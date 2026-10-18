@@ -1,3 +1,6 @@
+/*
+ * Some part of this file is copy of https://github.com/taikun24/InsaneAE/blob/1.21.1/src/main/java/jp/main/taikun/insaneae/client/QuantumCpuScreen.java
+ */
 package com.takenokoshi.overdriveae.screen;
 
 import java.util.List;
