@@ -85,6 +85,10 @@ public class OverdriveMachineLogic<ASSEMBLY extends OverdriveMachineLogic.Assemb
     protected long remainingCrafts;
     protected long budgetTick = Long.MIN_VALUE;
 
+    /** この tick の残り消費可能エネルギー(AE)。 */
+    protected double remainingEnergy;
+    protected long energyTick = Long.MIN_VALUE;
+
     protected boolean warnedAboutFailedAssembly;
     /** AE2のパターンアイテム以外をパターンとして使用できるよう、独自のパターンインベントリを保持。 */
     protected final OverdrivePatternInv patternInv;
@@ -144,7 +148,6 @@ public class OverdriveMachineLogic<ASSEMBLY extends OverdriveMachineLogic.Assemb
          */
         updatePatterns();
     }
-
 
     /**
      * 独自のパターンインベントリの更新メソッド
@@ -229,11 +232,14 @@ public class OverdriveMachineLogic<ASSEMBLY extends OverdriveMachineLogic.Assemb
             return false;
         }
         ASSEMBLY assembly = resolveAssembly(patternClass.cast(patternDetails), inputHolder);
-        if (assembly == null) {
+        if (assembly == null || energyBudget(assembly) <= 0) {
             return true;
         }
         remainingCrafts--;
+        double v = host.getEnergyPerProcess(assembly);
+        remainingEnergy -= v;
         consumeInputs(assembly, inputHolder);
+        host.addUsedEnergyThisTick(v);
         storeOutputs(assembly, 1L);
         ((PatternProviderLogicAccessor) this).insaneae$onPushPatternSuccess(patternDetails);
         return super.pushPattern(patternDetails, inputHolder);
@@ -294,13 +300,15 @@ public class OverdriveMachineLogic<ASSEMBLY extends OverdriveMachineLogic.Assemb
             return 0L;
         }
 
-        // ここまで来たら times 回ぶんすべてを消費したことになるので、残りは捨ててよい。
-        for (KeyCounter counter : inputHolder) {
-            counter.reset();
-        }
+        // エネルギーによって実行回数を制御
+        times = Math.min(times, energyBudget(assembly));
+        consumeInputs(assembly, inputHolder, times);
 
         remainingCrafts -= times;
         storeOutputs(assembly, times);
+        double usedEnergy = host.getEnergyPerProcess(assembly) * times;
+        host.addUsedEnergyThisTick(usedEnergy);
+        remainingEnergy -= usedEnergy;
         ((PatternProviderLogicAccessor) this).insaneae$onPushPatternSuccess(details);
         return times;
     }
@@ -310,6 +318,25 @@ public class OverdriveMachineLogic<ASSEMBLY extends OverdriveMachineLogic.Assemb
         GenericStack[] inputs = assembly.inputs();
         for (int index = 0; index < inputs.length; index++) {
             long toConsume = inputs[index].amount();
+            for (AEKey key : inputHolder[index].keySet()) {
+                long has = inputHolder[index].get(key);
+                if (has >= toConsume) {
+                    inputHolder[index].remove(key, toConsume);
+                    inputHolder[index].removeZeros();
+                    break;
+                } else {
+                    inputHolder[index].remove(key);
+                    toConsume -= has;
+                }
+            }
+        }
+    }
+
+    /** 材料を {@code times} 回ぶん消費する。 */
+    protected void consumeInputs(ASSEMBLY assembly, KeyCounter[] inputHolder, long times) {
+        GenericStack[] inputs = assembly.inputs();
+        for (int index = 0; index < inputs.length; index++) {
+            long toConsume = inputs[index].amount() * times;
             for (AEKey key : inputHolder[index].keySet()) {
                 long has = inputHolder[index].get(key);
                 if (has >= toConsume) {
@@ -360,7 +387,7 @@ public class OverdriveMachineLogic<ASSEMBLY extends OverdriveMachineLogic.Assemb
     protected long budget() {
         Level level = host.getLevel();
         if (level == null) {
-            return 0;
+            return 0L;
         }
         long now = level.getGameTime();
         if (now != budgetTick) {
@@ -368,6 +395,26 @@ public class OverdriveMachineLogic<ASSEMBLY extends OverdriveMachineLogic.Assemb
             remainingCrafts = host.getCraftsPerTick();
         }
         return remainingCrafts;
+    }
+
+    /** この tick に残っているエネルギー依存の組み立て回数。tick が変わっていれば{@link #remainingEnergy}を補充する。 */
+    protected long energyBudget(ASSEMBLY assembly) {
+        Level level = host.getLevel();
+        if (level == null) {
+            return 0L;
+        }
+        long now = level.getGameTime();
+        if (now != energyTick) {
+            energyTick = now;
+            remainingEnergy = host.getEnergyCanUseThisTick();
+        }
+        double energyPerProcess = host.getEnergyPerProcess(assembly);
+        if (energyPerProcess <= 0.0d) {
+            return Long.MAX_VALUE;
+        } else {
+            double v = remainingEnergy / energyPerProcess;
+            return v > Long.MAX_VALUE ? Long.MAX_VALUE : (long) v;
+        }
     }
 
     /** ACO がターゲットとして掴む BlockEntity ({@code ProviderOwnedPatternBatchTarget})。 */

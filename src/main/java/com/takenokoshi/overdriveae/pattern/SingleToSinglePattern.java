@@ -9,6 +9,7 @@ import appeng.api.crafting.IPatternDetails;
 import appeng.api.stacks.AEItemKey;
 import appeng.api.stacks.GenericStack;
 
+/** PatternDetailsHelper経由での変換はできない */
 public class SingleToSinglePattern implements IPatternDetails {
 
     public final AEItemKey def;

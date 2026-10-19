@@ -4,6 +4,7 @@
 package com.takenokoshi.overdriveae.blockentity.prefab;
 
 import appeng.api.config.Actionable;
+import appeng.api.config.PowerMultiplier;
 import appeng.api.crafting.IPatternDetails;
 import appeng.api.implementations.blockentities.PatternContainerGroup;
 import appeng.api.inventories.ISegmentedInventory;
@@ -75,6 +76,7 @@ public abstract class OverdriveMachineBlockEntity<ASSEMBLY extends OverdriveMach
     protected static final String NBT_UPGRADES = "upgrades";
     protected static final String NBT_PENDING = "pendingOutputs";
     protected static final String NBT_PENDING_BIG = "pendingOutputsBig";
+    protected static final String NBT_USED_ENERGY = "usedEnergy";
 
     /** 完成品が詰まっている間、何 tick おきに保存するか。 */
     protected static final int PENDING_SAVE_INTERVAL = 20;
@@ -101,6 +103,13 @@ public abstract class OverdriveMachineBlockEntity<ASSEMBLY extends OverdriveMach
     protected final QuantumBatchReceipts batchReceipts = new QuantumBatchReceipts();
 
     protected long processPerTick;
+
+    /** このtickに消費した電力量 */
+    protected double usedEnergyThisTick;
+    /** 直近の保存時点で {@link #usedEnergyThisTick} が0でなかったか。 */
+    protected boolean energyWasSaved;
+    /** エネルギー借金状態を最後に保存してからのtick数。 */
+    protected int ticksSinceEnergySave;
 
     /** 直近の保存時点で {@link #pendingOutputs} が空でなかったか。 */
     protected boolean pendingWasSaved;
@@ -151,6 +160,7 @@ public abstract class OverdriveMachineBlockEntity<ASSEMBLY extends OverdriveMach
 
     /**
      * 一回分の処理を実行し、OverdriveMachineLogic側でキャッシュする。
+     * 
      */
     public abstract ASSEMBLY assemble(PATTERN pattern, KeyCounter[] inputHolder);
 
@@ -158,6 +168,42 @@ public abstract class OverdriveMachineBlockEntity<ASSEMBLY extends OverdriveMach
      * OverdriveMachineLogic側でキャッシュされた情報と材料が一致するか判定する。
      */
     public abstract boolean matchesCache(ASSEMBLY assembly, KeyCounter[] inputHolder);
+
+    // ------------------------------------------------------- エネルギー消費
+
+    /**
+     * @return 現在ME倉庫が持つエネルギー量
+     */
+    public double getEnergyCanUseThisTick() {
+        return getMainNode().getGrid().getEnergyService().getStoredPower() - usedEnergyThisTick;
+    }
+
+    /**
+     * このtickの消費エネルギーを蓄積する。
+     * 
+     * @param amount
+     */
+    public void addUsedEnergyThisTick(double amount) {
+        this.usedEnergyThisTick += amount;
+    }
+
+    /**
+     * 蓄積された消費エネルギーの分、ME倉庫のエネルギーを消費する。
+     * 正常に消費できれば {@link #usedEnergyThisTick} が0になる。
+     * 
+     * @return エネルギーを消費したか
+     */
+    boolean consumeEnergy() {
+        boolean v = usedEnergyThisTick > 0.0D;
+        usedEnergyThisTick -= getMainNode().getGrid().getEnergyService().extractAEPower(usedEnergyThisTick,
+                Actionable.MODULATE, PowerMultiplier.ONE);
+        return v;
+    }
+
+    /**
+     * @return 処理1回あたりの消費エネルギー
+     */
+    public abstract double getEnergyPerProcess(ASSEMBLY assembly);
 
     // ---------------------------------------------------------------- 速度
 
@@ -229,8 +275,9 @@ public abstract class OverdriveMachineBlockEntity<ASSEMBLY extends OverdriveMach
         logic.flushPatternUpdate();
 
         if (flushPendingOutputs()) {
-            savePendingIfNeeded();
+            savePendingAndEnergyIfNeeded();
         }
+        consumeEnergy();
     }
 
     /**
@@ -285,16 +332,33 @@ public abstract class OverdriveMachineBlockEntity<ASSEMBLY extends OverdriveMach
      * 捌けきったら「空になった」ことを 1 回だけ保存する。
      * </p>
      */
-    private void savePendingIfNeeded() {
+    private void savePendingAndEnergyIfNeeded() {
+        boolean shouldSaveChanges = false;
         if (!pendingOutputs.isEmpty()) {
             if (!pendingWasSaved || ++ticksSincePendingSave >= PENDING_SAVE_INTERVAL) {
                 pendingWasSaved = true;
                 ticksSincePendingSave = 0;
-                saveChanges();
+                shouldSaveChanges = true;
             }
         } else if (pendingWasSaved) {
             pendingWasSaved = false;
             ticksSincePendingSave = 0;
+            shouldSaveChanges = true;
+        }
+
+        if (usedEnergyThisTick > 0.0D) {
+            if (!energyWasSaved || ++ticksSinceEnergySave >= PENDING_SAVE_INTERVAL) {
+                energyWasSaved = true;
+                ticksSinceEnergySave = 0;
+                shouldSaveChanges = true;
+            }
+        } else if (energyWasSaved) {
+            energyWasSaved = false;
+            ticksSinceEnergySave = 0;
+            shouldSaveChanges = true;
+        }
+
+        if (shouldSaveChanges) {
             saveChanges();
         }
     }
@@ -394,6 +458,8 @@ public abstract class OverdriveMachineBlockEntity<ASSEMBLY extends OverdriveMach
         // ACO の craftingtable batch レシート。ACO 未導入でも読み書きするだけなので、
         // 一度連携で使ったワールドから ACO を抜いてもレシートは消えない。
         batchReceipts.save(data, registries);
+
+        data.putDouble(NBT_USED_ENERGY, usedEnergyThisTick);
     }
 
     @Override
@@ -410,6 +476,8 @@ public abstract class OverdriveMachineBlockEntity<ASSEMBLY extends OverdriveMach
         // 読み込んだ時点の中身は「保存済み」。空になったときに 1 回だけ保存すればよい。
         pendingWasSaved = !pendingOutputs.isEmpty();
         ticksSincePendingSave = 0;
+
+        usedEnergyThisTick = data.getDouble(NBT_USED_ENERGY);
     }
 
     @Override
