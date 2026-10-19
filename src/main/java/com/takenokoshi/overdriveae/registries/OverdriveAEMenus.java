@@ -8,7 +8,7 @@ import net.minecraft.world.inventory.MenuType;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-public class OAEMenus {
+public class OverdriveAEMenus {
     public  static final DeferredRegister<MenuType<?>> MENU_TYPES = DeferredRegister.create(Registries.MENU,
             OverdriveAE.MODID);
 

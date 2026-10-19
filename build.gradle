@@ -12,11 +12,24 @@ tasks.named('wrapper', Wrapper).configure {
 version = mod_version
 group = mod_group_id
 
-sourceSets.main.resources {
-    srcDir('src/generated/resources')
 
-    exclude("**/*.bbmodel")
-    exclude("src/generated/**/.cache")
+
+sourceSets {
+    datagen {
+        java.srcDir 'src/datagen/java'
+        compileClasspath += sourceSets.main.compileClasspath
+        runtimeClasspath += sourceSets.main.runtimeClasspath
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+    }
+
+    main{
+        resources{
+            srcDir('src/generated/resources')
+
+            exclude("**/*.bbmodel")
+            exclude("src/generated/**/.cache")}
+    }
 }
 
 repositories {
@@ -63,6 +76,7 @@ neoForge {
 
         data {
             data()
+            sourceSet = sourceSets.datagen
             programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
         }
 
@@ -76,12 +90,15 @@ neoForge {
     mods {
         "${mod_id}" {
             sourceSet(sourceSets.main)
+            sourceSet(sourceSets.datagen)
         }
     }
 }
 
 configurations {
     runtimeClasspath.extendsFrom localRuntime
+
+    datagenImplementation.extendsFrom implementation
 }
 
 dependencies {

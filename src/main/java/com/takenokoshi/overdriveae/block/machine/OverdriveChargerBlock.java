@@ -3,6 +3,8 @@ package com.takenokoshi.overdriveae.block.machine;
 import com.takenokoshi.overdriveae.blockentity.machine.OverdriveChargerBlockEntity;
 import com.takenokoshi.overdriveae.blockentity.prefab.OverdriveMachineBlockEntity;
 
+import appeng.api.orientation.IOrientationStrategy;
+import appeng.api.orientation.OrientationStrategies;
 import appeng.block.AEBaseEntityBlock;
 import appeng.menu.locator.MenuLocators;
 import appeng.util.InteractionUtil;
@@ -26,6 +28,18 @@ public class OverdriveChargerBlock extends AEBaseEntityBlock<OverdriveChargerBlo
         // noOcclusion: モデルに透明な部分があるので、隣のブロックの面を消させない。
         // 付けないと隣接面がカリングされ、透けた部分から地形の裏 (=何も無い空間) が見える。
         super(props.sound(SoundType.METAL).mapColor(MapColor.METAL).forceSolidOn().noOcclusion());
+    }
+
+    /**
+     * 置いた向き (と回転) を持たせる。AE2 のチャージャーと同じ {@code full}:
+     * 6 方向 × 4 回転 = 24 通りを {@code facing} / {@code spin} のブロックステートで持つ。
+     *
+     * <p>ここを変えるとブロックステートの一覧も変わるので、
+     * {@code ModBlockStateProvider} 側の生成 (24 通り) と必ず揃えること。</p>
+     */
+    @Override
+    public IOrientationStrategy getOrientationStrategy() {
+        return OrientationStrategies.full();
     }
 
     /**

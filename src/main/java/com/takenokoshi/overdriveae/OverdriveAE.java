@@ -4,13 +4,14 @@ import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
 import com.takenokoshi.overdriveae.recipe.RecipeCacheReloadLister;
-import com.takenokoshi.overdriveae.registries.OAECapabilities;
-import com.takenokoshi.overdriveae.registries.OAEMachines;
-import com.takenokoshi.overdriveae.registries.OAEMenus;
-import com.takenokoshi.overdriveae.registries.OAETabs;
+import com.takenokoshi.overdriveae.registries.OverdriveAECapabilities;
+import com.takenokoshi.overdriveae.registries.OverdriveAEMachines;
+import com.takenokoshi.overdriveae.registries.OverdriveAEMenus;
+import com.takenokoshi.overdriveae.registries.OverdriveAETabs;
 
 import appeng.api.upgrades.Upgrades;
 import jp.main.taikun.insaneae.quantum.QuantumCpuBlockEntity;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
@@ -28,25 +29,29 @@ public class OverdriveAE {
     public static final String MODID = "overdriveae";
     public static final Logger LOGGER = LogUtils.getLogger();
 
+    public static ResourceLocation makeId(String path){
+        return ResourceLocation.fromNamespaceAndPath(MODID, path);
+    }
+
     public OverdriveAE(IEventBus modEventBus, ModContainer modContainer) {
 
-        OAEMachines.MACHINES.register(modEventBus);
-        OAETabs.TABS.register(modEventBus);
-        OAEMenus.MENU_TYPES.register(modEventBus);
+        OverdriveAEMachines.MACHINES.register(modEventBus);
+        OverdriveAETabs.TABS.register(modEventBus);
+        OverdriveAEMenus.MENU_TYPES.register(modEventBus);
 
         modEventBus.addListener(this::addCreative);
-        modEventBus.addListener(OAECapabilities::register);
+        modEventBus.addListener(OverdriveAECapabilities::register);
         modEventBus.addListener(this::commonSetup);
 
         NeoForge.EVENT_BUS.addListener(this::registerReloadListeners);
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
-        OAEMachines.MACHINES.bind();
+        OverdriveAEMachines.MACHINES.bind();
 
-        Upgrades.add(QUANTUM_ACCELERATION_CARD.get(), OAEMachines.OVERDRIVE_CHARGER,
+        Upgrades.add(QUANTUM_ACCELERATION_CARD.get(), OverdriveAEMachines.OVERDRIVE_CHARGER,
                 QuantumCpuBlockEntity.MAX_ACCELERATION_CARDS);
-        Upgrades.add(TASK_FUSION_CARD.get(), OAEMachines.OVERDRIVE_CHARGER, 1);
+        Upgrades.add(TASK_FUSION_CARD.get(), OverdriveAEMachines.OVERDRIVE_CHARGER, 1);
     }
 
     private void addCreative(BuildCreativeModeTabContentsEvent event) {

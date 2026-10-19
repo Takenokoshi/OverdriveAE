@@ -1,0 +1,19 @@
+{
+  "parent": "block/block",
+  "children": {
+    "base": {
+      "parent": "overdriveae:block/overdrive_base"
+    },
+    "charger": {
+      "parent": "overdriveae:block/overdrive_charger/charger"
+    }
+  },
+  "item_render_order": [
+    "charger",
+    "base"
+  ],
+  "loader": "neoforge:composite",
+  "textures": {
+    "particle": "overdriveae:block/overdrive_frame"
+  }
+}

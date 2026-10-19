@@ -6,9 +6,9 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 
-public class OAECapabilities {
+public class OverdriveAECapabilities {
     public static void register(RegisterCapabilitiesEvent event) {
-        OAEMachines.MACHINES.getMachines().forEach(def -> {
+        OverdriveAEMachines.MACHINES.getMachines().forEach(def -> {
             registerGridNodeHost(event, def.getBlockEntityType());
         });
         

@@ -9,13 +9,13 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-public class OAETabs {
+public class OverdriveAETabs {
     public static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB,
             OverdriveAE.MODID);
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> MAIN = TABS.register("main",
             () -> CreativeModeTab.builder()
-                    .icon(() -> new ItemStack(OAEMachines.OVERDRIVE_CHARGER, 1))
+                    .icon(() -> new ItemStack(OverdriveAEMachines.OVERDRIVE_CHARGER, 1))
                     .title(Component.literal("OverdriveAE"))
-                    .displayItems(OAEMachines.MACHINES.itemRegister.getEntries()).build());
+                    .displayItems(OverdriveAEMachines.MACHINES.itemRegister.getEntries()).build());
 }

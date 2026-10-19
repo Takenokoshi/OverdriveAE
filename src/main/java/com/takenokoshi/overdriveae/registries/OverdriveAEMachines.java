@@ -6,7 +6,7 @@ import com.takenokoshi.overdriveae.blockentity.machine.OverdriveChargerBlockEnti
 import com.takenokoshi.overdriveae.registration.OAEDeferredMachine;
 import com.takenokoshi.overdriveae.registration.OAEMachineDeferredRegister;
 
-public class OAEMachines {
+public class OverdriveAEMachines {
     public static final OAEMachineDeferredRegister MACHINES = new OAEMachineDeferredRegister(OverdriveAE.MODID);
 
     public static final OAEDeferredMachine<OverdriveChargerBlock, OverdriveChargerBlockEntity> OVERDRIVE_CHARGER = MACHINES
