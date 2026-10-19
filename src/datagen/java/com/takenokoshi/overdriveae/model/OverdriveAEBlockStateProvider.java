@@ -41,6 +41,7 @@ public class OverdriveAEBlockStateProvider extends BlockStateProvider {
                         .existingChild("base", modLoc("block/overdrive_base"))
                         .existingChild("charger", modLoc("block/overdrive_charger/charger"))
                         .itemRenderOrder("charger", "base")
+                        .block()
                         .end());
     }
 
