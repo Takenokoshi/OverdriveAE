@@ -175,7 +175,8 @@ public abstract class OverdriveMachineBlockEntity<ASSEMBLY extends OverdriveMach
      * @return 現在ME倉庫が持つエネルギー量
      */
     public double getEnergyCanUseThisTick() {
-        return getMainNode().getGrid().getEnergyService().getStoredPower() - usedEnergyThisTick;
+        IGrid grid = getMainNode().getGrid();
+        return grid != null ? grid.getEnergyService().getStoredPower() - usedEnergyThisTick : 0.0D;
     }
 
     /**
@@ -194,8 +195,12 @@ public abstract class OverdriveMachineBlockEntity<ASSEMBLY extends OverdriveMach
      * @return エネルギーを消費したか
      */
     boolean consumeEnergy() {
+        IGrid grid = getMainNode().getGrid();
+        if (grid == null) {
+            return false;
+        }
         boolean v = usedEnergyThisTick > 0.0D;
-        usedEnergyThisTick -= getMainNode().getGrid().getEnergyService().extractAEPower(usedEnergyThisTick,
+        usedEnergyThisTick -= grid.getEnergyService().extractAEPower(usedEnergyThisTick,
                 Actionable.MODULATE, PowerMultiplier.ONE);
         return v;
     }
