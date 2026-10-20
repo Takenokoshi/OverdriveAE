@@ -213,7 +213,7 @@ public class OverdriveMachineScreen extends AEBaseScreen<OverdriveMachineMenu> {
         this.blockingModeButton.set(this.menu.getBlockingMode());
         this.lockCraftingModeButton.set(this.menu.getLockCraftingMode());
         this.showInPatternAccessTerminalButton.setState(this.menu.getShowInAccessTerminal() == YesNo.YES);
-        setTextContent("dialog_title", this.menu.host.getName());
+        setTextContent("dialog_title", this.menu.host.getGuiTitle());
         setTextContent("page", Component.literal((page + 1) + "/" + pageCount()));
         prevPage.active = page > 0;
         nextPage.active = page < pageCount() - 1;

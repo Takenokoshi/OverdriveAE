@@ -518,4 +518,9 @@ public abstract class OverdriveMachineBlockEntity<ASSEMBLY extends OverdriveMach
         saveChanges();
     }
 
+    public Component getGuiTitle() {
+        return Component.translatable(
+                "block." + deferredMachine.getId().getNamespace() + "." + deferredMachine.getId().getPath());
+    }
+
 }
