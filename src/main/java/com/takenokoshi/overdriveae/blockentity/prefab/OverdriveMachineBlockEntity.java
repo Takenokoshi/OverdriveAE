@@ -208,7 +208,7 @@ public abstract class OverdriveMachineBlockEntity<ASSEMBLY extends OverdriveMach
     /**
      * @return 処理1回あたりの消費エネルギー
      */
-    public abstract double getEnergyPerProcess(ASSEMBLY assembly);
+    public abstract double getEnergyPerProcess(PATTERN pattern);
 
     // ---------------------------------------------------------------- 速度
 

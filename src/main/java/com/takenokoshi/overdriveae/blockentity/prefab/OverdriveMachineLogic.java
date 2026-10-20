@@ -61,15 +61,6 @@ public class OverdriveMachineLogic<ASSEMBLY extends OverdriveMachineLogic.Assemb
      * 実際に組み立てた結果を<b>パターンごとに</b>覚えておく表。
      *
      * <p>
-     * 以前はここが 1 枠しか無く、直前に組んだパターンとしか照合できなかった。
-     * ところが 1 つのクラフトジョブには普通いくつもの小レシピが同時に走っていて、
-     * CPU 側はタスクの表を舐めながら順に押し出してくる。<b>別のパターンが交互に来ると
-     * 1 枠のキャッシュは毎回無効化される</b>ので、命中率が 0 に落ちて
-     * {@link #assembleAndCache} を毎クラフト走らせていた (レシピの実行と
-     * {@code fireAutoCraftingEvent} の発火が丸ごと乗る)。
-     * </p>
-     *
-     * <p>
      * 上限付きの LRU にしてある。パターンは 1620 枠あるが、<b>同時に走る小レシピは
      * せいぜい数十</b>なので {@link #ASSEMBLY_CACHE_SIZE} で足りる。
      * </p>
@@ -77,6 +68,21 @@ public class OverdriveMachineLogic<ASSEMBLY extends OverdriveMachineLogic.Assemb
     protected final Map<PATTERN, ASSEMBLY> assemblyCache = new LinkedHashMap<>(16, 0.75f, true) {
         @Override
         protected boolean removeEldestEntry(Map.Entry<PATTERN, ASSEMBLY> eldest) {
+            return size() > ASSEMBLY_CACHE_SIZE;
+        }
+    };
+
+    /**
+     * エネルギーの消費量を<b>パターンごとに</b>覚えておく表。
+     *
+     * <p>
+     * 上限付きの LRU にしてある。パターンは 1620 枠あるが、<b>同時に走る小レシピは
+     * せいぜい数十</b>なので {@link #ASSEMBLY_CACHE_SIZE} で足りる。
+     * </p>
+     */
+    protected final Map<PATTERN, Double> energyCache = new LinkedHashMap<>(16, 0.75f, true) {
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<PATTERN, Double> eldest) {
             return size() > ASSEMBLY_CACHE_SIZE;
         }
     };
@@ -211,6 +217,7 @@ public class OverdriveMachineLogic<ASSEMBLY extends OverdriveMachineLogic.Assemb
          * (データパックの再読み込みなど) ので、覚えている組み立て結果は捨てる。
          */
         assemblyCache.clear();
+        energyCache.clear();
     }
 
     @Override
@@ -231,18 +238,20 @@ public class OverdriveMachineLogic<ASSEMBLY extends OverdriveMachineLogic.Assemb
         if (!patternClass.isInstance(patternDetails)) {
             return false;
         }
-        ASSEMBLY assembly = resolveAssembly(patternClass.cast(patternDetails), inputHolder);
-        if (assembly == null || energyBudget(assembly) <= 0) {
+        PATTERN pattern = patternClass.cast(patternDetails);
+        if (energyBudget(pattern) <= 0) {
+            return false;
+        }
+        ASSEMBLY assembly = resolveAssembly(pattern, inputHolder);
+        if (assembly == null) {
             return true;
         }
         remainingCrafts--;
-        double v = host.getEnergyPerProcess(assembly);
-        remainingEnergy -= v;
         consumeInputs(assembly, inputHolder);
-        host.addUsedEnergyThisTick(v);
         storeOutputs(assembly, 1L);
+        consumeEnergy(resolveEnergy(pattern));
         ((PatternProviderLogicAccessor) this).insaneae$onPushPatternSuccess(patternDetails);
-        return super.pushPattern(patternDetails, inputHolder);
+        return true;
     }
 
     // ------------------------------------------------------------ まとめ処理
@@ -266,19 +275,11 @@ public class OverdriveMachineLogic<ASSEMBLY extends OverdriveMachineLogic.Assemb
         if (!patternClass.isInstance(details)) {
             return 0L;
         }
-        return budget();
+        return Math.min(budget(), energyBudget(patternClass.cast(details)));
     }
 
     /**
      * {@code times} 回ぶんの材料を受け取り、<b>組み立ては 1 回だけ</b>行って結果を {@code times} 倍する。
-     *
-     * <p>
-     * {@code inputHolder} の扱いに注意。{@link #fillGrid} がグリッドに載せるのは 1 回ぶんだけで、
-     * 残りの {@code times - 1} 回ぶんは {@code inputHolder} に残ったままになる。
-     * これを<b>消費済みとして捨てられるのは組み立てが成功したときだけ</b>で、
-     * 失敗したときは呼び出し側 ({@code QuantumBulkCrafting}) が CPU の在庫へ戻せるよう
-     * <b>そのまま残して返す</b>。
-     * </p>
      */
     @Override
     public long pushPatternBulk(IPatternDetails details, KeyCounter[] inputHolder, long times) {
@@ -289,26 +290,17 @@ public class OverdriveMachineLogic<ASSEMBLY extends OverdriveMachineLogic.Assemb
         if (level == null || budget() < times) {
             return 0L;
         }
-        KeyCounter[] originalInputs = copyInputHolder(inputHolder);
-
-        ASSEMBLY assembly = resolveAssembly(patternClass.cast(details), inputHolder);
-        if (assembly == null) {
-            // 組立失敗時はpushPatternBulkの外側が材料を戻すため、ここでは
-            // inputHolderを呼出し前の状態へ戻し、グリッドを空にする。
-            // 一部だけをネットワークへ返すと、外側のRollbackと二重計上になる。
-            restoreInputHolder(inputHolder, originalInputs);
+        PATTERN pattern = patternClass.cast(details);
+        ASSEMBLY assembly = resolveAssembly(pattern, inputHolder);
+        if (assembly == null || energyBudget(pattern) < times) {
             return 0L;
         }
 
-        // エネルギーによって実行回数を制御
-        times = Math.min(times, energyBudget(assembly));
         consumeInputs(assembly, inputHolder, times);
 
         remainingCrafts -= times;
         storeOutputs(assembly, times);
-        double usedEnergy = host.getEnergyPerProcess(assembly) * times;
-        host.addUsedEnergyThisTick(usedEnergy);
-        remainingEnergy -= usedEnergy;
+        consumeEnergy(resolveEnergy(pattern) * times);
         ((PatternProviderLogicAccessor) this).insaneae$onPushPatternSuccess(details);
         return times;
     }
@@ -359,6 +351,11 @@ public class OverdriveMachineLogic<ASSEMBLY extends OverdriveMachineLogic.Assemb
         }
     }
 
+    protected void consumeEnergy(double value) {
+        remainingEnergy -= value;
+        host.addUsedEnergyThisTick(value);
+    }
+
     @Override
     public boolean fusesOperations() {
         return host.isTaskFusionInstalled();
@@ -398,7 +395,7 @@ public class OverdriveMachineLogic<ASSEMBLY extends OverdriveMachineLogic.Assemb
     }
 
     /** この tick に残っているエネルギー依存の組み立て回数。tick が変わっていれば{@link #remainingEnergy}を補充する。 */
-    protected long energyBudget(ASSEMBLY assembly) {
+    protected long energyBudget(PATTERN pattern) {
         Level level = host.getLevel();
         if (level == null) {
             return 0L;
@@ -408,8 +405,8 @@ public class OverdriveMachineLogic<ASSEMBLY extends OverdriveMachineLogic.Assemb
             energyTick = now;
             remainingEnergy = host.getEnergyCanUseThisTick();
         }
-        double energyPerProcess = host.getEnergyPerProcess(assembly);
-        if (energyPerProcess <= 0.0d) {
+        double energyPerProcess = resolveEnergy(pattern);
+        if (energyPerProcess <= 0.0D) {
             return Long.MAX_VALUE;
         } else {
             double v = remainingEnergy / energyPerProcess;
@@ -427,11 +424,30 @@ public class OverdriveMachineLogic<ASSEMBLY extends OverdriveMachineLogic.Assemb
      * 覚えていればそれを使い、無ければ実際にレシピを回す。組めなければ null。
      */
     protected ASSEMBLY resolveAssembly(PATTERN pattern, KeyCounter[] inputHolder) {
-        ASSEMBLY cached = assemblyCache.get(pattern);
-        if (cached != null && host.matchesCache(cached, inputHolder)) {
-            return cached;
+        ASSEMBLY value = assemblyCache.get(pattern);
+        if (value != null && host.matchesCache(value, inputHolder)) {
+            return value;
         }
-        return host.assemble(pattern, inputHolder);
+        value = host.assemble(pattern, inputHolder);
+        if (value == null) {
+            return null;
+        }
+        assemblyCache.put(pattern, value);
+        return value;
+    }
+
+    /**
+     * パターンに対する消費エネルギーを返す。
+     * 覚えていればそれを使い、無ければ消費エネルギーを計算する。
+     */
+    protected double resolveEnergy(PATTERN pattern) {
+        double value = energyCache.getOrDefault(pattern, -1.0D);
+        if (value >= 0.0D) {
+            return value;
+        }
+        value = host.getEnergyPerProcess(pattern);
+        energyCache.put(pattern, value);
+        return value;
     }
 
     /** まとめ処理失敗時に、fillCraftingGrid前の入力所有量を複製する。 */
