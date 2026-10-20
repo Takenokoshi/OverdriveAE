@@ -1,3 +1,6 @@
 {
-  "block.overdriveae.overdrive_charger": "Overdrive Charger"
+  "block.overdriveae.overdrive_charger": "Overdrive Charger",
+  "block.overdriveae.overdrive_energized_blast_furnace": "Overdrive Energized Blast Furnace",
+  "block.overdriveae.overdrive_energized_furnace": "Overdrive Energized Furnace",
+  "block.overdriveae.overdrive_energized_smoker": "Overdrive Energized Smoker"
 }

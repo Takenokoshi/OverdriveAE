@@ -8,6 +8,7 @@ import appeng.block.AEBaseEntityBlock;
 import appeng.blockentity.AEBaseBlockEntity;
 import appeng.core.definitions.DeferredBlockEntityType;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
@@ -63,6 +64,18 @@ public class OAEDeferredMachine<B extends AEBaseEntityBlock<E>, E extends AEBase
     public void bind() {
         deferredBlock.get().setBlockEntity(deferredBlockEntityType.getBlockEntityClass(), getBlockEntityType(),
                 clientTicker, serverTicker);
+    }
+
+    public ResourceLocation getId(){
+        return deferredBlock.getId();
+    }
+
+    public B getBlock(){
+        return deferredBlock.get();
+    }
+
+    public BlockItem getItem(){
+        return deferredItem.get();
     }
 
 }

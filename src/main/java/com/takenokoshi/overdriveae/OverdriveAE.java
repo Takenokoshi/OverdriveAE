@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
 import com.takenokoshi.overdriveae.recipe.RecipeCacheReloadLister;
+import com.takenokoshi.overdriveae.registration.OAEDeferredMachine;
 import com.takenokoshi.overdriveae.registries.OverdriveAECapabilities;
 import com.takenokoshi.overdriveae.registries.OverdriveAEMachines;
 import com.takenokoshi.overdriveae.registries.OverdriveAEMenus;
@@ -24,12 +25,14 @@ import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import static jp.main.taikun.insaneae.registries.ModUpgrades.QUANTUM_ACCELERATION_CARD;
 import static jp.main.taikun.insaneae.registries.ModUpgrades.TASK_FUSION_CARD;
 
+import java.util.List;
+
 @Mod(value = OverdriveAE.MODID, dist = Dist.DEDICATED_SERVER)
 public class OverdriveAE {
     public static final String MODID = "overdriveae";
     public static final Logger LOGGER = LogUtils.getLogger();
 
-    public static ResourceLocation makeId(String path){
+    public static ResourceLocation makeId(String path) {
         return ResourceLocation.fromNamespaceAndPath(MODID, path);
     }
 
@@ -49,9 +52,17 @@ public class OverdriveAE {
     private void commonSetup(FMLCommonSetupEvent event) {
         OverdriveAEMachines.MACHINES.bind();
 
-        Upgrades.add(QUANTUM_ACCELERATION_CARD.get(), OverdriveAEMachines.OVERDRIVE_CHARGER,
-                QuantumCpuBlockEntity.MAX_ACCELERATION_CARDS);
-        Upgrades.add(TASK_FUSION_CARD.get(), OverdriveAEMachines.OVERDRIVE_CHARGER, 1);
+        List.of(new OAEDeferredMachine[] {
+                OverdriveAEMachines.OVERDRIVE_CHARGER,
+                OverdriveAEMachines.OVERDRIVE_ENERGIZED_BLAST_FURNACE,
+                OverdriveAEMachines.OVERDRIVE_ENERGIZED_FURNACE,
+                OverdriveAEMachines.OVERDRIVE_ENERGIZED_SMOKER,
+        }).forEach(this::addQuantumUpgrade);
+    }
+
+    private void addQuantumUpgrade(OAEDeferredMachine<?, ?> machine) {
+        Upgrades.add(QUANTUM_ACCELERATION_CARD.get(), machine, QuantumCpuBlockEntity.MAX_ACCELERATION_CARDS);
+        Upgrades.add(TASK_FUSION_CARD.get(), machine, 1);
     }
 
     private void addCreative(BuildCreativeModeTabContentsEvent event) {

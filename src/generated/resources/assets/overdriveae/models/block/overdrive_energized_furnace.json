@@ -1,0 +1,31 @@
+{
+  "parent": "block/block",
+  "children": {
+    "base": {
+      "parent": "overdriveae:block/overdrive_base"
+    },
+    "furnace": {
+      "parent": "minecraft:block/furnace",
+      "transform": {
+        "scale": [
+          0.5,
+          0.5,
+          0.5
+        ],
+        "translation": [
+          -0.25,
+          -0.25,
+          -0.25
+        ]
+      }
+    }
+  },
+  "item_render_order": [
+    "furnace",
+    "base"
+  ],
+  "loader": "neoforge:composite",
+  "textures": {
+    "particle": "overdriveae:block/overdrive_frame"
+  }
+}

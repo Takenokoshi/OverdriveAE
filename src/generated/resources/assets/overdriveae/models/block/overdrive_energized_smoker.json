@@ -1,0 +1,31 @@
+{
+  "parent": "block/block",
+  "children": {
+    "base": {
+      "parent": "overdriveae:block/overdrive_base"
+    },
+    "smoker": {
+      "parent": "minecraft:block/smoker",
+      "transform": {
+        "scale": [
+          0.5,
+          0.5,
+          0.5
+        ],
+        "translation": [
+          -0.25,
+          -0.25,
+          -0.25
+        ]
+      }
+    }
+  },
+  "item_render_order": [
+    "smoker",
+    "base"
+  ],
+  "loader": "neoforge:composite",
+  "textures": {
+    "particle": "overdriveae:block/overdrive_frame"
+  }
+}

@@ -220,6 +220,11 @@ public class OverdriveMachineLogic<ASSEMBLY extends OverdriveMachineLogic.Assemb
         energyCache.clear();
     }
 
+    /** エネルギーの消費量をアップグレードで変化させる機械用 */
+    public void clearEnergyCache(){
+        energyCache.clear();
+    }
+
     @Override
     public boolean pushPattern(IPatternDetails patternDetails, KeyCounter[] inputHolder) {
         Level level = host.getLevel();

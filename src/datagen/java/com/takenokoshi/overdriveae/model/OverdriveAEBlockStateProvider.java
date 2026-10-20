@@ -21,26 +21,54 @@ public class OverdriveAEBlockStateProvider extends BlockStateProvider {
     protected static final ExistingFileHelper.ResourceType MODEL = new ExistingFileHelper.ResourceType(
             PackType.CLIENT_RESOURCES, ".json", "models");
 
-    private final ExistingFileHelper exFileHelper;
-
     public OverdriveAEBlockStateProvider(PackOutput output, ExistingFileHelper exFileHelper) {
         super(output, OverdriveAE.MODID, exFileHelper);
-        this.exFileHelper = exFileHelper;
     }
 
     @Override
     protected void registerStatesAndModels() {
-        exFileHelper.trackGenerated(AppEng.makeId("block/charger"), MODEL);
-        models()
-                .withExistingParent("block/overdrive_charger/charger", AppEng.makeId("block/charger"))
-                .rootTransforms().scale(0.5F).translation(-0.25F, -0.25F, -0.25F).end();
-        orientedBlock(OverdriveAEMachines.OVERDRIVE_CHARGER.deferredBlock.get(),
+        orientedBlock(OverdriveAEMachines.OVERDRIVE_CHARGER.getBlock(),
                 models().getBuilder("block/overdrive_charger")
                         .texture("particle", modLoc("block/overdrive_frame"))
-                        .customLoader(ExistingUsableCompositeModelBuilder::begin)
+                        .customLoader(CompositeModelAdvancedBuilder::begin)
                         .existingChild("base", modLoc("block/overdrive_base"))
-                        .existingChild("charger", modLoc("block/overdrive_charger/charger"))
+                        .modifiedExistingChildStart("charger", AppEng.makeId("block/charger"))
+                        .rootTransforms().scale(0.5F).translation(-0.25F, -0.25F, -0.25F).backToModifiedChildBuilder()
+                        .backToCompositeBuilder()
                         .itemRenderOrder("charger", "base")
+                        .block()
+                        .end());
+        orientedBlock(OverdriveAEMachines.OVERDRIVE_ENERGIZED_BLAST_FURNACE.getBlock(),
+                models().getBuilder("block/overdrive_energized_blast_furnace")
+                        .texture("particle", modLoc("block/overdrive_frame"))
+                        .customLoader(CompositeModelAdvancedBuilder::begin)
+                        .existingChild("base", modLoc("block/overdrive_base"))
+                        .modifiedExistingChildStart("blast_furnace", mcLoc("block/blast_furnace"))
+                        .rootTransforms().scale(0.5F).translation(-0.25F, -0.25F, -0.25F).backToModifiedChildBuilder()
+                        .backToCompositeBuilder()
+                        .itemRenderOrder("blast_furnace", "base")
+                        .block()
+                        .end());
+        orientedBlock(OverdriveAEMachines.OVERDRIVE_ENERGIZED_FURNACE.getBlock(),
+                models().getBuilder("block/overdrive_energized_furnace")
+                        .texture("particle", modLoc("block/overdrive_frame"))
+                        .customLoader(CompositeModelAdvancedBuilder::begin)
+                        .existingChild("base", modLoc("block/overdrive_base"))
+                        .modifiedExistingChildStart("furnace", mcLoc("block/furnace"))
+                        .rootTransforms().scale(0.5F).translation(-0.25F, -0.25F, -0.25F).backToModifiedChildBuilder()
+                        .backToCompositeBuilder()
+                        .itemRenderOrder("furnace", "base")
+                        .block()
+                        .end());
+        orientedBlock(OverdriveAEMachines.OVERDRIVE_ENERGIZED_SMOKER.getBlock(),
+                models().getBuilder("block/overdrive_energized_smoker")
+                        .texture("particle", modLoc("block/overdrive_frame"))
+                        .customLoader(CompositeModelAdvancedBuilder::begin)
+                        .existingChild("base", modLoc("block/overdrive_base"))
+                        .modifiedExistingChildStart("smoker", mcLoc("block/smoker"))
+                        .rootTransforms().scale(0.5F).translation(-0.25F, -0.25F, -0.25F).backToModifiedChildBuilder()
+                        .backToCompositeBuilder()
+                        .itemRenderOrder("smoker", "base")
                         .block()
                         .end());
     }
