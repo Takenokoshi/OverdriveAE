@@ -46,6 +46,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
+import com.takenokoshi.overdriveae.blockentity.logic.OverdriveMachineLogic;
 import com.takenokoshi.overdriveae.menu.OverdriveMachineMenu;
 import com.takenokoshi.overdriveae.registration.OAEDeferredMachine;
 

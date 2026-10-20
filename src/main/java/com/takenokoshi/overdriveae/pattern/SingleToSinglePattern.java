@@ -3,7 +3,7 @@ package com.takenokoshi.overdriveae.pattern;
 import java.util.Collections;
 import java.util.List;
 
-import com.takenokoshi.overdriveae.blockentity.prefab.OverdriveMachineLogic.Assembly;
+import com.takenokoshi.overdriveae.blockentity.logic.OverdriveMachineLogic;
 
 import appeng.api.crafting.IPatternDetails;
 import appeng.api.stacks.AEItemKey;
@@ -40,7 +40,7 @@ public class SingleToSinglePattern implements IPatternDetails {
         return Collections.singletonList(output);
     }
 
-    public static class SingleToSingleAssembly implements Assembly {
+    public static class SingleToSingleAssembly implements OverdriveMachineLogic.Assembly {
 
         public final GenericStack input;
         public final GenericStack output;

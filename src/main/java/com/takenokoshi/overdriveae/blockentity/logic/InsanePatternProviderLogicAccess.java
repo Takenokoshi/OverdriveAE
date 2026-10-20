@@ -1,4 +1,4 @@
-package com.takenokoshi.overdriveae.blockentity.prefab;
+package com.takenokoshi.overdriveae.blockentity.logic;
 
 import java.util.Set;
 

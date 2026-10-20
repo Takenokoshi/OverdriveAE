@@ -2,11 +2,12 @@
  *Some part of this file is copy of https://github.com/taikun24/InsaneAE/blob/1.21.1/src/main/java/jp/main/taikun/insaneae/quantum/QuantumCpuLogic.java
  */
 
-package com.takenokoshi.overdriveae.blockentity.prefab;
+package com.takenokoshi.overdriveae.blockentity.logic;
 
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
+import com.takenokoshi.overdriveae.blockentity.prefab.OverdriveMachineBlockEntity;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -174,6 +175,39 @@ public class OverdriveMachineLogic<ASSEMBLY extends OverdriveMachineLogic.Assemb
          * InsanePatternProviderLogic側のパターン更新を呼ぶ。
          */
         updatePatterns();
+    }
+
+    /**
+     * 触媒を必要とする機械で、触媒が増えたときの更新
+     */
+    public void recheckUndecodedPatterns() {
+        for (int i = 0; i < patterns.length; i++) {
+            if (patterns[i] != null) {
+                continue;
+            }
+            ItemStack stack = patternInv.getStackInSlot(i);
+            if (stack.isEmpty()) {
+            } else {
+                patterns[i] = host.tryDecodePattern(stack);
+            }
+        }
+        updatePatterns();
+    }
+
+    /**
+     * 触媒を必要とする機械で、触媒が減ったときの更新
+     */
+    public void recheckDecodedPatterns() {
+        for (int i = 0; i < patterns.length; i++) {
+            if (patterns[i] == null) {
+                continue;
+            }
+            ItemStack stack = patternInv.getStackInSlot(i);
+            if (stack.isEmpty()) {
+            } else {
+                patterns[i] = host.tryDecodePattern(stack);
+            }
+        }
     }
 
     /**

@@ -7,9 +7,11 @@ import java.util.function.Function;
 import com.takenokoshi.overdriveae.recipe.cache.ChargerRecipeCache;
 import com.takenokoshi.overdriveae.recipe.cache.CookingRecipeCache;
 import com.takenokoshi.overdriveae.recipe.cache.IRecipeCache;
+import com.takenokoshi.overdriveae.recipe.cache.InscriberRecipeCache;
 
 import appeng.recipes.AERecipeTypes;
 import appeng.recipes.handlers.ChargerRecipe;
+import appeng.recipes.handlers.InscriberRecipe;
 import net.minecraft.world.item.crafting.BlastingRecipe;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeInput;
@@ -27,9 +29,9 @@ public class RecipeCacheHolder<I extends RecipeInput, R extends Recipe<I>, C ext
     public final C recipeCache;
     private boolean isCached;
 
-    public RecipeCacheHolder(RecipeType<R> recipeType, Function<RecipeType<R>, C> recipeCacheCreator) {
+    public RecipeCacheHolder(RecipeType<R> recipeType, Function<RecipeCacheHolder<I, R, C>, C> recipeCacheCreator) {
         this.recipeType = recipeType;
-        this.recipeCache = recipeCacheCreator.apply(this.recipeType);
+        this.recipeCache = recipeCacheCreator.apply(this);
         HOLDERS.add(this);
     }
 
@@ -70,4 +72,7 @@ public class RecipeCacheHolder<I extends RecipeInput, R extends Recipe<I>, C ext
 
     public static final RecipeCacheHolder<RecipeInput, ChargerRecipe, ChargerRecipeCache> CHARGER = new RecipeCacheHolder<>(
             AERecipeTypes.CHARGER, new ChargerRecipeCache());
+
+    public static final RecipeCacheHolder<RecipeInput, InscriberRecipe, InscriberRecipeCache> INSCRIBER = new RecipeCacheHolder<>(
+            AERecipeTypes.INSCRIBER, new InscriberRecipeCache());
 }

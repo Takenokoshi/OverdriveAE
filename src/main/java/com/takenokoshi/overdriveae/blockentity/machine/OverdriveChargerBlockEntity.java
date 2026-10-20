@@ -4,8 +4,8 @@ import java.util.Arrays;
 
 import org.jetbrains.annotations.Nullable;
 
+import com.takenokoshi.overdriveae.blockentity.logic.OverdriveMachineLogic;
 import com.takenokoshi.overdriveae.blockentity.prefab.OverdriveMachineBlockEntity;
-import com.takenokoshi.overdriveae.blockentity.prefab.OverdriveMachineLogic;
 import com.takenokoshi.overdriveae.pattern.SingleToSinglePattern;
 import com.takenokoshi.overdriveae.recipe.lookup.ChargerRecipeLookupHandler;
 import com.takenokoshi.overdriveae.registration.OAEDeferredMachine;
