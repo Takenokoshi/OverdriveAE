@@ -41,28 +41,25 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 public class OverdriveMachineScreen extends AEBaseScreen<OverdriveMachineMenu> {
 
-    
+    protected static final Logger LOG = LogUtils.getLogger();
 
-    private static final Logger LOG = LogUtils.getLogger();
-
-    private static final int COLUMNS = QuantumCpuBlockEntity.PATTERN_COLUMNS;
-    private static final int PER_PAGE = QuantumCpuBlockEntity.PATTERN_SLOTS_PER_PAGE;
-    private static final int PAGES = QuantumCpuBlockEntity.PATTERN_PAGES;
+    protected static final int COLUMNS = QuantumCpuBlockEntity.PATTERN_COLUMNS;
+    protected static final int PER_PAGE = QuantumCpuBlockEntity.PATTERN_SLOTS_PER_PAGE;
+    protected static final int PAGES = QuantumCpuBlockEntity.PATTERN_PAGES;
 
     /** パターン枠の左上と間隔 (quantum_cpu.json の ENCODED_PATTERN と同じ値)。 */
-    private static final int GRID_LEFT = 8;
-    private static final int GRID_TOP = 22;
-    private static final int SLOT_SIZE = 18;
+    protected static final int GRID_LEFT = 8;
+    protected static final int GRID_TOP = 22;
+    protected static final int SLOT_SIZE = 18;
 
+    protected final SettingToggleButton<YesNo> blockingModeButton;
+    protected final SettingToggleButton<LockCraftingMode> lockCraftingModeButton;
+    protected final ToggleButton showInPatternAccessTerminalButton;
+    protected final OverdriveMachineLockReason lockReason;
+    protected final IconTextButton prevPage;
+    protected final IconTextButton nextPage;
 
-    private final SettingToggleButton<YesNo> blockingModeButton;
-    private final SettingToggleButton<LockCraftingMode> lockCraftingModeButton;
-    private final ToggleButton showInPatternAccessTerminalButton;
-    private final OverdriveMachineLockReason lockReason;
-    private final IconTextButton prevPage;
-    private final IconTextButton nextPage;
-
-    private int page;
+    protected int page;
 
     public OverdriveMachineScreen(OverdriveMachineMenu menu, Inventory playerInventory, Component title,
             ScreenStyle style) {
@@ -85,8 +82,6 @@ public class OverdriveMachineScreen extends AEBaseScreen<OverdriveMachineMenu> {
         this.lockReason = new OverdriveMachineLockReason(this);
         widgets.add("lockReason", this.lockReason);
 
-        
-
         if (menu.getTarget() instanceof IUpgradeableObject upgradeable) {
             addUpgradesPanel(upgradeable);
         }
@@ -104,17 +99,21 @@ public class OverdriveMachineScreen extends AEBaseScreen<OverdriveMachineMenu> {
     /**
      * アップグレードカードのパネル。
      *
-     * <p><b>他 Mod が同じものを先に足していることがある。</b> 例えば ExtendedAE Plus は
+     * <p>
+     * <b>他 Mod が同じものを先に足していることがある。</b> 例えば ExtendedAE Plus は
      * {@code PatternProviderScreen} のコンストラクタに Mixin で
      * {@code widgets.add("upgrades", new UpgradesPanel(...))} を注入する。
      * こちらは {@code super(...)} の後に同じ ID で足すので、
      * {@code WidgetContainer} の重複チェック ({@code "%s already used for widget"}) に当たって
      * {@code IllegalStateException} になり、<b>画面が開けなくなる</b>
-     * (相手は自分の追加だけ try/catch で守っているのでログにも出ない)。</p>
+     * (相手は自分の追加だけ try/catch で守っているのでログにも出ない)。
+     * </p>
      *
-     * <p>中身はどちらも同じ {@code UPGRADE} スロットなので、既にあるなら相手のパネルに任せる。</p>
+     * <p>
+     * 中身はどちらも同じ {@code UPGRADE} スロットなので、既にあるなら相手のパネルに任せる。
+     * </p>
      */
-    private void addUpgradesPanel(IUpgradeableObject upgradeable) {
+    protected void addUpgradesPanel(IUpgradeableObject upgradeable) {
         try {
             widgets.add("upgrades", new UpgradesPanel(menu.getSlots(SlotSemantics.UPGRADE), upgradeable));
         } catch (IllegalStateException alreadyAdded) {
@@ -132,11 +131,11 @@ public class OverdriveMachineScreen extends AEBaseScreen<OverdriveMachineMenu> {
 
     // ------------------------------------------------------------------ ページ送り
 
-    private void turnPage(int delta) {
+    protected void turnPage(int delta) {
         setPage(page + delta);
     }
 
-    private void setPage(int newPage) {
+    protected void setPage(int newPage) {
         int clamped = Math.max(0, Math.min(pageCount() - 1, newPage));
         if (clamped != page) {
             page = clamped;
@@ -145,21 +144,25 @@ public class OverdriveMachineScreen extends AEBaseScreen<OverdriveMachineMenu> {
         }
     }
 
-    private int pageCount() {
+    protected int pageCount() {
         return menu.isServerPaged() ? menu.getPageCount() : PAGES;
     }
 
     /**
      * 現在のページのパターン枠と、クラフトユニット枠を並べる。
      *
-     * <p>パターン枠とユニット枠は<b>同じ場所を取り合う</b>ので、出しているのはどちらか一方だけ。</p>
+     * <p>
+     * パターン枠とユニット枠は<b>同じ場所を取り合う</b>ので、出しているのはどちらか一方だけ。
+     * </p>
      *
-     * <p>サーバ側でページ分割されている場合 ({@link QuantumCpuMenu#isServerPaged()})、
+     * <p>
+     * サーバ側でページ分割されている場合 ({@link QuantumCpuMenu#isServerPaged()})、
      * メニューには 1 ページぶんのスロットしか無いので素直に並べるだけ。
      * サーバ側のページングを切っている場合は全枠 (1620) 並んでいるので、
-     * 表示するページぶんだけ位置を決めて残りは非表示にする<b>旧来のやり方</b>に落ちる。</p>
+     * 表示するページぶんだけ位置を決めて残りは非表示にする<b>旧来のやり方</b>に落ちる。
+     * </p>
      */
-    private void layoutSlots() {
+    protected void layoutSlots() {
 
         List<Slot> slots = menu.getSlots(SlotSemantics.ENCODED_PATTERN);
         int first = menu.isServerPaged() ? 0 : page * PER_PAGE;
@@ -167,7 +170,7 @@ public class OverdriveMachineScreen extends AEBaseScreen<OverdriveMachineMenu> {
         for (int index = 0; index < slots.size(); index++) {
             Slot slot = slots.get(index);
             int inPage = index - first;
-            boolean visible =  inPage >= 0 && inPage < PER_PAGE;
+            boolean visible = inPage >= 0 && inPage < PER_PAGE;
 
             if (slot instanceof AppEngSlot appEngSlot) {
                 // setSlotEnabled ではなく setActive。
@@ -189,14 +192,14 @@ public class OverdriveMachineScreen extends AEBaseScreen<OverdriveMachineMenu> {
         if (super.mouseScrolled(x, y, scrollX, wheelDelta)) {
             return true;
         }
-        if ( wheelDelta != 0 && isOverPatternGrid(x, y)) {
+        if (wheelDelta != 0 && isOverPatternGrid(x, y)) {
             turnPage(wheelDelta > 0 ? -1 : 1);
             return true;
         }
         return false;
     }
 
-    private boolean isOverPatternGrid(double x, double y) {
+    protected boolean isOverPatternGrid(double x, double y) {
         int left = leftPos + GRID_LEFT;
         int top = topPos + GRID_TOP;
         return x >= left && x < left + COLUMNS * SLOT_SIZE
@@ -243,25 +246,25 @@ public class OverdriveMachineScreen extends AEBaseScreen<OverdriveMachineMenu> {
         }
     }
 
-
-    private void selectNextPatternProviderMode() {
+    protected void selectNextPatternProviderMode() {
         final boolean backwards = isHandlingRightClick();
         ServerboundPacket message = new ConfigButtonPacket(Settings.PATTERN_ACCESS_TERMINAL, backwards);
         PacketDistributor.sendToServer(message);
     }
-    
 
     /**
      * アイコンだけのボタン。{@link IconButton} はアイコンを差し替えれば使える。
      *
-     * <p>アイコンを供給側から取るのは、開閉ボタンが状態で見た目を変えるため
-     * ({@code getIcon} は毎フレーム呼ばれる)。</p>
+     * <p>
+     * アイコンを供給側から取るのは、開閉ボタンが状態で見た目を変えるため
+     * ({@code getIcon} は毎フレーム呼ばれる)。
+     * </p>
      */
-    private static final class IconTextButton extends IconButton {
+    protected static final class IconTextButton extends IconButton {
 
-        private final Supplier<Icon> icon;
+        protected final Supplier<Icon> icon;
 
-        private IconTextButton(Supplier<Icon> icon, Component message, Button.OnPress onPress) {
+        protected IconTextButton(Supplier<Icon> icon, Component message, Button.OnPress onPress) {
             super(onPress);
             this.icon = icon;
             setMessage(message);
