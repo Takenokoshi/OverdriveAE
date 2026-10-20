@@ -11,6 +11,7 @@ import com.takenokoshi.overdriveae.registries.OverdriveAEMenus;
 import com.takenokoshi.overdriveae.registries.OverdriveAETabs;
 
 import appeng.api.upgrades.Upgrades;
+import jp.main.taikun.insaneae.InsaneAE;
 import jp.main.taikun.insaneae.quantum.QuantumCpuBlockEntity;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
@@ -34,6 +35,10 @@ public class OverdriveAE {
 
     public static ResourceLocation makeId(String path) {
         return ResourceLocation.fromNamespaceAndPath(MODID, path);
+    }
+
+    public static ResourceLocation makeInsaneId(String path){
+        return  ResourceLocation.fromNamespaceAndPath(InsaneAE.MODID, path);
     }
 
     public OverdriveAE(IEventBus modEventBus, ModContainer modContainer) {

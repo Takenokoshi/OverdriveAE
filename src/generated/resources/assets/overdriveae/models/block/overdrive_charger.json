@@ -5,7 +5,7 @@
       "parent": "overdriveae:block/overdrive_base"
     },
     "charger": {
-      "parent": "ae2:block/charger",
+      "parent": "insaneae:block/improved_charger",
       "transform": {
         "scale": [
           0.5,
