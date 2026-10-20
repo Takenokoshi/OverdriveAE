@@ -204,7 +204,7 @@ public class OverdriveMachineLogic<ASSEMBLY extends OverdriveMachineLogic.Assemb
     protected void onPatternsFlushed() {
         super.onPatternsFlushed();
         /** InsanePatternProviderLogic.patternSetの中身をこちらで置き換えてhasPatternの返り値を矯正する。 */
-        /** Mixinを介してInsanePatternProviderLogicAccessのprivateフィールドを持ってくる */
+        /** Mixinを介してInsanePatternProviderLogicのprivateフィールドを持ってくる */
         Set<IPatternDetails> patternSet = InsanePatternProviderLogicAccess.accessPatternSet(this);
         patternSet.clear();
         for (PATTERN cache : patterns) {
@@ -221,7 +221,7 @@ public class OverdriveMachineLogic<ASSEMBLY extends OverdriveMachineLogic.Assemb
     }
 
     /** エネルギーの消費量をアップグレードで変化させる機械用 */
-    public void clearEnergyCache(){
+    public void clearEnergyCache() {
         energyCache.clear();
     }
 
@@ -455,22 +455,17 @@ public class OverdriveMachineLogic<ASSEMBLY extends OverdriveMachineLogic.Assemb
         return value;
     }
 
-    /** まとめ処理失敗時に、fillCraftingGrid前の入力所有量を複製する。 */
-    protected static KeyCounter[] copyInputHolder(KeyCounter[] inputHolder) {
-        KeyCounter[] copy = new KeyCounter[inputHolder.length];
-        for (int index = 0; index < inputHolder.length; index++) {
-            copy[index] = new KeyCounter();
-            copy[index].addAll(inputHolder[index]);
-        }
-        return copy;
-    }
-
-    /** 呼出し前の入力へ戻し、BulkCraftingHook側のRollbackへ所有権を返す。 */
-    protected static void restoreInputHolder(KeyCounter[] inputHolder, KeyCounter[] originalInputs) {
-        for (int index = 0; index < inputHolder.length; index++) {
-            inputHolder[index].reset();
-            inputHolder[index].addAll(originalInputs[index]);
-        }
+    /**
+     * 独自のパターンインベントリの中身をドロップに追加する。
+     */
+    @Override
+    public void addDrops(List<ItemStack> drops) {
+        super.addDrops(drops);
+        patternInv.forEach(stack -> {
+            if (!stack.isEmpty()) {
+                drops.add(stack);
+            }
+        });
     }
 
 }
