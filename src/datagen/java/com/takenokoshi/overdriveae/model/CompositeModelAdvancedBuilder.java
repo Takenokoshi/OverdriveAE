@@ -57,8 +57,8 @@ public class CompositeModelAdvancedBuilder<T extends ModelBuilder<T>> extends Co
         return this;
     }
 
-    public ModifiedExistingChildModel<T> modifiedExistingChildStart(String name, ResourceLocation chuldLoc) {
-        return new ModifiedExistingChildModel<>(name, this, chuldLoc);
+    public ModifiedExistingChildModel<T> modifiedExistingChildStart(String name, ResourceLocation childLoc) {
+        return new ModifiedExistingChildModel<>(name, this, childLoc);
     }
 
     public CompositeModelAdvancedBuilder<T> block() {
