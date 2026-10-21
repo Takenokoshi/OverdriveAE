@@ -3,6 +3,7 @@ package com.takenokoshi.overdriveae.registries;
 import com.takenokoshi.overdriveae.OverdriveAE;
 import com.takenokoshi.overdriveae.block.machine.OverdriveMachineBlock;
 import com.takenokoshi.overdriveae.blockentity.machine.OverdriveChargerBlockEntity;
+import com.takenokoshi.overdriveae.blockentity.machine.OverdriveCondenserBlockEntity;
 import com.takenokoshi.overdriveae.blockentity.machine.OverdriveEnergizedBlastFurnaceBlockEntity;
 import com.takenokoshi.overdriveae.blockentity.machine.OverdriveEnergizedFurnaceBlockEntity;
 import com.takenokoshi.overdriveae.blockentity.machine.OverdriveEnergizedSmokerBlockEntity;
@@ -11,7 +12,8 @@ import com.takenokoshi.overdriveae.registration.OverdriveAEDeferredMachine;
 import com.takenokoshi.overdriveae.registration.OverdriveAEMachineDeferredRegister;
 
 public class OverdriveAEMachines {
-    public static final OverdriveAEMachineDeferredRegister MACHINES = new OverdriveAEMachineDeferredRegister(OverdriveAE.MODID);
+    public static final OverdriveAEMachineDeferredRegister MACHINES = new OverdriveAEMachineDeferredRegister(
+            OverdriveAE.MODID);
 
     public static final OverdriveAEDeferredMachine<OverdriveMachineBlock<OverdriveChargerBlockEntity>, OverdriveChargerBlockEntity> OVERDRIVE_CHARGER = MACHINES
             .register("overdrive_charger", OverdriveMachineBlock::new, OverdriveChargerBlockEntity.class,
@@ -20,6 +22,10 @@ public class OverdriveAEMachines {
     public static final OverdriveAEDeferredMachine<OverdriveMachineBlock<OverdriveInscriberBlockEntity>, OverdriveInscriberBlockEntity> OVERDRIVE_INSCRIBER = MACHINES
             .register("overdrive_inscriber", OverdriveMachineBlock::new, OverdriveInscriberBlockEntity.class,
                     OverdriveInscriberBlockEntity::new, null, (level, pos, state, be) -> be.serverTick());
+
+    public static final OverdriveAEDeferredMachine<OverdriveMachineBlock<OverdriveCondenserBlockEntity>, OverdriveCondenserBlockEntity> OVERDRIVE_MATTER_CONDENSER = MACHINES
+            .register("overdrive_matter_condenser", OverdriveMachineBlock::new, OverdriveCondenserBlockEntity.class,
+                    OverdriveCondenserBlockEntity::new, null, (level, pos, state, be) -> be.serverTick());
 
     public static final OverdriveAEDeferredMachine<OverdriveMachineBlock<OverdriveEnergizedFurnaceBlockEntity>, OverdriveEnergizedFurnaceBlockEntity> OVERDRIVE_ENERGIZED_FURNACE = MACHINES
             .register("overdrive_energized_furnace", OverdriveMachineBlock::new,

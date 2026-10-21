@@ -4,6 +4,7 @@
   "block.overdriveae.overdrive_energized_furnace": "Overdrive Energized Furnace",
   "block.overdriveae.overdrive_energized_smoker": "Overdrive Energized Smoker",
   "block.overdriveae.overdrive_inscriber": "Overdrive Inscriber",
+  "block.overdriveae.overdrive_matter_condenser": "Overdrive Matter Condenser",
   "gui.overdriveae.overdrive_inscriber.catalyst_inv_label": "Catalyst items",
   "gui.overdriveae.overdrive_inscriber.catalyst_slots": "Slots for catalyst items.",
   "gui.overdriveae.overdrive_inscriber.show_catalysts": "Show catalyst item slots"

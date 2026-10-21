@@ -2,6 +2,7 @@ package com.takenokoshi.overdriveae.blockentity.machine;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -34,6 +35,7 @@ import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class OverdriveInscriberBlockEntity
@@ -199,6 +201,12 @@ public class OverdriveInscriberBlockEntity
         MenuOpener.returnTo(OverdriveInscriberMenu.TYPE, player, subMenu.getLocator());
     }
 
+    @Override
+    public void addAdditionalDrops(Level level, BlockPos pos, List<ItemStack> drops) {
+        super.addAdditionalDrops(level, pos, drops);
+        catalystInv.addDrops(drops);
+    }
+
     private static class CatalystInv extends AppEngInternalInventory {
 
         private final Runnable onChange;
@@ -212,6 +220,14 @@ public class OverdriveInscriberBlockEntity
         public void setItemDirect(int slot, ItemStack stack) {
             super.setItemDirect(slot, stack);
             onChange.run();
+        }
+
+        public void addDrops(List<ItemStack> drops){
+            for (ItemStack itemStack : this) {
+                if (!itemStack.isEmpty()) {
+                    drops.add(itemStack);
+                }
+            }
         }
 
     }

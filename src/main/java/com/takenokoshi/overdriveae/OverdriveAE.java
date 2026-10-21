@@ -60,6 +60,7 @@ public class OverdriveAE {
         List.of(new OverdriveAEDeferredMachine[] {
                 OverdriveAEMachines.OVERDRIVE_CHARGER,
                 OverdriveAEMachines.OVERDRIVE_INSCRIBER,
+                OverdriveAEMachines.OVERDRIVE_MATTER_CONDENSER,
                 OverdriveAEMachines.OVERDRIVE_ENERGIZED_BLAST_FURNACE,
                 OverdriveAEMachines.OVERDRIVE_ENERGIZED_FURNACE,
                 OverdriveAEMachines.OVERDRIVE_ENERGIZED_SMOKER,
