@@ -1,6 +1,8 @@
 package com.takenokoshi.overdriveae;
 
+import com.takenokoshi.overdriveae.menu.OverdriveInscriberMenu;
 import com.takenokoshi.overdriveae.menu.OverdriveMachineMenu;
+import com.takenokoshi.overdriveae.screen.OverdriveInscriberScreen;
 import com.takenokoshi.overdriveae.screen.OverdriveMachineScreen;
 
 import appeng.init.client.InitScreens;
@@ -28,7 +30,10 @@ public class OverdriveAEClient extends OverdriveAE {
      * (AE2 の {@code InitScreens#register} もイベントを第 1 引数に取るようになっている)。
      */
     private static void registerScreens(RegisterMenuScreensEvent event) {
-        InitScreens.register(event, OverdriveMachineMenu.TYPE, OverdriveMachineScreen::new,
+        InitScreens.register(event, OverdriveInscriberMenu.TYPE, OverdriveInscriberScreen::new,
+                "/screens/insaneae/quantum_cpu.json");
+        /** そのままだと型推論がうまくいかないのでクラス指定しておく */
+        InitScreens.register(event, OverdriveMachineMenu.TYPE, OverdriveMachineScreen<OverdriveMachineMenu>::new ,
                 "/screens/insaneae/quantum_cpu.json");
     }
 }

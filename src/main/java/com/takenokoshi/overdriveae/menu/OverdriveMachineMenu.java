@@ -233,7 +233,7 @@ public class OverdriveMachineMenu extends AEBaseMenu {
         return ItemStack.EMPTY;
     }
 
-    private boolean isPlayerInventorySlot(Slot slot) {
+    protected boolean isPlayerInventorySlot(Slot slot) {
         SlotSemantic semantic = getSlotSemantic(slot);
         return semantic == SlotSemantics.PLAYER_INVENTORY || semantic == SlotSemantics.PLAYER_HOTBAR;
     }

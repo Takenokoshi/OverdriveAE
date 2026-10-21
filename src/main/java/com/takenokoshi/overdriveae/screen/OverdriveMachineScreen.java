@@ -39,7 +39,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-public class OverdriveMachineScreen extends AEBaseScreen<OverdriveMachineMenu> {
+public class OverdriveMachineScreen<M extends OverdriveMachineMenu> extends AEBaseScreen<M> {
 
     protected static final Logger LOG = LogUtils.getLogger();
 
@@ -61,7 +61,7 @@ public class OverdriveMachineScreen extends AEBaseScreen<OverdriveMachineMenu> {
 
     protected int page;
 
-    public OverdriveMachineScreen(OverdriveMachineMenu menu, Inventory playerInventory, Component title,
+    public OverdriveMachineScreen(M menu, Inventory playerInventory, Component title,
             ScreenStyle style) {
         super(menu, playerInventory, title, style);
 

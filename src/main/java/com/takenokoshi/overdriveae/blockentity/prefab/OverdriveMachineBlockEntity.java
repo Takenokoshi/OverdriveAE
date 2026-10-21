@@ -48,7 +48,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import com.takenokoshi.overdriveae.blockentity.logic.OverdriveMachineLogic;
 import com.takenokoshi.overdriveae.menu.OverdriveMachineMenu;
-import com.takenokoshi.overdriveae.registration.OAEDeferredMachine;
+import com.takenokoshi.overdriveae.registration.OverdriveAEDeferredMachine;
 
 import static jp.main.taikun.insaneae.quantum.QuantumCpuBlockEntity.BASE_CRAFTS_PER_TICK;
 import static jp.main.taikun.insaneae.quantum.QuantumCpuBlockEntity.MULTIPLIER_PER_CARD;
@@ -119,9 +119,9 @@ public abstract class OverdriveMachineBlockEntity<ASSEMBLY extends OverdriveMach
 
     protected final IActionSource actionSource;
 
-    protected final OAEDeferredMachine<?, ?> deferredMachine;
+    protected final OverdriveAEDeferredMachine<?, ?> deferredMachine;
 
-    public OverdriveMachineBlockEntity(OAEDeferredMachine<?, ?> deferredMachine, BlockPos pos, BlockState blockState,
+    public OverdriveMachineBlockEntity(OverdriveAEDeferredMachine<?, ?> deferredMachine, BlockPos pos, BlockState blockState,
             int additionalUpgradeSlots) {
         super(deferredMachine.getBlockEntityType(), pos, blockState);
         getMainNode().setIdlePowerUsage(6.0);

@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 import com.takenokoshi.overdriveae.OverdriveAE;
-import com.takenokoshi.overdriveae.registration.OAEDeferredMachine;
+import com.takenokoshi.overdriveae.registration.OverdriveAEDeferredMachine;
 import com.takenokoshi.overdriveae.registries.OverdriveAEMachines;
 
 import net.minecraft.data.PackOutput;
@@ -19,9 +19,13 @@ public class OverdriveAEEnglishLangProvider extends LanguageProvider {
     @Override
     protected void addTranslations() {
         OverdriveAEMachines.MACHINES.getMachines().forEach(this::addMachine);
+
+        add("gui.overdriveae.overdrive_inscriber.catalyst_slots", "Slots for catalyst items.");
+        add("gui.overdriveae.overdrive_inscriber.catalyst_inv_label", "Catalyst items");
+        add("gui.overdriveae.overdrive_inscriber.show_catalysts", "Show catalyst item slots");
     }
 
-    private void addMachine(OAEDeferredMachine<?, ?> deferredMachine) {
+    private void addMachine(OverdriveAEDeferredMachine<?, ?> deferredMachine) {
         String name = format(deferredMachine.deferredBlock.getId().getPath());
         addBlock(deferredMachine.deferredBlock, name);
     }

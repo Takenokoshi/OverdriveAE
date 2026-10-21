@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import appeng.core.definitions.AEItems;
+import appeng.recipes.handlers.InscriberProcessType;
 import appeng.recipes.handlers.InscriberRecipe;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -21,8 +23,12 @@ public class InscriberRecipeCache implements IRecipeCache<InscriberRecipe> {
     /** 材料1種類のレシピは一つしか保存しなくていい */
     private final Map<Item, InscriberRecipe> singleInputCacheMap = new HashMap<>();
 
+    /** 触媒アイテムを保存しておく */
+    private final Set<Item> catalystCacheSet = new HashSet<>();
+
     @Override
     public void initCaches(List<RecipeHolder<InscriberRecipe>> recipeHolders) {
+        catalystCacheSet.add(AEItems.NAME_PRESS.get());
         for (RecipeHolder<InscriberRecipe> recipeHolder : recipeHolders) {
             InscriberRecipe recipe = recipeHolder.value();
             boolean isBottomEmpty = recipe.getBottomOptional().isEmpty();
@@ -44,6 +50,14 @@ public class InscriberRecipeCache implements IRecipeCache<InscriberRecipe> {
                     set.add(recipe);
                 }
             }
+            if (recipe.getProcessType()==InscriberProcessType.INSCRIBE) {
+                for (ItemStack item : recipe.getTopOptional().getItems()) {
+                    catalystCacheSet.add(item.getItem());
+                }
+                for (ItemStack item : recipe.getBottomOptional().getItems()) {
+                    catalystCacheSet.add(item.getItem());
+                }
+            }
         }
     }
 
@@ -52,6 +66,7 @@ public class InscriberRecipeCache implements IRecipeCache<InscriberRecipe> {
         tripleInputCacheMap.clear();
         doubleInputCacheMap.clear();
         singleInputCacheMap.clear();
+        catalystCacheSet.clear();
     }
 
     public static boolean topMatch(InscriberRecipe recipe, ItemStack topInput) {
@@ -104,7 +119,7 @@ public class InscriberRecipeCache implements IRecipeCache<InscriberRecipe> {
     }
 
     public InscriberRecipe getRecipeTopMiddle(ItemStack topInput, ItemStack centerInput) {
-        Set<InscriberRecipe> set = tripleInputCacheMap.getOrDefault(centerInput.getItem(), null);
+        Set<InscriberRecipe> set = doubleInputCacheMap.getOrDefault(centerInput.getItem(), null);
         if (set == null) {
             return null;
         }
@@ -112,7 +127,7 @@ public class InscriberRecipeCache implements IRecipeCache<InscriberRecipe> {
     }
 
     public InscriberRecipe getRecipeMiddleBottom(ItemStack centerInput, ItemStack bottomInput) {
-        Set<InscriberRecipe> set = tripleInputCacheMap.getOrDefault(centerInput.getItem(), null);
+        Set<InscriberRecipe> set = doubleInputCacheMap.getOrDefault(centerInput.getItem(), null);
         if (set == null) {
             return null;
         }
@@ -125,5 +140,9 @@ public class InscriberRecipeCache implements IRecipeCache<InscriberRecipe> {
 
     public InscriberRecipe getRecipeSingle(ItemStack centerInput) {
         return singleInputCacheMap.get(centerInput.getItem());
+    }
+
+    public boolean isCatalystItem(ItemStack stack){
+        return catalystCacheSet.contains(stack.getItem());
     }
 }

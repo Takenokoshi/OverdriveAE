@@ -8,7 +8,7 @@ import com.takenokoshi.overdriveae.blockentity.logic.OverdriveMachineLogic;
 import com.takenokoshi.overdriveae.pattern.SingleToSinglePattern;
 import com.takenokoshi.overdriveae.pattern.SingleToSinglePattern.SingleToSingleAssembly;
 import com.takenokoshi.overdriveae.recipe.lookup.CookingRecipeCacheLookupHandler;
-import com.takenokoshi.overdriveae.registration.OAEDeferredMachine;
+import com.takenokoshi.overdriveae.registration.OverdriveAEDeferredMachine;
 
 import appeng.api.ids.AEComponents;
 import appeng.api.stacks.AEItemKey;
@@ -27,7 +27,7 @@ public abstract class OverdriveCookingBlockEntity<R extends AbstractCookingRecip
         OverdriveMachineBlockEntity<SingleToSinglePattern.SingleToSingleAssembly, SingleToSinglePattern, OverdriveCookingBlockEntity<R>>
         implements CookingRecipeCacheLookupHandler<R> {
 
-    public OverdriveCookingBlockEntity(OAEDeferredMachine<?, ?> deferredMachine, BlockPos pos, BlockState blockState) {
+    public OverdriveCookingBlockEntity(OverdriveAEDeferredMachine<?, ?> deferredMachine, BlockPos pos, BlockState blockState) {
         super(deferredMachine, pos, blockState, 0);
     }
 
@@ -55,6 +55,9 @@ public abstract class OverdriveCookingBlockEntity<R extends AbstractCookingRecip
                 return null;
             }
             var input = pattern.sparseInputs().get(0);
+            if (input == null) {
+                return null;
+            }
             if (input.what() instanceof AEItemKey itemKey) {
                 R recipe = getRecipe(itemKey.getReadOnlyStack());
                 return recipe == null ? null
@@ -84,6 +87,9 @@ public abstract class OverdriveCookingBlockEntity<R extends AbstractCookingRecip
                 return false;
             }
             var input = pattern.sparseInputs().get(0);
+            if (input == null) {
+                return false;
+            }
             if (input.what() instanceof AEItemKey itemKey) {
                 return hasRecipe(itemKey.getReadOnlyStack());
             }

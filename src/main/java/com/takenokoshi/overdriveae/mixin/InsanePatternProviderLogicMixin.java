@@ -13,4 +13,10 @@ public interface InsanePatternProviderLogicMixin {
 
     @Accessor("patternSet")
     Set<IPatternDetails> overdriveae$accessPatternSet();
+
+    @Accessor("patternsDirty")
+    void overdriveae$setPatternsDirty(boolean value);
+
+    @Accessor("patternsDirty")
+    boolean overdriveae$getPatternsDirty();
 }

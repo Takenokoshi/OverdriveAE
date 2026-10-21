@@ -8,7 +8,7 @@ import com.takenokoshi.overdriveae.blockentity.logic.OverdriveMachineLogic;
 import com.takenokoshi.overdriveae.blockentity.prefab.OverdriveMachineBlockEntity;
 import com.takenokoshi.overdriveae.pattern.SingleToSinglePattern;
 import com.takenokoshi.overdriveae.recipe.lookup.ChargerRecipeLookupHandler;
-import com.takenokoshi.overdriveae.registration.OAEDeferredMachine;
+import com.takenokoshi.overdriveae.registration.OverdriveAEDeferredMachine;
 
 import appeng.api.config.PowerMultiplier;
 import appeng.api.ids.AEComponents;
@@ -28,7 +28,8 @@ public class OverdriveChargerBlockEntity extends
         OverdriveMachineBlockEntity<SingleToSinglePattern.SingleToSingleAssembly, SingleToSinglePattern, OverdriveChargerBlockEntity>
         implements ChargerRecipeLookupHandler {
 
-    public OverdriveChargerBlockEntity(OAEDeferredMachine<?, ?> deferredMachine, BlockPos pos, BlockState blockState) {
+    public OverdriveChargerBlockEntity(OverdriveAEDeferredMachine<?, ?> deferredMachine, BlockPos pos,
+            BlockState blockState) {
         super(deferredMachine, pos, blockState, 0);
     }
 
@@ -55,6 +56,9 @@ public class OverdriveChargerBlockEntity extends
                 return null;
             }
             var input = pattern.sparseInputs().get(0);
+            if (input == null) {
+                return null;
+            }
             if (input.what() instanceof AEItemKey itemKey) {
                 ChargerRecipe recipe = getRecipe(itemKey.getReadOnlyStack());
                 return recipe == null ? null
@@ -84,6 +88,9 @@ public class OverdriveChargerBlockEntity extends
                 return false;
             }
             var input = pattern.sparseInputs().get(0);
+            if (input == null) {
+                return false;
+            }
             if (input.what() instanceof AEItemKey itemKey) {
                 return hasRecipe(itemKey.getReadOnlyStack());
             }

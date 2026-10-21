@@ -24,9 +24,9 @@ public class OverdriveMachineLockReason implements ICompositeWidget {
    protected boolean visible = false;
    protected int x;
    protected int y;
-   private final OverdriveMachineScreen screen;
+   private final OverdriveMachineScreen<?> screen;
 
-   public OverdriveMachineLockReason(OverdriveMachineScreen screen){
+   public OverdriveMachineLockReason(OverdriveMachineScreen<?> screen){
     this.screen = screen;}
 
    public void setPosition(Point position) {

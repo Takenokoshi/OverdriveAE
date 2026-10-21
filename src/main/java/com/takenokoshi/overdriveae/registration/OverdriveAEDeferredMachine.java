@@ -23,19 +23,19 @@ import net.neoforged.neoforge.registries.DeferredItem;
 /**
  * DeferredHolderのラッパー。レジストリの簡略化要因。
  */
-public class OAEDeferredMachine<B extends AEBaseEntityBlock<E>, E extends AEBaseBlockEntity> implements ItemLike {
+public class OverdriveAEDeferredMachine<B extends AEBaseEntityBlock<E>, E extends AEBaseBlockEntity> implements ItemLike {
 
     public final DeferredBlock<B> deferredBlock;
     public final DeferredItem<BlockItem> deferredItem;
     public final DeferredBlockEntityType<E> deferredBlockEntityType;
     private final BlockEntityTicker<E> clientTicker, serverTicker;
 
-    public OAEDeferredMachine(String name,
+    public OverdriveAEDeferredMachine(String name,
             Function<BlockBehaviour.Properties, B> blockFunc,
             Class<E> entityClass,
-            Function3<OAEDeferredMachine<?, ?>, BlockPos, BlockState, E> blockEntityFunc,
+            Function3<OverdriveAEDeferredMachine<?, ?>, BlockPos, BlockState, E> blockEntityFunc,
             BlockEntityTicker<E> clientTicker, BlockEntityTicker<E> serverTicker,
-            OAEMachineDeferredRegister register) {
+            OverdriveAEMachineDeferredRegister register) {
         this.deferredBlock = register.blockRegister.registerBlock(name, blockFunc);
         this.deferredItem = register.itemRegister.registerSimpleBlockItem(deferredBlock);
         this.deferredBlockEntityType = new DeferredBlockEntityType<>(entityClass,
@@ -52,7 +52,7 @@ public class OAEDeferredMachine<B extends AEBaseEntityBlock<E>, E extends AEBase
     }
 
     private BlockEntityType.BlockEntitySupplier<E> createBlockEntitySupplier(
-            Function3<OAEDeferredMachine<?, ?>, BlockPos, BlockState, E> blockEntityFunc) {
+            Function3<OverdriveAEDeferredMachine<?, ?>, BlockPos, BlockState, E> blockEntityFunc) {
         return (p, s) -> blockEntityFunc.apply(this, p, s);
     }
 

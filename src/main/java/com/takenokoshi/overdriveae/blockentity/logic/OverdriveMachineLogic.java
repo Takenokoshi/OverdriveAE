@@ -10,8 +10,7 @@ import com.mojang.logging.LogUtils;
 import com.takenokoshi.overdriveae.blockentity.prefab.OverdriveMachineBlockEntity;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +33,7 @@ import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
 public class OverdriveMachineLogic<ASSEMBLY extends OverdriveMachineLogic.Assembly, PATTERN extends IPatternDetails, MACHINE extends OverdriveMachineBlockEntity<ASSEMBLY, PATTERN, MACHINE>>
         extends InsanePatternProviderLogic implements IBulkCraftingProvider {
@@ -53,6 +53,15 @@ public class OverdriveMachineLogic<ASSEMBLY extends OverdriveMachineLogic.Assemb
     }
 
     public static final String NBT_OVERDRIVE_PATTERN_INV = "overdrivePatterns";
+
+    /** パターンの再変換が必要か。{@link #flushPatternUpdate()} でまとめて処理する。 */
+    protected boolean shouldDecodedPatternAgain = true;
+    /** 最後に再変換した tick。同じ tick の 2 回目以降だけをまとめる。 */
+    private long lastDecodeTick = Long.MIN_VALUE;
+
+    private boolean shouldUpdateAvailablePatterns;
+
+    private final Set<IPatternDetails> availablePatterns;
 
     protected final MACHINE host;
     protected final IManagedGridNode mainNode;
@@ -111,6 +120,7 @@ public class OverdriveMachineLogic<ASSEMBLY extends OverdriveMachineLogic.Assemb
         this.patternInv = new OverdrivePatternInv(host, QuantumCpuBlockEntity.PATTERN_SLOTS,
                 this.host::isPatternAcceptable, this::updatePattern);
         this.patterns = patternArrayConstructor.apply(QuantumCpuBlockEntity.PATTERN_SLOTS);
+        this.availablePatterns = new HashSet<>();
     }
 
     @Override
@@ -177,81 +187,76 @@ public class OverdriveMachineLogic<ASSEMBLY extends OverdriveMachineLogic.Assemb
         updatePatterns();
     }
 
-    /**
-     * 触媒を必要とする機械で、触媒が増えたときの更新
-     */
-    public void recheckUndecodedPatterns() {
-        for (int i = 0; i < patterns.length; i++) {
-            if (patterns[i] != null) {
-                continue;
-            }
-            ItemStack stack = patternInv.getStackInSlot(i);
-            if (stack.isEmpty()) {
-            } else {
-                patterns[i] = host.tryDecodePattern(stack);
-            }
-        }
-        updatePatterns();
-    }
+    // -------------------------------------------------------------- パターン管理
 
     /**
-     * 触媒を必要とする機械で、触媒が減ったときの更新
+     * このメソッドでパターンの更新を予約した場合、パターンキャッシュを再構成してから
+     * InsanePatternProviderLogic側のパターン更新が走る
+     * 触媒アイテムを要求する機械用
      */
-    public void recheckDecodedPatterns() {
-        for (int i = 0; i < patterns.length; i++) {
-            if (patterns[i] == null) {
-                continue;
-            }
-            ItemStack stack = patternInv.getStackInSlot(i);
-            if (stack.isEmpty()) {
-            } else {
-                patterns[i] = host.tryDecodePattern(stack);
-            }
+    public void markShouldDecodedPatternAgain() {
+        shouldDecodedPatternAgain = true;
+        if (currentTick() != lastDecodeTick) {
+            flushPatternUpdate();
         }
     }
 
+    protected long currentTick() {
+        BlockEntity blockEntity = this.host.getBlockEntity();
+        Level level = blockEntity == null ? null : blockEntity.getLevel();
+        return level == null ? Long.MIN_VALUE : level.getGameTime();
+    }
+
     /**
-     * ME倉庫側に渡すパターン。
-     * パターンキャッシュは実在するレシピによる検証が行われているものである為、
-     * パターンインベントリの中身ではなくパターンキャッシュから渡す。
-     * 実行毎にリストを生成しているが、InsanePatternProviderLogic 側で
-     * ME倉庫側の更新が1tickに最大1回に抑えられているのでこれで問題ない。
+     * パターンキャッシュの更新が必要なら、先にパターンキャッシュを更新
      */
     @Override
-    public List<IPatternDetails> getAvailablePatterns() {
-        /**
-         * InsanePatternProviderLogic#getAvailablePatterns()を呼ばないのでInsanePatternProviderLogic#flushPatternUpdate()をこちらで呼ぶ。
-         */
-        flushPatternUpdate();
-        List<IPatternDetails> result = new ArrayList<>();
-        for (PATTERN cache : patterns) {
-            if (cache != null) {
-                result.add(cache);
+    public void flushPatternUpdate() {
+        if (shouldDecodedPatternAgain) {
+            shouldDecodedPatternAgain = false;
+            lastDecodeTick = currentTick();
+            for (int i = 0; i < patterns.length; i++) {
+                ItemStack stack = patternInv.getStackInSlot(i);
+                if (stack.isEmpty()) {
+                    patterns[i] = null;
+                } else if (host.isPatternAcceptable(stack)) {
+                    patterns[i] = host.tryDecodePattern(stack);
+                } else {
+                    patterns[i] = null;
+                }
             }
+            InsanePatternProviderLogicAccess.setPatternDirty(this, true);
         }
-        return Collections.unmodifiableList(result);
+        if (InsanePatternProviderLogicAccess.getPatternDirty(this)) {
+            shouldUpdateAvailablePatterns = true;
+        }
+        super.flushPatternUpdate();
     }
-
-    // -------------------------------------------------------------- パターン管理
 
     @Override
     protected void onPatternsFlushed() {
         super.onPatternsFlushed();
-        /** InsanePatternProviderLogic.patternSetの中身をこちらで置き換えてhasPatternの返り値を矯正する。 */
-        /** Mixinを介してInsanePatternProviderLogicのprivateフィールドを持ってくる */
-        Set<IPatternDetails> patternSet = InsanePatternProviderLogicAccess.accessPatternSet(this);
-        patternSet.clear();
-        for (PATTERN cache : patterns) {
-            if (cache != null) {
-                patternSet.add(cache);
-            }
-        }
         /**
          * パターン一覧が変わった: レシピ自体が差し替わっている可能性がある
          * (データパックの再読み込みなど) ので、覚えている組み立て結果は捨てる。
          */
         assemblyCache.clear();
         energyCache.clear();
+    }
+
+    @Override
+    public List<IPatternDetails> getAvailablePatterns() {
+        flushPatternUpdate();
+        if (shouldUpdateAvailablePatterns) {
+            shouldUpdateAvailablePatterns = false;
+            availablePatterns.clear();
+            for (PATTERN pattern : patterns) {
+                if (pattern != null) {
+                    availablePatterns.add(pattern);
+                }
+            }
+        }
+        return List.copyOf(availablePatterns);
     }
 
     /** エネルギーの消費量をアップグレードで変化させる機械用 */
@@ -265,7 +270,7 @@ public class OverdriveMachineLogic<ASSEMBLY extends OverdriveMachineLogic.Assemb
         if (level == null || level.isClientSide()) {
             return false;
         }
-        if (!mainNode.isActive() || !hasPattern(patternDetails)) {
+        if (!mainNode.isActive() || !havePattern(patternDetails)) {
             return false;
         }
         if (getCraftingLockedReason() != LockCraftingMode.NONE) {
@@ -305,7 +310,7 @@ public class OverdriveMachineLogic<ASSEMBLY extends OverdriveMachineLogic.Assemb
         if (level == null || level.isClientSide()) {
             return 0L;
         }
-        if (!mainNode.isActive() || !hasPattern(details)) {
+        if (!mainNode.isActive() || !havePattern(details)) {
             return 0L;
         }
         if (getCraftingLockedReason() != LockCraftingMode.NONE || super.isBusy()) {
@@ -500,6 +505,11 @@ public class OverdriveMachineLogic<ASSEMBLY extends OverdriveMachineLogic.Assemb
                 drops.add(stack);
             }
         });
+    }
+
+    protected boolean havePattern(IPatternDetails details) {
+        this.flushPatternUpdate();
+        return this.availablePatterns.contains(details);
     }
 
 }

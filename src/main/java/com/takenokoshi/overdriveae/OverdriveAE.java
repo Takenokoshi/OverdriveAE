@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
 import com.takenokoshi.overdriveae.recipe.RecipeCacheReloadLister;
-import com.takenokoshi.overdriveae.registration.OAEDeferredMachine;
+import com.takenokoshi.overdriveae.registration.OverdriveAEDeferredMachine;
 import com.takenokoshi.overdriveae.registries.OverdriveAECapabilities;
 import com.takenokoshi.overdriveae.registries.OverdriveAEMachines;
 import com.takenokoshi.overdriveae.registries.OverdriveAEMenus;
@@ -57,15 +57,16 @@ public class OverdriveAE {
     private void commonSetup(FMLCommonSetupEvent event) {
         OverdriveAEMachines.MACHINES.bind();
 
-        List.of(new OAEDeferredMachine[] {
+        List.of(new OverdriveAEDeferredMachine[] {
                 OverdriveAEMachines.OVERDRIVE_CHARGER,
+                OverdriveAEMachines.OVERDRIVE_INSCRIBER,
                 OverdriveAEMachines.OVERDRIVE_ENERGIZED_BLAST_FURNACE,
                 OverdriveAEMachines.OVERDRIVE_ENERGIZED_FURNACE,
                 OverdriveAEMachines.OVERDRIVE_ENERGIZED_SMOKER,
         }).forEach(this::addQuantumUpgrade);
     }
 
-    private void addQuantumUpgrade(OAEDeferredMachine<?, ?> machine) {
+    private void addQuantumUpgrade(OverdriveAEDeferredMachine<?, ?> machine) {
         Upgrades.add(QUANTUM_ACCELERATION_CARD.get(), machine, QuantumCpuBlockEntity.MAX_ACCELERATION_CARDS);
         Upgrades.add(TASK_FUSION_CARD.get(), machine, 1);
     }

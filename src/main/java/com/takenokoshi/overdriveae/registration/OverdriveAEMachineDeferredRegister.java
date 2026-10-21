@@ -21,15 +21,15 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 /**
  * OAEDeferredMachineをつくる為のDeferredRegisterのラッパー。レジストリ簡略化要因。
  */
-public class OAEMachineDeferredRegister {
+public class OverdriveAEMachineDeferredRegister {
     public final String modid;
     public final DeferredRegister.Blocks blockRegister;
     public final DeferredRegister.Items itemRegister;
     public final DeferredRegister<BlockEntityType<?>> blockEntityTypeRegister;
 
-    private final List<OAEDeferredMachine<?, ?>> machines;
+    private final List<OverdriveAEDeferredMachine<?, ?>> machines;
 
-    public OAEMachineDeferredRegister(String modid) {
+    public OverdriveAEMachineDeferredRegister(String modid) {
         this.modid = modid;
         this.blockRegister = DeferredRegister.createBlocks(modid);
         this.itemRegister = DeferredRegister.createItems(modid);
@@ -37,12 +37,12 @@ public class OAEMachineDeferredRegister {
         this.machines = new ArrayList<>();
     }
 
-    public <B extends AEBaseEntityBlock<E>, E extends AEBaseBlockEntity> OAEDeferredMachine<B, E> register(String name,
+    public <B extends AEBaseEntityBlock<E>, E extends AEBaseBlockEntity> OverdriveAEDeferredMachine<B, E> register(String name,
             Function<BlockBehaviour.Properties, B> blockFunc,
             Class<E> entityClass,
-            Function3<OAEDeferredMachine<?, ?>, BlockPos, BlockState, E> blockEntityFunc,
+            Function3<OverdriveAEDeferredMachine<?, ?>, BlockPos, BlockState, E> blockEntityFunc,
             BlockEntityTicker<E> clientTicker, BlockEntityTicker<E> serverTicker) {
-        var result = new OAEDeferredMachine<>(name, blockFunc, entityClass, blockEntityFunc, clientTicker, serverTicker,
+        var result = new OverdriveAEDeferredMachine<>(name, blockFunc, entityClass, blockEntityFunc, clientTicker, serverTicker,
                 this);
         machines.add(result);
         return result;
@@ -54,11 +54,11 @@ public class OAEMachineDeferredRegister {
         blockEntityTypeRegister.register(bus);
     }
 
-    public List<OAEDeferredMachine<?, ?>> getMachines() {
+    public List<OverdriveAEDeferredMachine<?, ?>> getMachines() {
         return Collections.unmodifiableList(machines);
     }
 
     public void bind(){
-        machines.forEach(OAEDeferredMachine::bind);
+        machines.forEach(OverdriveAEDeferredMachine::bind);
     }
 }

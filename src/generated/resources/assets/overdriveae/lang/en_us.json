@@ -2,5 +2,9 @@
   "block.overdriveae.overdrive_charger": "Overdrive Charger",
   "block.overdriveae.overdrive_energized_blast_furnace": "Overdrive Energized Blast Furnace",
   "block.overdriveae.overdrive_energized_furnace": "Overdrive Energized Furnace",
-  "block.overdriveae.overdrive_energized_smoker": "Overdrive Energized Smoker"
+  "block.overdriveae.overdrive_energized_smoker": "Overdrive Energized Smoker",
+  "block.overdriveae.overdrive_inscriber": "Overdrive Inscriber",
+  "gui.overdriveae.overdrive_inscriber.catalyst_inv_label": "Catalyst items",
+  "gui.overdriveae.overdrive_inscriber.catalyst_slots": "Slots for catalyst items.",
+  "gui.overdriveae.overdrive_inscriber.show_catalysts": "Show catalyst item slots"
 }

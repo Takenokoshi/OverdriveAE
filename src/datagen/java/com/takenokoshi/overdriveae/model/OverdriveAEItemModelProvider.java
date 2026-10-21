@@ -1,7 +1,7 @@
 package com.takenokoshi.overdriveae.model;
 
 import com.takenokoshi.overdriveae.OverdriveAE;
-import com.takenokoshi.overdriveae.registration.OAEDeferredMachine;
+import com.takenokoshi.overdriveae.registration.OverdriveAEDeferredMachine;
 import com.takenokoshi.overdriveae.registries.OverdriveAEMachines;
 
 import net.minecraft.data.PackOutput;
@@ -17,7 +17,7 @@ public class OverdriveAEItemModelProvider extends ItemModelProvider {
 
     @Override
     protected void registerModels() {
-        for (OAEDeferredMachine<?, ?> machine : OverdriveAEMachines.MACHINES.getMachines()) {
+        for (OverdriveAEDeferredMachine<?, ?> machine : OverdriveAEMachines.MACHINES.getMachines()) {
             getBuilder(machine.deferredItem.getId().getPath())
                     .parent(new ModelFile.UncheckedModelFile(
                             OverdriveAE.makeId("block/" + machine.deferredBlock.getId().getPath())));
