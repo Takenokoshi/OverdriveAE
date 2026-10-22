@@ -1,10 +1,10 @@
 package com.takenokoshi.overdriveae.main.recipe.cache;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
+
+import com.takenokoshi.overdriveae.main.recipe.map.ItemCacheMap;
 
 import appeng.core.definitions.AEItems;
 import appeng.recipes.handlers.InscriberProcessType;
@@ -18,12 +18,15 @@ public class InscriberRecipeCache implements IRecipeCache<InscriberRecipe> {
 
     /** キャッシュのキーはレシピ中央のアイテム */
 
-    private final Map<Item, Set<InscriberRecipe>> tripleInputCacheMap = new HashMap<>();
-    private final Map<Item, Set<InscriberRecipe>> doubleInputCacheMap = new HashMap<>();
-    /** 材料1種類のレシピは一つしか保存しなくていい */
-    private final Map<Item, InscriberRecipe> singleInputCacheMap = new HashMap<>();
+    private final ItemCacheMap<InscriberRecipe> tripleInputCacheMap = new ItemCacheMap<>();
+    private final ItemCacheMap<InscriberRecipe> topMiddleCacheMap = new ItemCacheMap<>();
+    private final ItemCacheMap<InscriberRecipe> middleBottomCacheMap = new ItemCacheMap<>();
+    private final ItemCacheMap<InscriberRecipe> singleInputCacheMap = new ItemCacheMap<>();
 
-    /** 触媒アイテムを保存しておく */
+    /**
+     * 触媒アイテムを保存しておく
+     * データコンポーネント等を確認しておく必要は無い
+     */
     private final Set<Item> catalystCacheSet = new HashSet<>();
 
     @Override
@@ -34,23 +37,15 @@ public class InscriberRecipeCache implements IRecipeCache<InscriberRecipe> {
             boolean isBottomEmpty = recipe.getBottomOptional().isEmpty();
             boolean isTopEmpty = recipe.getTopOptional().isEmpty();
             if (isBottomEmpty && isTopEmpty) {
-                for (ItemStack item : recipe.getMiddleInput().getItems()) {
-                    singleInputCacheMap.put(item.getItem(), recipe);
-                }
-            } else if (isBottomEmpty || isTopEmpty) {
-                for (ItemStack item : recipe.getMiddleInput().getItems()) {
-                    Item key = item.getItem();
-                    Set<InscriberRecipe> set = doubleInputCacheMap.computeIfAbsent(key, v -> new HashSet<>());
-                    set.add(recipe);
-                }
+                singleInputCacheMap.putRecipe(recipe.getMiddleInput(), recipe);
+            } else if (isBottomEmpty) {
+                topMiddleCacheMap.putRecipe(recipe.getMiddleInput(), recipe);
+            } else if (isTopEmpty) {
+                middleBottomCacheMap.putRecipe(recipe.getMiddleInput(), recipe);
             } else {
-                for (ItemStack item : recipe.getMiddleInput().getItems()) {
-                    Item key = item.getItem();
-                    Set<InscriberRecipe> set = tripleInputCacheMap.computeIfAbsent(key, v -> new HashSet<>());
-                    set.add(recipe);
-                }
+                tripleInputCacheMap.putRecipe(recipe.getMiddleInput(), recipe);
             }
-            if (recipe.getProcessType()==InscriberProcessType.INSCRIBE) {
+            if (recipe.getProcessType() == InscriberProcessType.INSCRIBE) {
                 for (ItemStack item : recipe.getTopOptional().getItems()) {
                     catalystCacheSet.add(item.getItem());
                 }
@@ -64,7 +59,8 @@ public class InscriberRecipeCache implements IRecipeCache<InscriberRecipe> {
     @Override
     public void clear() {
         tripleInputCacheMap.clear();
-        doubleInputCacheMap.clear();
+        topMiddleCacheMap.clear();
+        middleBottomCacheMap.clear();
         singleInputCacheMap.clear();
         catalystCacheSet.clear();
     }
@@ -78,19 +74,11 @@ public class InscriberRecipeCache implements IRecipeCache<InscriberRecipe> {
     }
 
     public boolean hasRecipeTriple(ItemStack topInput, ItemStack centerInput, ItemStack bottomInput) {
-        Set<InscriberRecipe> set = tripleInputCacheMap.getOrDefault(centerInput.getItem(), null);
-        if (set == null) {
-            return false;
-        }
-        return set.stream().anyMatch(r -> topMatch(r, topInput) && bottomMatch(r, bottomInput));
+        return tripleInputCacheMap.hasRecipe(bottomInput, r -> topMatch(r, topInput) && bottomMatch(r, bottomInput));
     }
 
     public InscriberRecipe getRecipeTriple(ItemStack topInput, ItemStack centerInput, ItemStack bottomInput) {
-        Set<InscriberRecipe> set = tripleInputCacheMap.getOrDefault(centerInput.getItem(), null);
-        if (set == null) {
-            return null;
-        }
-        return set.stream().filter(r -> topMatch(r, topInput) && bottomMatch(r, bottomInput)).findFirst().orElse(null);
+        return tripleInputCacheMap.getRecipe(bottomInput, r -> topMatch(r, topInput) && bottomMatch(r, bottomInput));
     }
 
     public boolean hasRecipeDouble(ItemStack firstInput, ItemStack secondInput) {
@@ -98,19 +86,11 @@ public class InscriberRecipeCache implements IRecipeCache<InscriberRecipe> {
     }
 
     public boolean hasRecipeTopMiddle(ItemStack topInput, ItemStack centerInput) {
-        Set<InscriberRecipe> set = doubleInputCacheMap.getOrDefault(centerInput.getItem(), null);
-        if (set == null) {
-            return false;
-        }
-        return set.stream().anyMatch(r -> topMatch(r, topInput));
+        return topMiddleCacheMap.hasRecipe(centerInput, r -> topMatch(r, topInput));
     }
 
     public boolean hasRecipeMiddleBottom(ItemStack centerInput, ItemStack bottomInput) {
-        Set<InscriberRecipe> set = doubleInputCacheMap.getOrDefault(centerInput.getItem(), null);
-        if (set == null) {
-            return false;
-        }
-        return set.stream().anyMatch(r -> bottomMatch(r, bottomInput));
+        return middleBottomCacheMap.hasRecipe(centerInput, r -> bottomMatch(r, bottomInput));
     }
 
     public InscriberRecipe getRecipeDouble(ItemStack firstInput, ItemStack secondInput) {
@@ -119,30 +99,22 @@ public class InscriberRecipeCache implements IRecipeCache<InscriberRecipe> {
     }
 
     public InscriberRecipe getRecipeTopMiddle(ItemStack topInput, ItemStack centerInput) {
-        Set<InscriberRecipe> set = doubleInputCacheMap.getOrDefault(centerInput.getItem(), null);
-        if (set == null) {
-            return null;
-        }
-        return set.stream().filter(r -> topMatch(r, topInput)).findFirst().orElse(null);
+        return topMiddleCacheMap.getRecipe(centerInput, r -> topMatch(r, topInput));
     }
 
     public InscriberRecipe getRecipeMiddleBottom(ItemStack centerInput, ItemStack bottomInput) {
-        Set<InscriberRecipe> set = doubleInputCacheMap.getOrDefault(centerInput.getItem(), null);
-        if (set == null) {
-            return null;
-        }
-        return set.stream().filter(r -> bottomMatch(r, bottomInput)).findFirst().orElse(null);
+        return middleBottomCacheMap.getRecipe(centerInput, r -> bottomMatch(r, bottomInput));
     }
 
     public boolean hasRecipeSingle(ItemStack centerInput) {
-        return singleInputCacheMap.containsKey(centerInput.getItem());
+        return singleInputCacheMap.hasRecipe(centerInput);
     }
 
     public InscriberRecipe getRecipeSingle(ItemStack centerInput) {
-        return singleInputCacheMap.get(centerInput.getItem());
+        return singleInputCacheMap.getRecipe(centerInput);
     }
 
-    public boolean isCatalystItem(ItemStack stack){
+    public boolean isCatalystItem(ItemStack stack) {
         return catalystCacheSet.contains(stack.getItem());
     }
 }

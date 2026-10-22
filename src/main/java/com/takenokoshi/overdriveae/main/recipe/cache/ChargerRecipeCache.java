@@ -1,25 +1,21 @@
 package com.takenokoshi.overdriveae.main.recipe.cache;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import com.takenokoshi.overdriveae.main.recipe.map.ItemCacheMap;
 
 import appeng.recipes.handlers.ChargerRecipe;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 
 public class ChargerRecipeCache implements IRecipeCache<ChargerRecipe> {
 
-    private final Map<Item, ChargerRecipe> cacheMap = new HashMap<>();
+    private final ItemCacheMap<ChargerRecipe> cacheMap = new ItemCacheMap<>();
 
     @Override
     public void initCaches(List<RecipeHolder<ChargerRecipe>> recipeHolders) {
         for (RecipeHolder<ChargerRecipe> recipeHolder : recipeHolders) {
             ChargerRecipe recipe = recipeHolder.value();
-            for (ItemStack item : recipe.ingredient.getItems()) {
-                cacheMap.put(item.getItem(), recipe);
-            }
+            cacheMap.putRecipe(recipe.ingredient, recipe);
         }
     }
 
@@ -29,11 +25,11 @@ public class ChargerRecipeCache implements IRecipeCache<ChargerRecipe> {
     }
 
     public boolean hasRecipe(ItemStack input) {
-        return cacheMap.containsKey(input.getItem());
+        return cacheMap.hasRecipe(input);
     }
 
     public ChargerRecipe getRecipe(ItemStack input) {
-        return cacheMap.get(input.getItem());
+        return cacheMap.getRecipe(input);
     }
 
 }
