@@ -1,0 +1,22 @@
+package com.takenokoshi.overdriveae.main.mixin;
+
+import java.util.Set;
+
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.gen.Accessor;
+
+import appeng.api.crafting.IPatternDetails;
+import jp.main.taikun.insaneae.provider.InsanePatternProviderLogic;
+
+@Mixin(value = { InsanePatternProviderLogic.class }, remap = false)
+public interface InsanePatternProviderLogicMixin {
+
+    @Accessor("patternSet")
+    Set<IPatternDetails> overdriveae$accessPatternSet();
+
+    @Accessor("patternsDirty")
+    void overdriveae$setPatternsDirty(boolean value);
+
+    @Accessor("patternsDirty")
+    boolean overdriveae$getPatternsDirty();
+}
