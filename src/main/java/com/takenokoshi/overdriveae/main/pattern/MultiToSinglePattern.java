@@ -12,13 +12,13 @@ import appeng.recipes.handlers.InscriberRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 
 /** PatternDetailsHelper経由での変換はできない */
-public class InscriberPattern implements IPatternDetails {
+public class MultiToSinglePattern implements IPatternDetails {
     public final AEItemKey def;
     public final GenericStack[][] inputs;
     public final GenericStack output;
     private final SimpleInput[] simpleInputs;
 
-    public InscriberPattern(AEItemKey def, GenericStack[][] inputs, GenericStack output) {
+    public MultiToSinglePattern(AEItemKey def, GenericStack[][] inputs, GenericStack output) {
         this.def = def;
         this.inputs = inputs;
         this.output = output;
@@ -28,10 +28,10 @@ public class InscriberPattern implements IPatternDetails {
         }
     }
 
-    public static InscriberPattern fromRecipe(AEItemKey def, InscriberRecipe recipe) {
+    public static MultiToSinglePattern fromRecipe(AEItemKey def, InscriberRecipe recipe) {
 
         if (recipe.getProcessType() == InscriberProcessType.INSCRIBE) {
-            return new InscriberPattern(def, new GenericStack[][] {
+            return new MultiToSinglePattern(def, new GenericStack[][] {
                     Arrays.stream(recipe.getMiddleInput().getItems()).map(GenericStack::fromItemStack)
                             .toArray(GenericStack[]::new),
             }, GenericStack.fromItemStack(recipe.getResultItem()));
@@ -43,26 +43,26 @@ public class InscriberPattern implements IPatternDetails {
         boolean isBottomEmpty = bottomIngredient.isEmpty();
 
         if (isTopEmpty && isBottomEmpty) {
-            return new InscriberPattern(def, new GenericStack[][] {
+            return new MultiToSinglePattern(def, new GenericStack[][] {
                     Arrays.stream(recipe.getMiddleInput().getItems()).map(GenericStack::fromItemStack)
                             .toArray(GenericStack[]::new),
             }, GenericStack.fromItemStack(recipe.getResultItem()));
         } else if (isTopEmpty) {
-            return new InscriberPattern(def, new GenericStack[][] {
+            return new MultiToSinglePattern(def, new GenericStack[][] {
                     Arrays.stream(recipe.getMiddleInput().getItems()).map(GenericStack::fromItemStack)
                             .toArray(GenericStack[]::new),
                     Arrays.stream(bottomIngredient.getItems()).map(GenericStack::fromItemStack)
                             .toArray(GenericStack[]::new),
             }, GenericStack.fromItemStack(recipe.getResultItem()));
         } else if (isBottomEmpty) {
-            return new InscriberPattern(def, new GenericStack[][] {
+            return new MultiToSinglePattern(def, new GenericStack[][] {
                     Arrays.stream(topIngredient.getItems()).map(GenericStack::fromItemStack)
                             .toArray(GenericStack[]::new),
                     Arrays.stream(recipe.getMiddleInput().getItems()).map(GenericStack::fromItemStack)
                             .toArray(GenericStack[]::new),
             }, GenericStack.fromItemStack(recipe.getResultItem()));
         } else {
-            return new InscriberPattern(def, new GenericStack[][] {
+            return new MultiToSinglePattern(def, new GenericStack[][] {
                     Arrays.stream(topIngredient.getItems()).map(GenericStack::fromItemStack)
                             .toArray(GenericStack[]::new),
                     Arrays.stream(recipe.getMiddleInput().getItems()).map(GenericStack::fromItemStack)

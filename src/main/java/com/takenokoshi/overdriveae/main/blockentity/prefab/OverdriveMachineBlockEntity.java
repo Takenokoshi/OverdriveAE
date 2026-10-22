@@ -33,7 +33,6 @@ import appeng.util.inv.InternalInventoryHost;
 import jp.main.taikun.insaneae.integration.aco.OptionalAcoBigIntegerIntegration;
 import jp.main.taikun.insaneae.integration.aco.PendingOutputLedger;
 import jp.main.taikun.insaneae.integration.aco.PendingOutputNbt;
-import jp.main.taikun.insaneae.quantum.batch.QuantumBatchReceipts;
 import jp.main.taikun.insaneae.upgrade.SpeedBoost;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -91,17 +90,6 @@ public abstract class OverdriveMachineBlockEntity<ASSEMBLY extends OverdriveMach
      * ME への挿入は 1 tick に 1 回だけまとめて行うので、その間ここに溜まる。
      */
     protected final PendingOutputLedger pendingOutputs;
-
-    /**
-     * ACO の craftingtable batch レシート台帳。
-     *
-     * <p>
-     * ACO 未導入でも<b>ただの入れ物として存在する</b> (ACO の型に触れないクラスなので、
-     * ここに持っても未導入環境のクラスロードに影響しない)。中身を触るのは
-     * ACO 連携の Mixin だけ。
-     * </p>
-     */
-    protected final QuantumBatchReceipts batchReceipts = new QuantumBatchReceipts();
 
     protected long processPerTick;
 
@@ -262,11 +250,6 @@ public abstract class OverdriveMachineBlockEntity<ASSEMBLY extends OverdriveMach
             return;
         }
         pendingOutputs.add(what, amount);
-    }
-
-    /** ACO 連携用のレシート台帳。 */
-    public QuantumBatchReceipts getBatchReceipts() {
-        return batchReceipts;
     }
 
     /** 完成品待ちの現在の中身 (コピー)。ゲームテスト用。 */
@@ -461,9 +444,6 @@ public abstract class OverdriveMachineBlockEntity<ASSEMBLY extends OverdriveMach
         // BigInteger は byte[] として保存する。旧 ListTag は loadTag 側で移行する。
         // 形式は台帳の実装 (ACO / 内蔵) に任せず、常に InsaneAE 側で固定する。
         data.put(NBT_PENDING_BIG, PendingOutputNbt.save(pendingOutputs, registries));
-        // ACO の craftingtable batch レシート。ACO 未導入でも読み書きするだけなので、
-        // 一度連携で使ったワールドから ACO を抜いてもレシートは消えない。
-        batchReceipts.save(data, registries);
 
         data.putDouble(NBT_USED_ENERGY, usedEnergyThisTick);
     }
@@ -473,8 +453,6 @@ public abstract class OverdriveMachineBlockEntity<ASSEMBLY extends OverdriveMach
         super.loadTag(data, registries);
         logic.readFromNBT(data, registries);
         upgrades.readFromNBT(data, NBT_UPGRADES, registries);
-
-        batchReceipts.load(data, registries);
 
         pendingOutputs.clear();
         PendingOutputNbt.load(pendingOutputs, data.getCompound(NBT_PENDING_BIG), registries);

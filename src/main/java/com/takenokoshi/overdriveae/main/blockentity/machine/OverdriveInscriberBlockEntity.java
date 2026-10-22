@@ -12,7 +12,7 @@ import com.takenokoshi.overdriveae.main.blockentity.logic.OverdriveMachineLogic;
 import com.takenokoshi.overdriveae.main.blockentity.logic.OverdrivePatternInv;
 import com.takenokoshi.overdriveae.main.blockentity.prefab.OverdriveMachineBlockEntity;
 import com.takenokoshi.overdriveae.main.menu.OverdriveInscriberMenu;
-import com.takenokoshi.overdriveae.main.pattern.InscriberPattern;
+import com.takenokoshi.overdriveae.main.pattern.MultiToSinglePattern;
 import com.takenokoshi.overdriveae.main.pattern.SingleOutputAssembly;
 import com.takenokoshi.overdriveae.main.recipe.lookup.InscriberRecipeLookupHandler;
 import com.takenokoshi.overdriveae.main.registration.OverdriveAEDeferredMachine;
@@ -39,7 +39,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class OverdriveInscriberBlockEntity
-        extends OverdriveMachineBlockEntity<SingleOutputAssembly, InscriberPattern, OverdriveInscriberBlockEntity>
+        extends OverdriveMachineBlockEntity<SingleOutputAssembly, MultiToSinglePattern, OverdriveInscriberBlockEntity>
         implements InscriberRecipeLookupHandler {
 
     public static final String NBT_CATALYST_INV = "catalystInv";
@@ -59,9 +59,9 @@ public class OverdriveInscriberBlockEntity
     }
 
     @Override
-    protected OverdriveMachineLogic<SingleOutputAssembly, InscriberPattern, OverdriveInscriberBlockEntity> createLogic() {
-        return new OverdriveMachineLogic<SingleOutputAssembly, InscriberPattern, OverdriveInscriberBlockEntity>(
-                getMainNode(), this, InscriberPattern[]::new, InscriberPattern.class);
+    protected OverdriveMachineLogic<SingleOutputAssembly, MultiToSinglePattern, OverdriveInscriberBlockEntity> createLogic() {
+        return new OverdriveMachineLogic<SingleOutputAssembly, MultiToSinglePattern, OverdriveInscriberBlockEntity>(
+                getMainNode(), this, MultiToSinglePattern[]::new, MultiToSinglePattern.class);
     }
 
     /**
@@ -70,7 +70,7 @@ public class OverdriveInscriberBlockEntity
 
     /** */
     @Override
-    public @Nullable InscriberPattern tryDecodePattern(ItemStack itemStack) {
+    public @Nullable MultiToSinglePattern tryDecodePattern(ItemStack itemStack) {
         if (AEItems.PROCESSING_PATTERN.is(itemStack)) {
             EncodedProcessingPattern pattern = itemStack.get(AEComponents.ENCODED_PROCESSING_PATTERN);
             if (pattern == null) {
@@ -83,7 +83,7 @@ public class OverdriveInscriberBlockEntity
                 if (inputs.get(0).what() instanceof AEItemKey itemKey) {
                     InscriberRecipe recipe = getRecipeSingle(itemKey.getReadOnlyStack());
                     return recipe == null ? null
-                            : InscriberPattern.fromRecipe(AEItemKey.of(itemStack), recipe);
+                            : MultiToSinglePattern.fromRecipe(AEItemKey.of(itemStack), recipe);
                 }
             } else if (inputs.get(2) == null) {
                 if (inputs.get(0).what() instanceof AEItemKey firstItemKey
@@ -92,7 +92,7 @@ public class OverdriveInscriberBlockEntity
                             secondItemKey.getReadOnlyStack());
                     return recipe == null || !isRecipeProcessable(recipe)
                             ? null
-                            : InscriberPattern.fromRecipe(AEItemKey.of(itemStack), recipe);
+                            : MultiToSinglePattern.fromRecipe(AEItemKey.of(itemStack), recipe);
                 }
             } else {
                 if (inputs.get(0).what() instanceof AEItemKey topItemKey
@@ -102,13 +102,13 @@ public class OverdriveInscriberBlockEntity
                             centerItemKey.getReadOnlyStack(), bottomItemKey.getReadOnlyStack());
                     return recipe == null || !isRecipeProcessable(recipe)
                             ? null
-                            : InscriberPattern.fromRecipe(AEItemKey.of(itemStack), recipe);
+                            : MultiToSinglePattern.fromRecipe(AEItemKey.of(itemStack), recipe);
                 }
             }
             return null;
         }
         InscriberRecipe recipe = getRecipeSingle(itemStack);
-        return recipe == null ? null : InscriberPattern.fromRecipe(AEItemKey.of(itemStack), recipe);
+        return recipe == null ? null : MultiToSinglePattern.fromRecipe(AEItemKey.of(itemStack), recipe);
     }
 
     @Override
@@ -144,7 +144,7 @@ public class OverdriveInscriberBlockEntity
     }
 
     @Override
-    public SingleOutputAssembly assemble(InscriberPattern pattern, KeyCounter[] inputHolder) {
+    public SingleOutputAssembly assemble(MultiToSinglePattern pattern, KeyCounter[] inputHolder) {
         return new SingleOutputAssembly(Arrays.stream(inputHolder)
                 .map(counter -> new GenericStack(counter.getFirstKey(), 1)).toArray(GenericStack[]::new),
                 pattern.output);
@@ -164,7 +164,7 @@ public class OverdriveInscriberBlockEntity
     }
 
     @Override
-    public double getEnergyPerProcess(InscriberPattern pattern) {
+    public double getEnergyPerProcess(MultiToSinglePattern pattern) {
         return PowerMultiplier.CONFIG.multiply(10000.0D);
     }
 
