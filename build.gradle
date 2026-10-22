@@ -93,6 +93,9 @@ neoForge {
             sourceSet(sourceSets.datagen)
         }
     }
+    accessTransformers = project.files(
+        'src/main/resources/META-INF/accesstransformer.cfg'
+    )
 }
 
 configurations {
