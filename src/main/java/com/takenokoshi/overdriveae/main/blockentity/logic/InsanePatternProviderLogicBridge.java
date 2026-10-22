@@ -8,7 +8,7 @@ import appeng.api.crafting.IPatternDetails;
 import jp.main.taikun.insaneae.provider.InsanePatternProviderLogic;
 
 /** Mixinブリッジ */
-public class InsanePatternProviderLogicAccess {
+public class InsanePatternProviderLogicBridge {
     public static Set<IPatternDetails> accessPatternSet(InsanePatternProviderLogic logic) {
         return ((InsanePatternProviderLogicMixin) logic).overdriveae$accessPatternSet();
     }

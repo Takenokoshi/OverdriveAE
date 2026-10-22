@@ -225,9 +225,9 @@ public class OverdriveMachineLogic<ASSEMBLY extends OverdriveMachineLogic.Assemb
                     patterns[i] = null;
                 }
             }
-            InsanePatternProviderLogicAccess.setPatternDirty(this, true);
+            InsanePatternProviderLogicBridge.setPatternDirty(this, true);
         }
-        if (InsanePatternProviderLogicAccess.getPatternDirty(this)) {
+        if (InsanePatternProviderLogicBridge.getPatternDirty(this)) {
             shouldUpdateAvailablePatterns = true;
         }
         super.flushPatternUpdate();
