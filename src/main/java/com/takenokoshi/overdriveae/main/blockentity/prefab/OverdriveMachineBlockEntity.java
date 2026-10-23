@@ -92,6 +92,9 @@ public abstract class OverdriveMachineBlockEntity<ASSEMBLY extends OverdriveMach
     protected final PendingOutputLedger pendingOutputs;
 
     protected long processPerTick;
+    protected boolean isTaskFusionCardInstalled;
+    protected boolean isWindowRepeatEnabled;
+    protected boolean acceptPatternBatch;
 
     /** このtickに消費した電力量 */
     protected double usedEnergyThisTick;
@@ -215,6 +218,9 @@ public abstract class OverdriveMachineBlockEntity<ASSEMBLY extends OverdriveMach
             speed = SpeedBoost.saturatingMultiply(speed, MULTIPLIER_PER_CARD);
         }
         this.processPerTick = speed;
+        this.isTaskFusionCardInstalled = upgrades.getInstalledUpgrades(TASK_FUSION_CARD.get()) > 0;
+        this.isWindowRepeatEnabled = cards >= MAX_ACCELERATION_CARDS;
+        this.acceptPatternBatch = this.isTaskFusionCardInstalled && this.isWindowRepeatEnabled;
         this.saveChanges();
     }
 
@@ -223,11 +229,15 @@ public abstract class OverdriveMachineBlockEntity<ASSEMBLY extends OverdriveMach
     }
 
     public boolean isTaskFusionInstalled() {
-        return upgrades.getInstalledUpgrades(TASK_FUSION_CARD.get()) > 0;
+        return isTaskFusionCardInstalled;
     }
 
     public boolean isWindowRepeatEnabled() {
-        return upgrades.getInstalledUpgrades(QUANTUM_ACCELERATION_CARD.get()) >= MAX_ACCELERATION_CARDS;
+        return isWindowRepeatEnabled;
+    }
+
+    public boolean acceptPatternBatch() {
+        return acceptPatternBatch;
     }
     // ------------------------------------------------------- 完成品の受け渡し
 

@@ -65,7 +65,7 @@ public class OverdriveMachineLogic<ASSEMBLY extends OverdriveMachineLogic.Assemb
 
     protected final MACHINE host;
     protected final IManagedGridNode mainNode;
-    protected final Class<PATTERN> patternClass;
+    public final Class<PATTERN> patternClass;
 
     /**
      * 実際に組み立てた結果を<b>パターンごとに</b>覚えておく表。
@@ -507,7 +507,7 @@ public class OverdriveMachineLogic<ASSEMBLY extends OverdriveMachineLogic.Assemb
         });
     }
 
-    protected boolean havePattern(IPatternDetails details) {
+    public boolean havePattern(IPatternDetails details) {
         this.flushPatternUpdate();
         return this.availablePatterns.contains(details);
     }
