@@ -12,6 +12,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 
+@SuppressWarnings("removal")
 @EventBusSubscriber(modid = OverdriveAE.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class OverdriveAEDatagen {
 
