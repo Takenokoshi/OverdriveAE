@@ -30,7 +30,7 @@ public class OverdriveChargerBlockEntity extends
 
     public OverdriveChargerBlockEntity(OverdriveAEDeferredMachine<?, ?> deferredMachine, BlockPos pos,
             BlockState blockState) {
-        super(deferredMachine, pos, blockState, 0);
+        super(deferredMachine, pos, blockState);
     }
 
     @Override

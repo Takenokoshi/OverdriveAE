@@ -26,7 +26,7 @@ public class OverdriveCondenserBlockEntity extends
 
     public OverdriveCondenserBlockEntity(OverdriveAEDeferredMachine<?, ?> deferredMachine, BlockPos pos,
             BlockState blockState) {
-        super(deferredMachine, pos, blockState, 0);
+        super(deferredMachine, pos, blockState);
     }
 
     @Override

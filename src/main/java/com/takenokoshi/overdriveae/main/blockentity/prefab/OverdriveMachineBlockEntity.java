@@ -109,19 +109,23 @@ public abstract class OverdriveMachineBlockEntity<ASSEMBLY extends OverdriveMach
 
     protected final OverdriveAEDeferredMachine<?, ?> deferredMachine;
 
-    public OverdriveMachineBlockEntity(OverdriveAEDeferredMachine<?, ?> deferredMachine, BlockPos pos, BlockState blockState,
-            int additionalUpgradeSlots) {
+    public OverdriveMachineBlockEntity(OverdriveAEDeferredMachine<?, ?> deferredMachine, BlockPos pos,
+            BlockState blockState) {
         super(deferredMachine.getBlockEntityType(), pos, blockState);
         getMainNode().setIdlePowerUsage(6.0);
         this.deferredMachine = deferredMachine;
         this.logic = createLogic();
-        this.upgrades = UpgradeInventories.forMachine(deferredMachine, UPGRADE_SLOTS + additionalUpgradeSlots,
+        this.upgrades = UpgradeInventories.forMachine(deferredMachine, getInitialUpgradeSlots(),
                 this::onUpgradeChange);
         this.pendingOutputs = OptionalAcoBigIntegerIntegration.createOutputLedger();
         this.processPerTick = BASE_CRAFTS_PER_TICK;
 
         this.actionSource = IActionSource.ofMachine(this);
     }
+
+    protected int getInitialUpgradeSlots() {
+        return UPGRADE_SLOTS;
+    };
 
     /**
      * サブクラス側でロジックのクラスを変更できるようにしておく。

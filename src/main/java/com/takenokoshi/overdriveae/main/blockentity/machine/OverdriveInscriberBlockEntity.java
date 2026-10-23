@@ -50,7 +50,7 @@ public class OverdriveInscriberBlockEntity
 
     public OverdriveInscriberBlockEntity(OverdriveAEDeferredMachine<?, ?> deferredMachine, BlockPos pos,
             BlockState blockState) {
-        super(deferredMachine, pos, blockState, 0);
+        super(deferredMachine, pos, blockState);
         this.catalystInv = new CatalystInv(this, this::isCatalystItem, logic::markShouldDecodedPatternAgain);
     }
 

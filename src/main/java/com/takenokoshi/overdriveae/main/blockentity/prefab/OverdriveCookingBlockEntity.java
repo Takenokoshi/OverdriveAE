@@ -28,7 +28,7 @@ public abstract class OverdriveCookingBlockEntity<R extends AbstractCookingRecip
         implements CookingRecipeCacheLookupHandler<R> {
 
     public OverdriveCookingBlockEntity(OverdriveAEDeferredMachine<?, ?> deferredMachine, BlockPos pos, BlockState blockState) {
-        super(deferredMachine, pos, blockState, 0);
+        super(deferredMachine, pos, blockState);
     }
 
     @Override
