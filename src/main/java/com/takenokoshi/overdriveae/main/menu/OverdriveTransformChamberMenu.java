@@ -36,11 +36,16 @@ public class OverdriveTransformChamberMenu extends OverdriveMachineMenu {
         this(TYPE, id, playerInventory, host);
     }
 
-    public OverdriveTransformChamberMenu(MenuType<?> menuType, int id, Inventory playerInventory,
+    public OverdriveTransformChamberMenu(MenuType<? extends OverdriveMachineMenu> menuType, int id,
+            Inventory playerInventory,
             OverdriveTransformChamberBlockEntity host) {
         super(menuType, id, playerInventory, host);
 
-        var catalystInv = host.getCatalystInv().createMenuWrapper();
+    }
+
+    @Override
+    protected void addAdditionalSlotsInConstructor() {
+        var catalystInv = ((OverdriveTransformChamberBlockEntity) host).getCatalystInv().createMenuWrapper();
         List<Component> storageTooltip = List
                 .of(Component.translatable("gui.overdriveae.overdrive_transform_chamber.catalyst_slots"));
         for (int i = 0; i < OverdriveTransformChamberBlockEntity.CATALYST_INV_SLOTS; i++) {

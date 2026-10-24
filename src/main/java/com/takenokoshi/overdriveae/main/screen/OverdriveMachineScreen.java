@@ -12,20 +12,12 @@ import com.mojang.logging.LogUtils;
 import com.takenokoshi.overdriveae.main.menu.OverdriveMachineMenu;
 
 import appeng.api.config.LockCraftingMode;
-import appeng.api.config.Settings;
-import appeng.api.config.YesNo;
 import appeng.api.upgrades.IUpgradeableObject;
-import appeng.client.gui.AEBaseScreen;
 import appeng.client.gui.Icon;
+import appeng.client.gui.implementations.PatternProviderScreen;
 import appeng.client.gui.style.ScreenStyle;
 import appeng.client.gui.widgets.IconButton;
-import appeng.client.gui.widgets.ServerSettingToggleButton;
-import appeng.client.gui.widgets.SettingToggleButton;
-import appeng.client.gui.widgets.ToggleButton;
 import appeng.client.gui.widgets.UpgradesPanel;
-import appeng.core.localization.GuiText;
-import appeng.core.network.ServerboundPacket;
-import appeng.core.network.serverbound.ConfigButtonPacket;
 import appeng.menu.SlotSemantic;
 import appeng.menu.SlotSemantics;
 import appeng.menu.slot.AppEngSlot;
@@ -37,9 +29,8 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
-import net.neoforged.neoforge.network.PacketDistributor;
 
-public class OverdriveMachineScreen<M extends OverdriveMachineMenu> extends AEBaseScreen<M> {
+public class OverdriveMachineScreen<M extends OverdriveMachineMenu> extends PatternProviderScreen<M> {
 
     protected static final Logger LOG = LogUtils.getLogger();
 
@@ -51,43 +42,14 @@ public class OverdriveMachineScreen<M extends OverdriveMachineMenu> extends AEBa
     protected static final int GRID_LEFT = 8;
     protected static final int GRID_TOP = 22;
     protected static final int SLOT_SIZE = 18;
-
-    protected final SettingToggleButton<YesNo> blockingModeButton;
-    protected final SettingToggleButton<LockCraftingMode> lockCraftingModeButton;
-    protected final ToggleButton showInPatternAccessTerminalButton;
-    protected final OverdriveMachineLockReason lockReason;
     protected final IconTextButton prevPage;
     protected final IconTextButton nextPage;
-
     protected int page;
 
     public OverdriveMachineScreen(M menu, Inventory playerInventory, Component title,
             ScreenStyle style) {
         super(menu, playerInventory, title, style);
-
-        this.blockingModeButton = new ServerSettingToggleButton<>(Settings.BLOCKING_MODE, YesNo.NO);
-        this.addToLeftToolbar(this.blockingModeButton);
-
-        lockCraftingModeButton = new ServerSettingToggleButton<>(Settings.LOCK_CRAFTING_MODE, LockCraftingMode.NONE);
-        this.addToLeftToolbar(lockCraftingModeButton);
-
-        widgets.addOpenPriorityButton();
-
-        this.showInPatternAccessTerminalButton = new ToggleButton(Icon.PATTERN_ACCESS_SHOW,
-                Icon.PATTERN_ACCESS_HIDE,
-                GuiText.PatternAccessTerminal.text(), GuiText.PatternAccessTerminalHint.text(),
-                btn -> selectNextPatternProviderMode());
-        this.addToLeftToolbar(this.showInPatternAccessTerminalButton);
-
-        this.lockReason = new OverdriveMachineLockReason(this);
-        widgets.add("lockReason", this.lockReason);
-
-        if (menu.getTarget() instanceof IUpgradeableObject upgradeable) {
-            addUpgradesPanel(upgradeable);
-        }
-
-        // ウィジェットの追加は init() ではなくコンストラクタで行うこと
-        // (WidgetContainer#add は同じ ID の二重登録で落ちるため。init は画面サイズ変更のたびに走る)
+        addUpgradesPanel(menu.host);
         prevPage = new IconTextButton(() -> Icon.ARROW_LEFT,
                 Component.translatable("gui.insaneae.quantum_cpu.previous_page"), btn -> turnPage(-1));
         nextPage = new IconTextButton(() -> Icon.ARROW_RIGHT,
@@ -113,7 +75,7 @@ public class OverdriveMachineScreen<M extends OverdriveMachineMenu> extends AEBa
      * 中身はどちらも同じ {@code UPGRADE} スロットなので、既にあるなら相手のパネルに任せる。
      * </p>
      */
-    protected void addUpgradesPanel(IUpgradeableObject upgradeable) {
+    private void addUpgradesPanel(IUpgradeableObject upgradeable) {
         try {
             widgets.add("upgrades", new UpgradesPanel(menu.getSlots(SlotSemantics.UPGRADE), upgradeable));
         } catch (IllegalStateException alreadyAdded) {
@@ -215,10 +177,6 @@ public class OverdriveMachineScreen<M extends OverdriveMachineMenu> extends AEBa
     protected void updateBeforeRender() {
         super.updateBeforeRender();
 
-        this.lockReason.setVisible(menu.getLockCraftingMode() != LockCraftingMode.NONE);
-        this.blockingModeButton.set(this.menu.getBlockingMode());
-        this.lockCraftingModeButton.set(this.menu.getLockCraftingMode());
-        this.showInPatternAccessTerminalButton.setState(this.menu.getShowInAccessTerminal() == YesNo.YES);
         setTextContent("dialog_title", this.menu.host.getGuiTitle());
         setTextContent("page", Component.literal((page + 1) + "/" + pageCount()));
         prevPage.active = page > 0;
@@ -247,12 +205,6 @@ public class OverdriveMachineScreen<M extends OverdriveMachineMenu> extends AEBa
                         .blit(guiGraphics);
             }
         }
-    }
-
-    protected void selectNextPatternProviderMode() {
-        final boolean backwards = isHandlingRightClick();
-        ServerboundPacket message = new ConfigButtonPacket(Settings.PATTERN_ACCESS_TERMINAL, backwards);
-        PacketDistributor.sendToServer(message);
     }
 
     /**

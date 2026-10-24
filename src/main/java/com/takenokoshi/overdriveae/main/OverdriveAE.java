@@ -61,6 +61,7 @@ public class OverdriveAE {
                 OverdriveAEMachines.OVERDRIVE_CHARGER,
                 OverdriveAEMachines.OVERDRIVE_INSCRIBER,
                 OverdriveAEMachines.OVERDRIVE_MATTER_CONDENSER,
+                OverdriveAEMachines.OVERDRIVE_TRANSFORM_CHAMBER,
                 OverdriveAEMachines.OVERDRIVE_ENERGIZED_BLAST_FURNACE,
                 OverdriveAEMachines.OVERDRIVE_ENERGIZED_FURNACE,
                 OverdriveAEMachines.OVERDRIVE_ENERGIZED_SMOKER,

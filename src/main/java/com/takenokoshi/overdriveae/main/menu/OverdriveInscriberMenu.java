@@ -37,13 +37,17 @@ public class OverdriveInscriberMenu extends OverdriveMachineMenu {
         this(TYPE, id, playerInventory, host);
     }
 
-    public OverdriveInscriberMenu(MenuType<?> menuType, int id, Inventory playerInventory,
+    public OverdriveInscriberMenu(MenuType<? extends OverdriveMachineMenu> menuType, int id, Inventory playerInventory,
             OverdriveInscriberBlockEntity host) {
         super(menuType, id, playerInventory, host);
+    }
+
+    @Override
+    protected void addAdditionalSlotsInConstructor() {
         List<Component> storageTooltip = List
                 .of(Component.translatable("gui.overdriveae.overdrive_inscriber.catalyst_slots"));
         for (int i = 0; i < OverdriveInscriberBlockEntity.CATALYST_INV_SLOTS; i++) {
-            AppEngSlot slot = new AppEngSlot(host.getCatalystInv(), i);
+            AppEngSlot slot = new AppEngSlot(((OverdriveInscriberBlockEntity) host).getCatalystInv(), i);
             slot.setEmptyTooltip(() -> storageTooltip);
             addSlot(slot, CATALYST_INV);
         }

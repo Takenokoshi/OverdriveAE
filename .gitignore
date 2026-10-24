@@ -34,3 +34,5 @@ repo/
 !**/src/**/repo/
 
 libs/
+
+memo/

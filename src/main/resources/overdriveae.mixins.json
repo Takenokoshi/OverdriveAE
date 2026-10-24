@@ -1,14 +1,17 @@
 {
-  "required": true,
-  "package": "com.takenokoshi.overdriveae.main.mixin",
-  "compatibilityLevel": "JAVA_21",
-  "mixins": [
-    "InsanePatternProviderLogicMixin"
-  ],
-  "injectors": {
-    "defaultRequire": 1
-  },
-  "overwrites": {
-    "requireAnnotations": true
-  }
+    "required": true,
+    "package": "com.takenokoshi.overdriveae.main.mixin",
+    "compatibilityLevel": "JAVA_21",
+    "refmap": "overdriveae.refmap.json",
+    "mixins": [
+        "InsanePatternProviderLogicMixin",
+        "AEBaseMenuMixin",
+        "AbstractContainerMenuMixin"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    },
+    "overwrites": {
+        "requireAnnotations": true
+    }
 }
