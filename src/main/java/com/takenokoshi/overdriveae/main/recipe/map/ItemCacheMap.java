@@ -67,7 +67,7 @@ public class ItemCacheMap<RECIPE> extends HashMap<Item, Set<PredicateRecipeCache
         Item item = stack.getItem();
         Set<PredicateRecipeCache<ItemStack, RECIPE>> set = get(item);
         if (set == null) {
-            return null;
+            return Stream.empty();
         }
         return set.stream().filter(v -> v.test(stack)).map(PredicateRecipeCache::value);
     }
