@@ -1,2 +1,73 @@
-This project is licensed under the GNU Lesser General Public
-License v3.0 only (LGPL-3.0-only).
+# OverdriveAE License
+
+Copyright (c) 2026 Takenokoshi
+
+OverdriveAE is distributed under different licenses depending on the type of content. The licenses listed below apply only to their respective components.
+
+## 1. Source Code
+
+Unless otherwise stated, the source code of OverdriveAE is licensed under the **GNU General Public License v3.0 (GPL-3.0)**.
+
+A copy of the license is available at:
+https://www.gnu.org/licenses/gpl-3.0.html
+
+### Third-Party Code: InsaneAE
+
+Certain portions of OverdriveAE's source code are derived from or adapted from [InsaneAE](https://github.com/taikun24/InsaneAE), originally licensed under the GNU General Public License v3.0.
+
+The original source code and its modifications can be reviewed in the [OverdriveAE GitHub repository](https://github.com/Takenokoshi/overdriveae).
+
+Copyright notices and license terms applicable to the original InsaneAE code are preserved as required by the GPL-3.0.
+
+OverdriveAE's source code, including applicable derivative works incorporating GPL-3.0-licensed code, is distributed under the terms of the GNU General Public License v3.0.
+
+## 2. Assets
+
+Assets are licensed according to their location and origin.
+
+### 2.1. Textures
+
+All texture files located under:
+
+`src/main/resources/assets/overdriveae/textures/`
+
+are distributed under the **Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported (CC BY-NC-SA 3.0)** license, subject to the rights of the original authors.
+
+These textures are modified versions or adaptations of textures from **Applied Energistics 2 (AE2)**. They are not original creations of OverdriveAE alone.
+
+You must comply with the applicable license terms and attribution requirements for the original AE2 textures when using, modifying, or redistributing these files.
+
+License:
+https://creativecommons.org/licenses/by-nc-sa/3.0/
+
+### 2.2. Other Assets
+
+All other assets created for OverdriveAE, excluding the textures specified in Section 2.1 and any third-party materials, are licensed under the **MIT License**.
+
+This includes assets such as models, sounds, and other resource files, except where otherwise specified.
+
+## 3. Data and Datapack Resources
+
+Unless otherwise stated, datapack resources included in OverdriveAE, such as recipes, tags, loot tables, and other data files, are licensed under the **MIT License**.
+
+This license does not apply to third-party materials or files that are explicitly identified as being subject to another license.
+
+## 4. Mod Icon
+
+The OverdriveAE mod icon is licensed under the **MIT License**, unless otherwise stated.
+
+## 5. Third-Party Materials
+
+OverdriveAE may include or derive from materials created by third parties. Such materials are not automatically relicensed under the licenses specified above.
+
+Users must comply with the applicable license terms and copyright notices of those materials.
+
+## 6. License Scope
+
+The license for one component of OverdriveAE does not automatically apply to other components.
+
+When redistributing or modifying OverdriveAE, you must identify the relevant component and comply with the license that applies to it.
+
+If a component is subject to a third-party license, that license takes precedence over this notice with respect to that component.
+
+THE SOFTWARE AND OTHER MATERIALS ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT, TO THE EXTENT PERMITTED BY APPLICABLE LAW.

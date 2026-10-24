@@ -1,0 +1,3 @@
+https://github.com/Takenokoshi/overdriveae/blob/main/LICENSE
+
+The licenses for the files included in this mod are governed by the corresponding files on GitHub.

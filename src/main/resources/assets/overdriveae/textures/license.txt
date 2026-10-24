@@ -1,0 +1,16 @@
+# OverdriveAE Texture License
+
+The textures in this directory are modified versions or adaptations of textures from Applied Energistics 2 (AE2).
+
+Original copyright notices:
+
+- (c) 2020, [Ridanisaurus Rid](https://github.com/Ridanisaurus/)
+- (c) 2013 - 2020 AlgorithmX2 et al
+
+These textures are licensed under the **Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported (CC BY-NC-SA 3.0)** license, in accordance with the applicable license terms of the original AE2 textures.
+
+License: https://creativecommons.org/licenses/by-nc-sa/3.0/
+
+Modified for OverdriveAE by Takenokoshi.
+
+All original copyrights remain with their respective owners. This notice does not imply ownership of the original AE2 textures by the OverdriveAE project.

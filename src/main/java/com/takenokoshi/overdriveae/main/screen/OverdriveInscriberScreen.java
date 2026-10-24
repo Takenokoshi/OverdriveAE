@@ -1,3 +1,16 @@
+/*
+ * Portions of this file are derived from InsaneAE.
+ *
+ * Original project:
+ * https://github.com/taikun24/InsaneAE
+ *
+ * Original license: GNU General Public License v3.0
+ *
+ * Modified for OverdriveAE.
+ * Copyright (c) 2026 Takenokoshi
+ *
+ * This file is distributed under the GNU GPL v3.0.
+ */
 package com.takenokoshi.overdriveae.main.screen;
 
 import java.util.List;
