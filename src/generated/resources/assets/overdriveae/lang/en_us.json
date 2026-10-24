@@ -5,7 +5,11 @@
   "block.overdriveae.overdrive_energized_smoker": "Overdrive Energized Smoker",
   "block.overdriveae.overdrive_inscriber": "Overdrive Inscriber",
   "block.overdriveae.overdrive_matter_condenser": "Overdrive Matter Condenser",
+  "block.overdriveae.overdrive_transform_chamber": "Overdrive Transform Chamber",
   "gui.overdriveae.overdrive_inscriber.catalyst_inv_label": "Catalyst items",
   "gui.overdriveae.overdrive_inscriber.catalyst_slots": "Slots for catalyst items.",
-  "gui.overdriveae.overdrive_inscriber.show_catalysts": "Show catalyst item slots"
+  "gui.overdriveae.overdrive_inscriber.show_catalysts": "Show catalyst item slots",
+  "gui.overdriveae.overdrive_transform_chamber.catalyst_inv_label": "Catalyst fluids",
+  "gui.overdriveae.overdrive_transform_chamber.catalyst_slots": "Tanks for catalyst fluids.",
+  "gui.overdriveae.overdrive_transform_chamber.show_catalysts": "Show catalyst fluid tanks"
 }

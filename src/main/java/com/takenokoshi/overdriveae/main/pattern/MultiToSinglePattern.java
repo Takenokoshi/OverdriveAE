@@ -9,6 +9,7 @@ import appeng.api.stacks.AEItemKey;
 import appeng.api.stacks.GenericStack;
 import appeng.recipes.handlers.InscriberProcessType;
 import appeng.recipes.handlers.InscriberRecipe;
+import appeng.recipes.transform.TransformRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 
 /** PatternDetailsHelper経由での変換はできない */
@@ -28,7 +29,7 @@ public class MultiToSinglePattern implements IPatternDetails {
         }
     }
 
-    public static MultiToSinglePattern fromRecipe(AEItemKey def, InscriberRecipe recipe) {
+    public static MultiToSinglePattern fromInscriberRecipe(AEItemKey def, InscriberRecipe recipe) {
 
         if (recipe.getProcessType() == InscriberProcessType.INSCRIBE) {
             return new MultiToSinglePattern(def, new GenericStack[][] {
@@ -71,6 +72,13 @@ public class MultiToSinglePattern implements IPatternDetails {
                             .toArray(GenericStack[]::new),
             }, GenericStack.fromItemStack(recipe.getResultItem()));
         }
+    }
+
+    public static MultiToSinglePattern fromTransformRecipe(AEItemKey def, TransformRecipe recipe) {
+        return new MultiToSinglePattern(def,
+                recipe.ingredients.stream().map(v -> Arrays.stream(v.getItems()).map(GenericStack::fromItemStack)
+                        .toArray(GenericStack[]::new)).toArray(GenericStack[][]::new),
+                GenericStack.fromItemStack(recipe.getResultItem()));
     }
 
     @Override

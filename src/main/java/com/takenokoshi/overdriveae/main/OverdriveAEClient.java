@@ -2,8 +2,10 @@ package com.takenokoshi.overdriveae.main;
 
 import com.takenokoshi.overdriveae.main.menu.OverdriveInscriberMenu;
 import com.takenokoshi.overdriveae.main.menu.OverdriveMachineMenu;
+import com.takenokoshi.overdriveae.main.menu.OverdriveTransformChamberMenu;
 import com.takenokoshi.overdriveae.main.screen.OverdriveInscriberScreen;
 import com.takenokoshi.overdriveae.main.screen.OverdriveMachineScreen;
+import com.takenokoshi.overdriveae.main.screen.OverdriveTransformChamberScreen;
 
 import appeng.init.client.InitScreens;
 import net.neoforged.api.distmarker.Dist;
@@ -30,6 +32,8 @@ public class OverdriveAEClient extends OverdriveAE {
      * (AE2 の {@code InitScreens#register} もイベントを第 1 引数に取るようになっている)。
      */
     private static void registerScreens(RegisterMenuScreensEvent event) {
+        InitScreens.register(event, OverdriveTransformChamberMenu.TYPE, OverdriveTransformChamberScreen::new,
+                "/screens/insaneae/quantum_cpu.json");
         InitScreens.register(event, OverdriveInscriberMenu.TYPE, OverdriveInscriberScreen::new,
                 "/screens/insaneae/quantum_cpu.json");
         /** そのままだと型推論がうまくいかないのでクラス指定しておく */

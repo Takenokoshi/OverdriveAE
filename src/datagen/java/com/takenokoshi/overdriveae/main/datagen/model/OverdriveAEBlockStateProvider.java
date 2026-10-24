@@ -60,6 +60,17 @@ public class OverdriveAEBlockStateProvider extends BlockStateProvider {
                         .itemRenderOrder("condenser", "base")
                         .block()
                         .end());
+        orientedBlock(OverdriveAEMachines.OVERDRIVE_TRANSFORM_CHAMBER.getBlock(),
+                models().getBuilder("block/overdrive_transform_chamber")
+                        .texture("particle", modLoc("block/overdrive_frame"))
+                        .customLoader(CompositeModelAdvancedBuilder::begin)
+                        .existingChild("base", modLoc("block/overdrive_base"))
+                        .modifiedExistingChildStart("tank", AppEng.makeId("block/sky_stone_tank"))
+                        .rootTransforms().scale(0.5F).translation(-0.25F, -0.25F, -0.25F).backToModifiedChildBuilder()
+                        .backToCompositeBuilder()
+                        .itemRenderOrder("tank", "base")
+                        .block()
+                        .end());
         orientedBlock(OverdriveAEMachines.OVERDRIVE_ENERGIZED_BLAST_FURNACE.getBlock(),
                 models().getBuilder("block/overdrive_energized_blast_furnace")
                         .texture("particle", modLoc("block/overdrive_frame"))

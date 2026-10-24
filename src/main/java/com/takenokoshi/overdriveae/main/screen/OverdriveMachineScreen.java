@@ -163,14 +163,17 @@ public class OverdriveMachineScreen<M extends OverdriveMachineMenu> extends AEBa
      * </p>
      */
     protected void layoutSlots() {
+        layoutPatternSlots(true);
+    }
 
+    protected void layoutPatternSlots(boolean patternSlotsvisible) {
         List<Slot> slots = menu.getSlots(SlotSemantics.ENCODED_PATTERN);
         int first = menu.isServerPaged() ? 0 : page * PER_PAGE;
 
         for (int index = 0; index < slots.size(); index++) {
             Slot slot = slots.get(index);
             int inPage = index - first;
-            boolean visible = inPage >= 0 && inPage < PER_PAGE;
+            boolean visible = patternSlotsvisible && inPage >= 0 && inPage < PER_PAGE;
 
             if (slot instanceof AppEngSlot appEngSlot) {
                 // setSlotEnabled ではなく setActive。

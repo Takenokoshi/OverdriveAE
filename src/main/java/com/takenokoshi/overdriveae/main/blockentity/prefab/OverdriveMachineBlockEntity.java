@@ -145,7 +145,7 @@ public abstract class OverdriveMachineBlockEntity<ASSEMBLY extends OverdriveMach
      * OverdriveMachineLogic側から呼ばれる。
      */
     @Nullable
-    public abstract PATTERN tryDecodePattern(ItemStack itemStack);
+    public abstract PATTERN decodePattern(ItemStack itemStack);
 
     /**
      * 処理パターンを受け入れられるかどうか確認する。
@@ -277,10 +277,9 @@ public abstract class OverdriveMachineBlockEntity<ASSEMBLY extends OverdriveMach
         // 溜めておいたパターン更新をここで流す (遅れは最大 1 tick)。
         logic.flushPatternUpdate();
 
-        if (flushPendingOutputs()) {
+        if (flushPendingOutputs() || consumeEnergy()) {
             savePendingAndEnergyIfNeeded();
         }
-        consumeEnergy();
     }
 
     /**

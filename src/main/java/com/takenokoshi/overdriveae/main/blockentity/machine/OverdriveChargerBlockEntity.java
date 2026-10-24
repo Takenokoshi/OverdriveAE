@@ -48,7 +48,7 @@ public class OverdriveChargerBlockEntity extends
      * AEProcessingPattern に変換せず、EncodedProcessingPattern を直接変換する
      */
     @Override
-    public @Nullable SingleToSinglePattern tryDecodePattern(ItemStack itemStack) {
+    public @Nullable SingleToSinglePattern decodePattern(ItemStack itemStack) {
 
         if (AEItems.PROCESSING_PATTERN.is(itemStack)) {
             EncodedProcessingPattern pattern = itemStack.get(AEComponents.ENCODED_PROCESSING_PATTERN);

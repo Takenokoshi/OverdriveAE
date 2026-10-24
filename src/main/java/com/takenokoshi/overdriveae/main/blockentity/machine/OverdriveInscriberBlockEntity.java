@@ -51,7 +51,7 @@ public class OverdriveInscriberBlockEntity
     public OverdriveInscriberBlockEntity(OverdriveAEDeferredMachine<?, ?> deferredMachine, BlockPos pos,
             BlockState blockState) {
         super(deferredMachine, pos, blockState);
-        this.catalystInv = new CatalystInv(this, this::isCatalystItem, logic::markShouldDecodedPatternAgain);
+        this.catalystInv = new CatalystInv(this, this::isCatalystItem, logic::markShouldDecodePatternAgain);
     }
 
     public AppEngInternalInventory getCatalystInv() {
@@ -70,7 +70,7 @@ public class OverdriveInscriberBlockEntity
 
     /** */
     @Override
-    public @Nullable MultiToSinglePattern tryDecodePattern(ItemStack itemStack) {
+    public @Nullable MultiToSinglePattern decodePattern(ItemStack itemStack) {
         if (AEItems.PROCESSING_PATTERN.is(itemStack)) {
             EncodedProcessingPattern pattern = itemStack.get(AEComponents.ENCODED_PROCESSING_PATTERN);
             if (pattern == null) {
@@ -83,7 +83,7 @@ public class OverdriveInscriberBlockEntity
                 if (inputs.get(0).what() instanceof AEItemKey itemKey) {
                     InscriberRecipe recipe = getRecipeSingle(itemKey.getReadOnlyStack());
                     return recipe == null ? null
-                            : MultiToSinglePattern.fromRecipe(AEItemKey.of(itemStack), recipe);
+                            : MultiToSinglePattern.fromInscriberRecipe(AEItemKey.of(itemStack), recipe);
                 }
             } else if (inputs.get(2) == null) {
                 if (inputs.get(0).what() instanceof AEItemKey firstItemKey
@@ -92,7 +92,7 @@ public class OverdriveInscriberBlockEntity
                             secondItemKey.getReadOnlyStack());
                     return recipe == null || !isRecipeProcessable(recipe)
                             ? null
-                            : MultiToSinglePattern.fromRecipe(AEItemKey.of(itemStack), recipe);
+                            : MultiToSinglePattern.fromInscriberRecipe(AEItemKey.of(itemStack), recipe);
                 }
             } else {
                 if (inputs.get(0).what() instanceof AEItemKey topItemKey
@@ -102,13 +102,13 @@ public class OverdriveInscriberBlockEntity
                             centerItemKey.getReadOnlyStack(), bottomItemKey.getReadOnlyStack());
                     return recipe == null || !isRecipeProcessable(recipe)
                             ? null
-                            : MultiToSinglePattern.fromRecipe(AEItemKey.of(itemStack), recipe);
+                            : MultiToSinglePattern.fromInscriberRecipe(AEItemKey.of(itemStack), recipe);
                 }
             }
             return null;
         }
         InscriberRecipe recipe = getRecipeSingle(itemStack);
-        return recipe == null ? null : MultiToSinglePattern.fromRecipe(AEItemKey.of(itemStack), recipe);
+        return recipe == null ? null : MultiToSinglePattern.fromInscriberRecipe(AEItemKey.of(itemStack), recipe);
     }
 
     @Override

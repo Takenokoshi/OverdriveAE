@@ -8,10 +8,13 @@ import com.takenokoshi.overdriveae.main.recipe.cache.ChargerRecipeCache;
 import com.takenokoshi.overdriveae.main.recipe.cache.CookingRecipeCache;
 import com.takenokoshi.overdriveae.main.recipe.cache.IRecipeCache;
 import com.takenokoshi.overdriveae.main.recipe.cache.InscriberRecipeCache;
+import com.takenokoshi.overdriveae.main.recipe.cache.TransformRecipeCache;
 
 import appeng.recipes.AERecipeTypes;
 import appeng.recipes.handlers.ChargerRecipe;
 import appeng.recipes.handlers.InscriberRecipe;
+import appeng.recipes.transform.TransformRecipe;
+import appeng.recipes.transform.TransformRecipeInput;
 import net.minecraft.world.item.crafting.BlastingRecipe;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeInput;
@@ -75,4 +78,7 @@ public class RecipeCacheHolder<I extends RecipeInput, R extends Recipe<I>, C ext
 
     public static final RecipeCacheHolder<RecipeInput, InscriberRecipe, InscriberRecipeCache> INSCRIBER = new RecipeCacheHolder<>(
             AERecipeTypes.INSCRIBER, new InscriberRecipeCache());
+
+    public static final RecipeCacheHolder<TransformRecipeInput, TransformRecipe, TransformRecipeCache> TRANSFORM = new RecipeCacheHolder<>(
+            AERecipeTypes.TRANSFORM, new TransformRecipeCache());
 }

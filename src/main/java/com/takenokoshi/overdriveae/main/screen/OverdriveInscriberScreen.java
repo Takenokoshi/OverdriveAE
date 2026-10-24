@@ -6,7 +6,6 @@ import com.takenokoshi.overdriveae.main.menu.OverdriveInscriberMenu;
 
 import appeng.client.gui.Icon;
 import appeng.client.gui.style.ScreenStyle;
-import appeng.menu.SlotSemantics;
 import appeng.menu.slot.AppEngSlot;
 import jp.main.taikun.insaneae.mixin.SlotAccessor;
 import net.minecraft.network.chat.Component;
@@ -35,8 +34,7 @@ public class OverdriveInscriberScreen extends OverdriveMachineScreen<OverdriveIn
     public OverdriveInscriberScreen(OverdriveInscriberMenu menu, Inventory playerInventory, Component title,
             ScreenStyle style) {
         super(menu, playerInventory, title, style);
-        // クラフトユニット枠の開閉。CPU を持たない特大パターンプロバイダーでは
-        // ユニット枠のスロットが 1 つも無いので、ボタンも出さない。
+        // クラフトユニット枠の開閉。
         catalystsToggle = new IconTextButton(() -> showingCatalysts ? Icon.BACK : Icon.S_MACHINE,
                 Component.empty(), btn -> toggleCatalysts());
         widgets.add("unitsToggle", catalystsToggle);
@@ -74,27 +72,7 @@ public class OverdriveInscriberScreen extends OverdriveMachineScreen<OverdriveIn
     @Override
     protected void layoutSlots() {
         layoutCatalystSlots(showingCatalysts);
-
-        List<Slot> slots = menu.getSlots(SlotSemantics.ENCODED_PATTERN);
-        int first = menu.isServerPaged() ? 0 : page * PER_PAGE;
-
-        for (int index = 0; index < slots.size(); index++) {
-            Slot slot = slots.get(index);
-            int inPage = index - first;
-            boolean visible = !showingCatalysts && inPage >= 0 && inPage < PER_PAGE;
-
-            if (slot instanceof AppEngSlot appEngSlot) {
-                // setSlotEnabled ではなく setActive。
-                // 無効化すると mayPlace/mayPickup まで殺してしまい、Shift クリックが
-                // 表示中のページにしか入らなくなる。
-                appEngSlot.setActive(visible);
-            }
-            if (visible) {
-                // Slot#x/y は final なので Mixin のアクセサ経由で書く (AE2 は AT で外している)。
-                ((SlotAccessor) slot).insaneae$setX(GRID_LEFT + inPage % COLUMNS * SLOT_SIZE);
-                ((SlotAccessor) slot).insaneae$setY(GRID_TOP + inPage / COLUMNS * SLOT_SIZE);
-            }
-        }
+        layoutPatternSlots(!showingCatalysts);
     }
 
     @Override

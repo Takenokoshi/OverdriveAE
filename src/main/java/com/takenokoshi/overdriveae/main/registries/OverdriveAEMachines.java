@@ -8,6 +8,7 @@ import com.takenokoshi.overdriveae.main.blockentity.machine.OverdriveEnergizedBl
 import com.takenokoshi.overdriveae.main.blockentity.machine.OverdriveEnergizedFurnaceBlockEntity;
 import com.takenokoshi.overdriveae.main.blockentity.machine.OverdriveEnergizedSmokerBlockEntity;
 import com.takenokoshi.overdriveae.main.blockentity.machine.OverdriveInscriberBlockEntity;
+import com.takenokoshi.overdriveae.main.blockentity.machine.OverdriveTransformChamberBlockEntity;
 import com.takenokoshi.overdriveae.main.registration.OverdriveAEDeferredMachine;
 import com.takenokoshi.overdriveae.main.registration.OverdriveAEMachineDeferredRegister;
 
@@ -26,6 +27,11 @@ public class OverdriveAEMachines {
     public static final OverdriveAEDeferredMachine<OverdriveMachineBlock<OverdriveCondenserBlockEntity>, OverdriveCondenserBlockEntity> OVERDRIVE_MATTER_CONDENSER = MACHINES
             .register("overdrive_matter_condenser", OverdriveMachineBlock::new, OverdriveCondenserBlockEntity.class,
                     OverdriveCondenserBlockEntity::new, null, (level, pos, state, be) -> be.serverTick());
+
+    public static final OverdriveAEDeferredMachine<OverdriveMachineBlock<OverdriveTransformChamberBlockEntity>, OverdriveTransformChamberBlockEntity> OVERDRIVE_TRANSFORM_CHAMBER = MACHINES
+            .register("overdrive_transform_chamber", OverdriveMachineBlock::new,
+                    OverdriveTransformChamberBlockEntity.class, OverdriveTransformChamberBlockEntity::new, null,
+                    (level, pos, state, be) -> be.serverTick());
 
     public static final OverdriveAEDeferredMachine<OverdriveMachineBlock<OverdriveEnergizedFurnaceBlockEntity>, OverdriveEnergizedFurnaceBlockEntity> OVERDRIVE_ENERGIZED_FURNACE = MACHINES
             .register("overdrive_energized_furnace", OverdriveMachineBlock::new,

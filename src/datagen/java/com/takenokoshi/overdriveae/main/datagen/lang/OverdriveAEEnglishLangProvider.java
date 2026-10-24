@@ -23,6 +23,9 @@ public class OverdriveAEEnglishLangProvider extends LanguageProvider {
         add("gui.overdriveae.overdrive_inscriber.catalyst_slots", "Slots for catalyst items.");
         add("gui.overdriveae.overdrive_inscriber.catalyst_inv_label", "Catalyst items");
         add("gui.overdriveae.overdrive_inscriber.show_catalysts", "Show catalyst item slots");
+        add("gui.overdriveae.overdrive_transform_chamber.catalyst_slots", "Tanks for catalyst fluids.");
+        add("gui.overdriveae.overdrive_transform_chamber.catalyst_inv_label", "Catalyst fluids");
+        add("gui.overdriveae.overdrive_transform_chamber.show_catalysts", "Show catalyst fluid tanks");
     }
 
     private void addMachine(OverdriveAEDeferredMachine<?, ?> deferredMachine) {

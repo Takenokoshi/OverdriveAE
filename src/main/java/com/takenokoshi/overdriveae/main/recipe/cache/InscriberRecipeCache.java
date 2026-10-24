@@ -74,11 +74,11 @@ public class InscriberRecipeCache implements IRecipeCache<InscriberRecipe> {
     }
 
     public boolean hasRecipeTriple(ItemStack topInput, ItemStack centerInput, ItemStack bottomInput) {
-        return tripleInputCacheMap.hasRecipe(bottomInput, r -> topMatch(r, topInput) && bottomMatch(r, bottomInput));
+        return tripleInputCacheMap.hasRecipe(centerInput, r -> topMatch(r, topInput) && bottomMatch(r, bottomInput));
     }
 
     public InscriberRecipe getRecipeTriple(ItemStack topInput, ItemStack centerInput, ItemStack bottomInput) {
-        return tripleInputCacheMap.getRecipe(bottomInput, r -> topMatch(r, topInput) && bottomMatch(r, bottomInput));
+        return tripleInputCacheMap.getRecipe(centerInput, r -> topMatch(r, topInput) && bottomMatch(r, bottomInput));
     }
 
     public boolean hasRecipeDouble(ItemStack firstInput, ItemStack secondInput) {

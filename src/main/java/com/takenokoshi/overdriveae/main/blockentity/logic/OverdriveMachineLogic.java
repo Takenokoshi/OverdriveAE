@@ -55,7 +55,7 @@ public class OverdriveMachineLogic<ASSEMBLY extends OverdriveMachineLogic.Assemb
     public static final String NBT_OVERDRIVE_PATTERN_INV = "overdrivePatterns";
 
     /** パターンの再変換が必要か。{@link #flushPatternUpdate()} でまとめて処理する。 */
-    protected boolean shouldDecodedPatternAgain = true;
+    protected boolean shouldDecodePatternAgain = true;
     /** 最後に再変換した tick。同じ tick の 2 回目以降だけをまとめる。 */
     private long lastDecodeTick = Long.MIN_VALUE;
 
@@ -156,7 +156,7 @@ public class OverdriveMachineLogic<ASSEMBLY extends OverdriveMachineLogic.Assemb
         if (stack.isEmpty()) {
             patterns[index] = null;
         } else if (host.isPatternAcceptable(stack)) {
-            patterns[index] = host.tryDecodePattern(stack);
+            patterns[index] = host.decodePattern(stack);
         } else {
             patterns[index] = null;
         }
@@ -176,7 +176,7 @@ public class OverdriveMachineLogic<ASSEMBLY extends OverdriveMachineLogic.Assemb
             if (stack.isEmpty()) {
                 patterns[i] = null;
             } else if (host.isPatternAcceptable(stack)) {
-                patterns[i] = host.tryDecodePattern(stack);
+                patterns[i] = host.decodePattern(stack);
             } else {
                 patterns[i] = null;
             }
@@ -194,8 +194,8 @@ public class OverdriveMachineLogic<ASSEMBLY extends OverdriveMachineLogic.Assemb
      * InsanePatternProviderLogic側のパターン更新が走る
      * 触媒アイテムを要求する機械用
      */
-    public void markShouldDecodedPatternAgain() {
-        shouldDecodedPatternAgain = true;
+    public void markShouldDecodePatternAgain() {
+        shouldDecodePatternAgain = true;
         if (currentTick() != lastDecodeTick) {
             flushPatternUpdate();
         }
@@ -212,15 +212,15 @@ public class OverdriveMachineLogic<ASSEMBLY extends OverdriveMachineLogic.Assemb
      */
     @Override
     public void flushPatternUpdate() {
-        if (shouldDecodedPatternAgain) {
-            shouldDecodedPatternAgain = false;
+        if (shouldDecodePatternAgain) {
+            shouldDecodePatternAgain = false;
             lastDecodeTick = currentTick();
             for (int i = 0; i < patterns.length; i++) {
                 ItemStack stack = patternInv.getStackInSlot(i);
                 if (stack.isEmpty()) {
                     patterns[i] = null;
                 } else if (host.isPatternAcceptable(stack)) {
-                    patterns[i] = host.tryDecodePattern(stack);
+                    patterns[i] = host.decodePattern(stack);
                 } else {
                     patterns[i] = null;
                 }
