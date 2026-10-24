@@ -11,5 +11,8 @@
   "gui.overdriveae.overdrive_inscriber.show_catalysts": "Show catalyst item slots",
   "gui.overdriveae.overdrive_transform_chamber.catalyst_inv_label": "Catalyst fluids",
   "gui.overdriveae.overdrive_transform_chamber.catalyst_slots": "Tanks for catalyst fluids.",
-  "gui.overdriveae.overdrive_transform_chamber.show_catalysts": "Show catalyst fluid tanks"
+  "gui.overdriveae.overdrive_transform_chamber.show_catalysts": "Show catalyst fluid tanks",
+  "item.overdriveae.overdrive_crystal": "Overdrive Crystal",
+  "item.overdriveae.overdrive_processor": "Overdrive Processor",
+  "item.overdriveae.printed_overdrive_processor": "Printed Overdrive Processor"
 }

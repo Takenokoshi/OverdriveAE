@@ -1,0 +1,18 @@
+{
+  "block.overdriveae.overdrive_charger": "Overdrive Charger",
+  "block.overdriveae.overdrive_energized_blast_furnace": "Overdrive Energized Blast Furnace",
+  "block.overdriveae.overdrive_energized_furnace": "Overdrive Energized Furnace",
+  "block.overdriveae.overdrive_energized_smoker": "Overdrive Energized Smoker",
+  "block.overdriveae.overdrive_inscriber": "Overdrive Inscriber",
+  "block.overdriveae.overdrive_matter_condenser": "Overdrive Matter Condenser",
+  "block.overdriveae.overdrive_transform_chamber": "Overdrive Transform Chamber",
+  "gui.overdriveae.overdrive_inscriber.catalyst_inv_label": "触媒アイテム",
+  "gui.overdriveae.overdrive_inscriber.catalyst_slots": "触媒アイテムを入れるスロット",
+  "gui.overdriveae.overdrive_inscriber.show_catalysts": "触媒アイテムスロットを表示する",
+  "gui.overdriveae.overdrive_transform_chamber.catalyst_inv_label": "液体触媒",
+  "gui.overdriveae.overdrive_transform_chamber.catalyst_slots": "液体触媒用タンク",
+  "gui.overdriveae.overdrive_transform_chamber.show_catalysts": "液体触媒用タンクを表示する",
+  "item.overdriveae.overdrive_crystal": "Overdrive Crystal",
+  "item.overdriveae.overdrive_processor": "Overdrive Processor",
+  "item.overdriveae.printed_overdrive_processor": "Printed Overdrive Processor"
+}

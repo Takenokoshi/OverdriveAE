@@ -6,6 +6,7 @@ import com.mojang.logging.LogUtils;
 import com.takenokoshi.overdriveae.main.recipe.RecipeCacheReloadLister;
 import com.takenokoshi.overdriveae.main.registration.OverdriveAEDeferredMachine;
 import com.takenokoshi.overdriveae.main.registries.OverdriveAECapabilities;
+import com.takenokoshi.overdriveae.main.registries.OverdriveAEItems;
 import com.takenokoshi.overdriveae.main.registries.OverdriveAEMachines;
 import com.takenokoshi.overdriveae.main.registries.OverdriveAEMenus;
 import com.takenokoshi.overdriveae.main.registries.OverdriveAETabs;
@@ -44,6 +45,7 @@ public class OverdriveAE {
     public OverdriveAE(IEventBus modEventBus, ModContainer modContainer) {
 
         OverdriveAEMachines.MACHINES.register(modEventBus);
+        OverdriveAEItems.ITEMS.register(modEventBus);
         OverdriveAETabs.TABS.register(modEventBus);
         OverdriveAEMenus.MENU_TYPES.register(modEventBus);
 

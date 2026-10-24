@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "C": {
+      "item": "ae2:condenser"
+    },
+    "O": {
+      "item": "overdriveae:overdrive_processor"
+    },
+    "P": {
+      "item": "ae2:pattern_provider"
+    },
+    "S": {
+      "item": "ae2:cell_component_256k"
+    }
+  },
+  "pattern": [
+    "CSC",
+    "OPO",
+    "COC"
+  ],
+  "result": {
+    "count": 1,
+    "id": "overdriveae:overdrive_matter_condenser"
+  }
+}

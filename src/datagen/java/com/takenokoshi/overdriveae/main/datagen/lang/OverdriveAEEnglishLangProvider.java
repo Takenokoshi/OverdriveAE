@@ -5,10 +5,13 @@ import java.util.stream.Collectors;
 
 import com.takenokoshi.overdriveae.main.OverdriveAE;
 import com.takenokoshi.overdriveae.main.registration.OverdriveAEDeferredMachine;
+import com.takenokoshi.overdriveae.main.registries.OverdriveAEItems;
 import com.takenokoshi.overdriveae.main.registries.OverdriveAEMachines;
 
 import net.minecraft.data.PackOutput;
+import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.common.data.LanguageProvider;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
 public class OverdriveAEEnglishLangProvider extends LanguageProvider {
 
@@ -19,6 +22,7 @@ public class OverdriveAEEnglishLangProvider extends LanguageProvider {
     @Override
     protected void addTranslations() {
         OverdriveAEMachines.MACHINES.getMachines().forEach(this::addMachine);
+        OverdriveAEItems.ITEMS.getEntries().forEach(this::addItem);
 
         add("gui.overdriveae.overdrive_inscriber.catalyst_slots", "Slots for catalyst items.");
         add("gui.overdriveae.overdrive_inscriber.catalyst_inv_label", "Catalyst items");
@@ -31,6 +35,10 @@ public class OverdriveAEEnglishLangProvider extends LanguageProvider {
     private void addMachine(OverdriveAEDeferredMachine<?, ?> deferredMachine) {
         String name = format(deferredMachine.deferredBlock.getId().getPath());
         addBlock(deferredMachine.deferredBlock, name);
+    }
+
+    private void addItem(DeferredHolder<Item, ?> item) {
+        addItem(item, format(item.getId().getPath()));
     }
 
     private String format(String name) {

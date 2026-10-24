@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "overdriveae:item/printed_overdrive_processor"
+  }
+}

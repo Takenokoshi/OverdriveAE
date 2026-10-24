@@ -1,0 +1,19 @@
+{
+  "type": "ae2:inscriber",
+  "ingredients": {
+    "bottom": {
+      "item": "overdriveae:printed_overdrive_processor"
+    },
+    "middle": {
+      "tag": "c:dusts/redstone"
+    },
+    "top": {
+      "item": "ae2:printed_silicon"
+    }
+  },
+  "mode": "press",
+  "result": {
+    "count": 1,
+    "id": "overdriveae:overdrive_processor"
+  }
+}

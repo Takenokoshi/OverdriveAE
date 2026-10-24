@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "C": {
+      "item": "minecraft:smoker"
+    },
+    "O": {
+      "item": "overdriveae:overdrive_processor"
+    },
+    "P": {
+      "item": "ae2:pattern_provider"
+    }
+  },
+  "pattern": [
+    "COC",
+    "OPO",
+    "COC"
+  ],
+  "result": {
+    "count": 1,
+    "id": "overdriveae:overdrive_energized_smoker"
+  }
+}
