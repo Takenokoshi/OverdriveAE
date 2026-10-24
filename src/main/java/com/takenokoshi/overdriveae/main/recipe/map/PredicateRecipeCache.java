@@ -8,4 +8,9 @@ public record PredicateRecipeCache<TYPE, RECIPE>(Predicate<TYPE> predicate, RECI
     public boolean test(TYPE t) {
         return predicate.test(t);
     }
+
+    @Override
+    public final int hashCode() {
+        return predicate.hashCode() * 31 + value.hashCode();
+    }
 }
