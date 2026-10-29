@@ -9,7 +9,7 @@ import java.util.function.Predicate;
 import org.jetbrains.annotations.Nullable;
 
 import com.takenokoshi.overdriveae.main.blockentity.logic.OverdriveMachineOldLogic;
-import com.takenokoshi.overdriveae.main.blockentity.logic.OverdrivePatternInv;
+import com.takenokoshi.overdriveae.main.blockentity.logic.OverdriveOldPatternInv;
 import com.takenokoshi.overdriveae.main.blockentity.prefab.OverdriveMachineOldBlockEntity;
 import com.takenokoshi.overdriveae.main.menu.OverdriveInscriberMenu;
 import com.takenokoshi.overdriveae.main.pattern.MultiToSinglePattern;
@@ -212,7 +212,7 @@ public class OverdriveInscriberBlockEntity
         private final Runnable onChange;
 
         public CatalystInv(InternalInventoryHost host, Predicate<ItemStack> filter, Runnable onChange) {
-            super(host, CATALYST_INV_SLOTS, 1, new OverdrivePatternInv.OverdrivePatternInvFilter(filter));
+            super(host, CATALYST_INV_SLOTS, 1, new OverdriveOldPatternInv.OverdrivePatternInvFilter(filter));
             this.onChange = onChange;
         }
 

@@ -116,7 +116,7 @@ public class OverdriveMachineOldLogic<ASSEMBLY extends OverdriveMachineOldLogic.
 
     protected boolean warnedAboutFailedAssembly;
     /** AE2のパターンアイテム以外をパターンとして使用できるよう、独自のパターンインベントリを保持。 */
-    protected final OverdrivePatternInv patternInv;
+    protected final OverdriveOldPatternInv patternInv;
     protected final PATTERN[] patterns;
 
     public OverdriveMachineOldLogic(IManagedGridNode mainNode, MACHINE host,
@@ -126,7 +126,7 @@ public class OverdriveMachineOldLogic<ASSEMBLY extends OverdriveMachineOldLogic.
         this.host = host;
         this.mainNode = mainNode;
         this.patternClass = patternClass;
-        this.patternInv = new OverdrivePatternInv(host, QuantumCpuBlockEntity.PATTERN_SLOTS,
+        this.patternInv = new OverdriveOldPatternInv(host, QuantumCpuBlockEntity.PATTERN_SLOTS,
                 this.host::isPatternAcceptable, this::updatePattern);
         this.patterns = patternArrayConstructor.apply(QuantumCpuBlockEntity.PATTERN_SLOTS);
         this.availablePatterns = new HashSet<>();

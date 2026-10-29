@@ -8,16 +8,16 @@ import appeng.util.inv.InternalInventoryHost;
 import appeng.util.inv.filter.IAEItemFilter;
 import net.minecraft.world.item.ItemStack;
 
-public class OverdrivePatternInv extends AppEngInternalInventory {
+public class OverdriveOldPatternInv extends AppEngInternalInventory {
 
     private final PatternInvChangeListener patternInvChangeListener;
 
-    public OverdrivePatternInv(InternalInventoryHost host, int size, IAEItemFilter filter,
+    public OverdriveOldPatternInv(InternalInventoryHost host, int size, IAEItemFilter filter,
             PatternInvChangeListener patternInvChangeListener) {
         super(host, size, 1, filter);
         this.patternInvChangeListener = patternInvChangeListener;
     }
-    public OverdrivePatternInv(InternalInventoryHost host, int size, Predicate<ItemStack> filter,
+    public OverdriveOldPatternInv(InternalInventoryHost host, int size, Predicate<ItemStack> filter,
             PatternInvChangeListener patternInvChangeListener) {
         super(host, size, 1, new OverdrivePatternInvFilter(filter));
         this.patternInvChangeListener = patternInvChangeListener;
