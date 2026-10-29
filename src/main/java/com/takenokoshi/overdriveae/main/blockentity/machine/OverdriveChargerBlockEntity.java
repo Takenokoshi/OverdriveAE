@@ -4,8 +4,8 @@ import java.util.Arrays;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.takenokoshi.overdriveae.main.blockentity.logic.OverdriveMachineLogic;
-import com.takenokoshi.overdriveae.main.blockentity.prefab.OverdriveMachineBlockEntity;
+import com.takenokoshi.overdriveae.main.blockentity.logic.OverdriveMachineOldLogic;
+import com.takenokoshi.overdriveae.main.blockentity.prefab.OverdriveMachineOldBlockEntity;
 import com.takenokoshi.overdriveae.main.pattern.SingleToSinglePattern;
 import com.takenokoshi.overdriveae.main.recipe.lookup.ChargerRecipeLookupHandler;
 import com.takenokoshi.overdriveae.main.registration.OverdriveAEDeferredMachine;
@@ -25,7 +25,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class OverdriveChargerBlockEntity extends
-        OverdriveMachineBlockEntity<SingleToSinglePattern.SingleToSingleAssembly, SingleToSinglePattern, OverdriveChargerBlockEntity>
+        OverdriveMachineOldBlockEntity<SingleToSinglePattern.SingleToSingleAssembly, SingleToSinglePattern, OverdriveChargerBlockEntity>
         implements ChargerRecipeLookupHandler {
 
     public OverdriveChargerBlockEntity(OverdriveAEDeferredMachine<?, ?> deferredMachine, BlockPos pos,
@@ -34,8 +34,8 @@ public class OverdriveChargerBlockEntity extends
     }
 
     @Override
-    protected OverdriveMachineLogic<SingleToSinglePattern.SingleToSingleAssembly, SingleToSinglePattern, OverdriveChargerBlockEntity> createLogic() {
-        return new OverdriveMachineLogic<>(getMainNode(), this, SingleToSinglePattern[]::new,
+    protected OverdriveMachineOldLogic<SingleToSinglePattern.SingleToSingleAssembly, SingleToSinglePattern, OverdriveChargerBlockEntity> createLogic() {
+        return new OverdriveMachineOldLogic<>(getMainNode(), this, SingleToSinglePattern[]::new,
                 SingleToSinglePattern.class);
     }
 

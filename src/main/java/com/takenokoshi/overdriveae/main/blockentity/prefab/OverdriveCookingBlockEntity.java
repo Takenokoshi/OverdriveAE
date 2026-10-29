@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.takenokoshi.overdriveae.main.blockentity.logic.OverdriveMachineLogic;
+import com.takenokoshi.overdriveae.main.blockentity.logic.OverdriveMachineOldLogic;
 import com.takenokoshi.overdriveae.main.pattern.SingleToSinglePattern;
 import com.takenokoshi.overdriveae.main.pattern.SingleToSinglePattern.SingleToSingleAssembly;
 import com.takenokoshi.overdriveae.main.recipe.lookup.CookingRecipeCacheLookupHandler;
@@ -24,7 +24,7 @@ import net.minecraft.world.item.crafting.AbstractCookingRecipe;
 import net.minecraft.world.level.block.state.BlockState;
 
 public abstract class OverdriveCookingBlockEntity<R extends AbstractCookingRecipe> extends
-        OverdriveMachineBlockEntity<SingleToSinglePattern.SingleToSingleAssembly, SingleToSinglePattern, OverdriveCookingBlockEntity<R>>
+        OverdriveMachineOldBlockEntity<SingleToSinglePattern.SingleToSingleAssembly, SingleToSinglePattern, OverdriveCookingBlockEntity<R>>
         implements CookingRecipeCacheLookupHandler<R> {
 
     public OverdriveCookingBlockEntity(OverdriveAEDeferredMachine<?, ?> deferredMachine, BlockPos pos, BlockState blockState) {
@@ -32,8 +32,8 @@ public abstract class OverdriveCookingBlockEntity<R extends AbstractCookingRecip
     }
 
     @Override
-    protected OverdriveMachineLogic<SingleToSingleAssembly, SingleToSinglePattern, OverdriveCookingBlockEntity<R>> createLogic() {
-        return new OverdriveMachineLogic<>(getMainNode(), this, SingleToSinglePattern[]::new,
+    protected OverdriveMachineOldLogic<SingleToSingleAssembly, SingleToSinglePattern, OverdriveCookingBlockEntity<R>> createLogic() {
+        return new OverdriveMachineOldLogic<>(getMainNode(), this, SingleToSinglePattern[]::new,
                 SingleToSinglePattern.class);
     }
 

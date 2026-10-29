@@ -8,8 +8,8 @@ import java.util.Set;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.takenokoshi.overdriveae.main.blockentity.logic.OverdriveMachineLogic;
-import com.takenokoshi.overdriveae.main.blockentity.prefab.OverdriveMachineBlockEntity;
+import com.takenokoshi.overdriveae.main.blockentity.logic.OverdriveMachineOldLogic;
+import com.takenokoshi.overdriveae.main.blockentity.prefab.OverdriveMachineOldBlockEntity;
 import com.takenokoshi.overdriveae.main.menu.OverdriveTransformChamberMenu;
 import com.takenokoshi.overdriveae.main.pattern.MultiToSinglePattern;
 import com.takenokoshi.overdriveae.main.pattern.SingleOutputAssembly;
@@ -39,7 +39,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 
 public class OverdriveTransformChamberBlockEntity extends
-        OverdriveMachineBlockEntity<SingleOutputAssembly, MultiToSinglePattern, OverdriveTransformChamberBlockEntity>
+        OverdriveMachineOldBlockEntity<SingleOutputAssembly, MultiToSinglePattern, OverdriveTransformChamberBlockEntity>
         implements TransformRecipeLookupHandler {
 
     public static final String NBT_CATALYST_INV = "catalystInv";
@@ -86,8 +86,8 @@ public class OverdriveTransformChamberBlockEntity extends
     }
 
     @Override
-    protected OverdriveMachineLogic<SingleOutputAssembly, MultiToSinglePattern, OverdriveTransformChamberBlockEntity> createLogic() {
-        return new OverdriveMachineLogic<>(getMainNode(), this, MultiToSinglePattern[]::new,
+    protected OverdriveMachineOldLogic<SingleOutputAssembly, MultiToSinglePattern, OverdriveTransformChamberBlockEntity> createLogic() {
+        return new OverdriveMachineOldLogic<>(getMainNode(), this, MultiToSinglePattern[]::new,
                 MultiToSinglePattern.class);
     }
 

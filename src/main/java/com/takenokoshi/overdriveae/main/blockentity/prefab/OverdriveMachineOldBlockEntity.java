@@ -55,7 +55,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
-import com.takenokoshi.overdriveae.main.blockentity.logic.OverdriveMachineLogic;
+import com.takenokoshi.overdriveae.main.blockentity.logic.OverdriveMachineOldLogic;
 import com.takenokoshi.overdriveae.main.menu.OverdriveMachineMenu;
 import com.takenokoshi.overdriveae.main.registration.OverdriveAEDeferredMachine;
 
@@ -78,7 +78,7 @@ import org.jetbrains.annotations.Nullable;
  * OverdriveMachineBlockEntity
  */
 
-public abstract class OverdriveMachineBlockEntity<ASSEMBLY extends OverdriveMachineLogic.Assembly, PATTERN extends IPatternDetails, MACHINE extends OverdriveMachineBlockEntity<ASSEMBLY, PATTERN, MACHINE>>
+public abstract class OverdriveMachineOldBlockEntity<ASSEMBLY extends OverdriveMachineOldLogic.Assembly, PATTERN extends IPatternDetails, MACHINE extends OverdriveMachineOldBlockEntity<ASSEMBLY, PATTERN, MACHINE>>
         extends AENetworkedBlockEntity
         implements PatternProviderLogicHost, IUpgradeableObject, ServerTickingBlockEntity,
         InternalInventoryHost {
@@ -91,7 +91,7 @@ public abstract class OverdriveMachineBlockEntity<ASSEMBLY extends OverdriveMach
     /** 完成品が詰まっている間、何 tick おきに保存するか。 */
     protected static final int PENDING_SAVE_INTERVAL = 20;
 
-    protected final OverdriveMachineLogic<ASSEMBLY, PATTERN, MACHINE> logic;
+    protected final OverdriveMachineOldLogic<ASSEMBLY, PATTERN, MACHINE> logic;
 
     protected final IUpgradeInventory upgrades;
 
@@ -122,7 +122,7 @@ public abstract class OverdriveMachineBlockEntity<ASSEMBLY extends OverdriveMach
 
     protected final OverdriveAEDeferredMachine<?, ?> deferredMachine;
 
-    public OverdriveMachineBlockEntity(OverdriveAEDeferredMachine<?, ?> deferredMachine, BlockPos pos,
+    public OverdriveMachineOldBlockEntity(OverdriveAEDeferredMachine<?, ?> deferredMachine, BlockPos pos,
             BlockState blockState) {
         super(deferredMachine.getBlockEntityType(), pos, blockState);
         getMainNode().setIdlePowerUsage(6.0);
@@ -143,7 +143,7 @@ public abstract class OverdriveMachineBlockEntity<ASSEMBLY extends OverdriveMach
     /**
      * サブクラス側でロジックのクラスを変更できるようにしておく。
      */
-    protected abstract OverdriveMachineLogic<ASSEMBLY, PATTERN, MACHINE> createLogic();
+    protected abstract OverdriveMachineOldLogic<ASSEMBLY, PATTERN, MACHINE> createLogic();
 
     // ---------------------------------------------------- パターンの取り扱い
     /** パターンは必ずしもAE2のパターンアイテムである必要は無い。 */
@@ -378,7 +378,7 @@ public abstract class OverdriveMachineBlockEntity<ASSEMBLY extends OverdriveMach
     // ------------------------------------------------- PatternProviderLogicHost
 
     @Override
-    public OverdriveMachineLogic<ASSEMBLY, PATTERN, MACHINE> getLogic() {
+    public OverdriveMachineOldLogic<ASSEMBLY, PATTERN, MACHINE> getLogic() {
         return logic;
     }
 

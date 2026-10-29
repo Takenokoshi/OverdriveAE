@@ -1,7 +1,7 @@
 
 package com.takenokoshi.overdriveae.main.menu;
 
-import com.takenokoshi.overdriveae.main.blockentity.prefab.OverdriveMachineBlockEntity;
+import com.takenokoshi.overdriveae.main.blockentity.prefab.OverdriveMachineOldBlockEntity;
 
 import appeng.api.inventories.InternalInventory;
 import appeng.helpers.patternprovider.PatternProviderReturnInventory;
@@ -32,15 +32,15 @@ public class OverdriveMachineMenu extends QuantumCpuMenu {
         MenuOpener.addOpener(TYPE, OverdriveMachineMenu::open);
     }
 
-    public final OverdriveMachineBlockEntity<?, ?, ?> host;
+    public final OverdriveMachineOldBlockEntity<?, ?, ?> host;
 
     public OverdriveMachineMenu(int id, Inventory playerInventory,
-            OverdriveMachineBlockEntity<?, ?, ?> host) {
+            OverdriveMachineOldBlockEntity<?, ?, ?> host) {
         this(TYPE, id, playerInventory, host);
     }
 
     public OverdriveMachineMenu(MenuType<? extends QuantumCpuMenu> menuType, int id, Inventory playerInventory,
-            OverdriveMachineBlockEntity<?, ?, ?> host) {
+            OverdriveMachineOldBlockEntity<?, ?, ?> host) {
         super(menuType, id, playerInventory, host);
         this.host = host;
         /**
@@ -86,8 +86,8 @@ public class OverdriveMachineMenu extends QuantumCpuMenu {
     private static OverdriveMachineMenu fromNetwork(int containerId, Inventory playerInventory,
             RegistryFriendlyByteBuf buf) {
         MenuHostLocator locator = MenuLocators.readFromPacket(buf);
-        OverdriveMachineBlockEntity<?, ?, ?> host = locator.locate(playerInventory.player,
-                OverdriveMachineBlockEntity.class);
+        OverdriveMachineOldBlockEntity<?, ?, ?> host = locator.locate(playerInventory.player,
+                OverdriveMachineOldBlockEntity.class);
         if (host == null) {
             throw new IllegalStateException("Couldn't find a Quantum CPU at " + locator + " on the client.");
         }
@@ -100,7 +100,7 @@ public class OverdriveMachineMenu extends QuantumCpuMenu {
         if (!(player instanceof ServerPlayer serverPlayer)) {
             return false;
         }
-        OverdriveMachineBlockEntity<?, ?, ?> host = locator.locate(player, OverdriveMachineBlockEntity.class);
+        OverdriveMachineOldBlockEntity<?, ?, ?> host = locator.locate(player, OverdriveMachineOldBlockEntity.class);
         if (host == null) {
             return false;
         }

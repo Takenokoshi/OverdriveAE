@@ -2,8 +2,8 @@ package com.takenokoshi.overdriveae.main.blockentity.machine;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.takenokoshi.overdriveae.main.blockentity.logic.OverdriveMachineLogic;
-import com.takenokoshi.overdriveae.main.blockentity.prefab.OverdriveMachineBlockEntity;
+import com.takenokoshi.overdriveae.main.blockentity.logic.OverdriveMachineOldLogic;
+import com.takenokoshi.overdriveae.main.blockentity.prefab.OverdriveMachineOldBlockEntity;
 import com.takenokoshi.overdriveae.main.pattern.SingleToSinglePattern;
 import com.takenokoshi.overdriveae.main.pattern.SingleToSinglePattern.SingleToSingleAssembly;
 import com.takenokoshi.overdriveae.main.registration.OverdriveAEDeferredMachine;
@@ -22,7 +22,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class OverdriveCondenserBlockEntity extends
-        OverdriveMachineBlockEntity<SingleToSinglePattern.SingleToSingleAssembly, SingleToSinglePattern, OverdriveCondenserBlockEntity> {
+        OverdriveMachineOldBlockEntity<SingleToSinglePattern.SingleToSingleAssembly, SingleToSinglePattern, OverdriveCondenserBlockEntity> {
 
     public OverdriveCondenserBlockEntity(OverdriveAEDeferredMachine<?, ?> deferredMachine, BlockPos pos,
             BlockState blockState) {
@@ -30,8 +30,8 @@ public class OverdriveCondenserBlockEntity extends
     }
 
     @Override
-    protected OverdriveMachineLogic<SingleToSingleAssembly, SingleToSinglePattern, OverdriveCondenserBlockEntity> createLogic() {
-        return new OverdriveMachineLogic<>(getMainNode(), this, SingleToSinglePattern[]::new,
+    protected OverdriveMachineOldLogic<SingleToSingleAssembly, SingleToSinglePattern, OverdriveCondenserBlockEntity> createLogic() {
+        return new OverdriveMachineOldLogic<>(getMainNode(), this, SingleToSinglePattern[]::new,
                 SingleToSinglePattern.class);
     }
 

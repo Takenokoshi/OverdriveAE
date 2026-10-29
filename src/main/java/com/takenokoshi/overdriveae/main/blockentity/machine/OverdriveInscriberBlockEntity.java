@@ -8,9 +8,9 @@ import java.util.function.Predicate;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.takenokoshi.overdriveae.main.blockentity.logic.OverdriveMachineLogic;
+import com.takenokoshi.overdriveae.main.blockentity.logic.OverdriveMachineOldLogic;
 import com.takenokoshi.overdriveae.main.blockentity.logic.OverdrivePatternInv;
-import com.takenokoshi.overdriveae.main.blockentity.prefab.OverdriveMachineBlockEntity;
+import com.takenokoshi.overdriveae.main.blockentity.prefab.OverdriveMachineOldBlockEntity;
 import com.takenokoshi.overdriveae.main.menu.OverdriveInscriberMenu;
 import com.takenokoshi.overdriveae.main.pattern.MultiToSinglePattern;
 import com.takenokoshi.overdriveae.main.pattern.SingleOutputAssembly;
@@ -39,7 +39,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class OverdriveInscriberBlockEntity
-        extends OverdriveMachineBlockEntity<SingleOutputAssembly, MultiToSinglePattern, OverdriveInscriberBlockEntity>
+        extends OverdriveMachineOldBlockEntity<SingleOutputAssembly, MultiToSinglePattern, OverdriveInscriberBlockEntity>
         implements InscriberRecipeLookupHandler {
 
     public static final String NBT_CATALYST_INV = "catalystInv";
@@ -59,8 +59,8 @@ public class OverdriveInscriberBlockEntity
     }
 
     @Override
-    protected OverdriveMachineLogic<SingleOutputAssembly, MultiToSinglePattern, OverdriveInscriberBlockEntity> createLogic() {
-        return new OverdriveMachineLogic<SingleOutputAssembly, MultiToSinglePattern, OverdriveInscriberBlockEntity>(
+    protected OverdriveMachineOldLogic<SingleOutputAssembly, MultiToSinglePattern, OverdriveInscriberBlockEntity> createLogic() {
+        return new OverdriveMachineOldLogic<SingleOutputAssembly, MultiToSinglePattern, OverdriveInscriberBlockEntity>(
                 getMainNode(), this, MultiToSinglePattern[]::new, MultiToSinglePattern.class);
     }
 

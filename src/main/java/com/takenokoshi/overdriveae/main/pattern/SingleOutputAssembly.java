@@ -1,10 +1,10 @@
 package com.takenokoshi.overdriveae.main.pattern;
 
-import com.takenokoshi.overdriveae.main.blockentity.logic.OverdriveMachineLogic;
+import com.takenokoshi.overdriveae.main.blockentity.logic.OverdriveMachineOldLogic;
 
 import appeng.api.stacks.GenericStack;
 
-public class SingleOutputAssembly implements OverdriveMachineLogic.Assembly {
+public class SingleOutputAssembly implements OverdriveMachineOldLogic.Assembly {
 
     public final GenericStack[] inputs;
     public final GenericStack output;

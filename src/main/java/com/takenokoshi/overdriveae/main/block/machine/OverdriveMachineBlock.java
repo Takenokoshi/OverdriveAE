@@ -13,7 +13,7 @@
  */
 package com.takenokoshi.overdriveae.main.block.machine;
 
-import com.takenokoshi.overdriveae.main.blockentity.prefab.OverdriveMachineBlockEntity;
+import com.takenokoshi.overdriveae.main.blockentity.prefab.OverdriveMachineOldBlockEntity;
 
 import appeng.api.orientation.IOrientationStrategy;
 import appeng.api.orientation.OrientationStrategies;
@@ -34,7 +34,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
 
-public class OverdriveMachineBlock<E extends  OverdriveMachineBlockEntity<?,?,?>> extends AEBaseEntityBlock<E> {
+public class OverdriveMachineBlock<E extends  OverdriveMachineOldBlockEntity<?,?,?>> extends AEBaseEntityBlock<E> {
 
     public OverdriveMachineBlock(Properties props) {
         // noOcclusion: モデルに透明な部分があるので、隣のブロックの面を消させない。
@@ -67,7 +67,7 @@ public class OverdriveMachineBlock<E extends  OverdriveMachineBlockEntity<?,?,?>
     @Override
     public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block,
             BlockPos fromPos, boolean isMoving) {
-        OverdriveMachineBlockEntity<?,?,?> be = getBlockEntity(level, pos);
+        OverdriveMachineOldBlockEntity<?,?,?> be = getBlockEntity(level, pos);
         if (be != null) {
             be.getLogic().updateRedstoneState();
         }
@@ -105,7 +105,7 @@ public class OverdriveMachineBlock<E extends  OverdriveMachineBlockEntity<?,?,?>
     }
 
     private boolean openScreen(Level level, BlockPos pos, Player player) {
-        OverdriveMachineBlockEntity<?,?,?> be = getBlockEntity(level, pos);
+        OverdriveMachineOldBlockEntity<?,?,?> be = getBlockEntity(level, pos);
         if (be == null) {
             return false;
         }

@@ -16,7 +16,7 @@ package com.takenokoshi.overdriveae.main.blockentity.logic;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
-import com.takenokoshi.overdriveae.main.blockentity.prefab.OverdriveMachineBlockEntity;
+import com.takenokoshi.overdriveae.main.blockentity.prefab.OverdriveMachineOldBlockEntity;
 
 import java.math.BigInteger;
 import java.util.HashSet;
@@ -44,7 +44,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
-public class OverdriveMachineLogic<ASSEMBLY extends OverdriveMachineLogic.Assembly, PATTERN extends IPatternDetails, MACHINE extends OverdriveMachineBlockEntity<ASSEMBLY, PATTERN, MACHINE>>
+public class OverdriveMachineOldLogic<ASSEMBLY extends OverdriveMachineOldLogic.Assembly, PATTERN extends IPatternDetails, MACHINE extends OverdriveMachineOldBlockEntity<ASSEMBLY, PATTERN, MACHINE>>
         extends InsanePatternProviderLogic implements IBulkCraftingProvider {
 
     protected static final Logger LOGGER = LogUtils.getLogger();
@@ -119,7 +119,7 @@ public class OverdriveMachineLogic<ASSEMBLY extends OverdriveMachineLogic.Assemb
     protected final OverdrivePatternInv patternInv;
     protected final PATTERN[] patterns;
 
-    public OverdriveMachineLogic(IManagedGridNode mainNode, MACHINE host,
+    public OverdriveMachineOldLogic(IManagedGridNode mainNode, MACHINE host,
             IntFunction<PATTERN[]> patternArrayConstructor, Class<PATTERN> patternClass) {
         /** InsanePatternProviderLogic側のパターンスロットは不要なので1枠のみにしておく。バグらないなら0でいい。 */
         super(mainNode, host, 1);
