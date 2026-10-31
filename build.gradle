@@ -106,11 +106,16 @@ configurations {
 
 dependencies {
     implementation "curse.maven:guideme-1173950:8897145"
-    implementation "curse.maven:applied-energistics-2-223794:8992605"
     implementation "curse.maven:mega-cells-622112:7952621"
     implementation "curse.maven:insaneae-1627326:9079001"
 
+    implementation files("libs/appliedenergistics2-19.2.18.jar")
     compileOnly files("libs/aco2.0.0-rc.5-processing.1_1.21.1.jar")
+
+
+    accessTransformers files(
+        "src/main/resources/META-INF/accesstransformer.cfg"
+    )
 }
 
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {

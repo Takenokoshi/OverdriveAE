@@ -19,6 +19,10 @@ public class OverdriveAEInv extends GenericStackInv {
         this.updateListener = updateListener;
     }
 
+    public OverdriveAEInv(int size, OverdriveAEInvUpdateListener updateListener){
+        this(null, size, updateListener);
+    }
+
     @Override
     public void setFilter(@Nullable AEKeySlotFilter filter) {
         super.setFilter(filter);
