@@ -1,4 +1,4 @@
-package com.takenokoshi.overdriveae.main.registration;
+package com.takenokoshi.overdriveae.main.util;
 
 import java.util.ArrayList;
 import java.util.Collections;

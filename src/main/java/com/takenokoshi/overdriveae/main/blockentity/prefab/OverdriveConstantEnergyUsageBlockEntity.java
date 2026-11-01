@@ -1,6 +1,7 @@
 package com.takenokoshi.overdriveae.main.blockentity.prefab;
 
 import java.util.List;
+import java.util.function.DoubleSupplier;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -9,6 +10,7 @@ import com.takenokoshi.overdriveae.main.blockentity.logic.OverdriveMachineLogicH
 import com.takenokoshi.overdriveae.main.registries.OverdriveAEItems;
 
 import appeng.api.config.Actionable;
+import appeng.api.config.PowerMultiplier;
 import appeng.api.crafting.IPatternDetails;
 import appeng.api.inventories.ISegmentedInventory;
 import appeng.api.inventories.InternalInventory;
@@ -46,31 +48,44 @@ public abstract class OverdriveConstantEnergyUsageBlockEntity<PATTERN extends IP
     protected boolean coprocessorUsageReductionEnabled;
 
     protected double energyPerProcess;
-    protected final double baseEnergyPerProcess, baseEnergyCapacity;
+    protected final DoubleSupplier baseEnergyPerProcess, baseEnergyCapacity;
+
+    protected int energyCards;
+    protected double energyUsageModifier;
+    protected final PowerMultiplier powerMultiplier;
 
     public OverdriveConstantEnergyUsageBlockEntity(BlockEntityType<?> blockEntityType, BlockPos pos,
-            BlockState blockState, double baseEnergyPerProcess, double baseEnergyCapacity) {
+            BlockState blockState, DoubleSupplier baseEnergyPerProcess, DoubleSupplier baseEnergyCapacity,
+            PowerMultiplier powerMultiplier) {
         super(blockEntityType, pos, blockState);
         this.logic = createLogic();
         this.upgradeInventory = createUpgradeInv();
         this.baseEnergyPerProcess = baseEnergyPerProcess;
-        this.energyPerProcess = this.baseEnergyPerProcess;
+        this.energyPerProcess = this.baseEnergyPerProcess.getAsDouble();
         this.baseEnergyCapacity = baseEnergyCapacity;
+        this.energyUsageModifier = 1.0D;
+        this.powerMultiplier = powerMultiplier;
     }
 
     protected abstract OverdriveMachineLogic<PATTERN, PATTERN_CACHE> createLogic();
 
     protected abstract IUpgradeInventory createUpgradeInv();
 
-    protected void setEnergyPerProcess(double energyPerProcess) {
-        this.energyPerProcess = energyPerProcess;
+    /**
+     * エネルギーに関するConfig更新時にも実行したい
+     * OverdriveAEの機械は独自のConfigを持たないので追加で実行するべきタイミングはない
+     */
+    public void updateEnergy() {
+        setInternalMaxPower(baseEnergyCapacity.getAsDouble() * Math.pow(256.0D, energyCards));
+        energyPerProcess = baseEnergyPerProcess.getAsDouble() * energyUsageModifier;
     }
 
     @Override
     public long budget(@NotNull PATTERN pattern) {
         return energyPerProcess <= 0.0D
                 ? remainingBudgetThisTick
-                : Math.min((long) (getAECurrentPower() / energyPerProcess), remainingBudgetThisTick);
+                : Math.min((long) (powerMultiplier.divide(getAECurrentPower()) / energyPerProcess),
+                        remainingBudgetThisTick);
     }
 
     @Override
@@ -103,7 +118,7 @@ public abstract class OverdriveConstantEnergyUsageBlockEntity<PATTERN extends IP
     @Override
     public void onProcessAdditional(@NotNull PATTERN pattern, @NotNull PATTERN_CACHE cache, long times) {
         remainingBudgetThisTick -= times;
-        extractAEPower(energyPerProcess * times, Actionable.MODULATE);
+        extractAEPower(energyPerProcess * times, Actionable.MODULATE, powerMultiplier);
     }
 
     // ------------------------------------------------------------ アップグレード
@@ -131,13 +146,13 @@ public abstract class OverdriveConstantEnergyUsageBlockEntity<PATTERN extends IP
             }
         }
         budget = speedCards >= 7 ? Long.MAX_VALUE : (1L << speedCards * 8 + 7) - 1L;
-        int energyCards = 0;
+        energyCards = 0;
         for (int i = 0; i < 7; i++) {
             if (upgradeInventory.isInstalled(OverdriveAEItems.OVERDRIVE_ENERGY_CARDS.get(i))) {
                 energyCards++;
             }
         }
-        setInternalMaxPower(baseEnergyCapacity * Math.pow(64.0D, energyCards));
+        updateEnergy();
         saveChanges();
     }
 

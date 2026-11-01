@@ -3,7 +3,7 @@ package com.takenokoshi.overdriveae.main.registries;
 import java.util.List;
 
 import com.takenokoshi.overdriveae.main.OverdriveAE;
-import com.takenokoshi.overdriveae.main.registration.ListBuilder;
+import com.takenokoshi.overdriveae.main.util.ListBuilder;
 
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredItem;

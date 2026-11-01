@@ -1,4 +1,4 @@
-package com.takenokoshi.overdriveae.main.blockentity.logic;
+package com.takenokoshi.overdriveae.main.util;
 
 import java.util.LinkedHashMap;
 

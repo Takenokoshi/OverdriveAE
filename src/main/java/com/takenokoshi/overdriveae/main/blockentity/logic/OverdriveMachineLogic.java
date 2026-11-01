@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.takenokoshi.overdriveae.main.blockentity.prefab.BigGenericHolder;
 import com.takenokoshi.overdriveae.main.blockentity.prefab.OverdriveAEInv;
+import com.takenokoshi.overdriveae.main.util.LRUCacheMap;
 
 import appeng.api.config.Actionable;
 import appeng.api.crafting.IPatternDetails;
@@ -114,6 +115,7 @@ public class OverdriveMachineLogic<PATTERN extends IPatternDetails, PATTERN_CACH
             patternsDirty = false;
             needUpdateAvailablePatterns = true;
             lastDecodeTick = host.currentTick();
+            patternCacheMap.clear();
             ICraftingProvider.requestUpdate(this.mainNode);
             updateAvailablePatterns();
         }
