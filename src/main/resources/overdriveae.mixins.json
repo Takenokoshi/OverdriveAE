@@ -5,6 +5,8 @@
     "refmap": "overdriveae.refmap.json",
     "mixins": [
         "InsanePatternProviderLogicMixin",
+        "CraftingCpuLogicMixin",
+        "StoredEnergyAmountMixin",
         "AEBaseMenuMixin",
         "AbstractContainerMenuMixin"
     ],

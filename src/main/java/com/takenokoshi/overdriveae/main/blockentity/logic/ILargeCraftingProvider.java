@@ -29,5 +29,5 @@ public interface ILargeCraftingProvider extends ICraftingProvider {
      * 
      * @return クラフトCPUの並列数の消費数の減少が有効か
      */
-    boolean compressTaskEnabled();
+    boolean coprocessorUsageReductionEnabled();
 }

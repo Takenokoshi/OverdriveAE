@@ -38,12 +38,17 @@ public interface OverdriveMachineLogicHost<PATTERN extends IPatternDetails, PATT
      * @param pattern
      * @return
      */
-    long budget(@NotNull PATTERN pattern);
+    default long budget(@NotNull PATTERN pattern) {
+        return Long.MAX_VALUE;
+    }
 
     /**
      * @return 現在のゲーム内時刻
      */
-    long currentTick();
+    default long currentTick() {
+        Level level = getLevel();
+        return level == null ? Long.MIN_VALUE : level.getGameTime();
+    }
 
     /**
      * @return このTickにどんなパターンも処理できないなら{@code true}
@@ -85,7 +90,6 @@ public interface OverdriveMachineLogicHost<PATTERN extends IPatternDetails, PATT
      * パターンキャッシュを基に、回数分の成果物を搬出リストに追加する。
      * 材料の確率消費は、消費しなかった分をここで搬出リストに加える
      * サブ成果物の確率生成は、パターンには反映せず、ここで生成分を搬出リストに加える
-     * エネルギーの消費がある場合、ここで消費する
      * 
      * @param pattern      パターン
      * @param cache        パターンキャッシュ
@@ -95,12 +99,15 @@ public interface OverdriveMachineLogicHost<PATTERN extends IPatternDetails, PATT
     void addOutputsToHolder(@NotNull PATTERN pattern, @NotNull PATTERN_CACHE cache, long times,
             BigGenericHolder outputHolder);
 
+    default void onProcessAdditional(@NotNull PATTERN pattern, @NotNull PATTERN_CACHE cache, long times) {
+    }
+
     void saveChanges();
 
     /**
      * 
      * @return クラフトCPUの並列数の消費数の減少が有効か
      */
-    boolean compressTaskEnebled();
+    boolean coprocessorUsageReductionEnabled();
 
 }

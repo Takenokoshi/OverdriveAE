@@ -2,13 +2,17 @@ package com.takenokoshi.overdriveae.main.blockentity.prefab;
 
 import java.math.BigInteger;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import appeng.api.stacks.AEKey;
 import appeng.api.stacks.GenericStack;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 
 public class BigGenericHolder extends LinkedHashMap<AEKey, BigInteger> {
 
@@ -103,5 +107,11 @@ public class BigGenericHolder extends LinkedHashMap<AEKey, BigInteger> {
             listTag.add(tag);
         });
         data.put(name, listTag);
+    }
+
+    public void addDrops(List<ItemStack> drops, Level level, BlockPos pos) {
+        forEach((key, value) -> {
+            key.addDrops(value.min(BigInteger.valueOf(Long.MAX_VALUE)).longValueExact(), drops, level, pos);
+        });
     }
 }

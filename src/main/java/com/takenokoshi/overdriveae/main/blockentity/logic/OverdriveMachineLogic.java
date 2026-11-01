@@ -19,11 +19,14 @@ import appeng.api.networking.IManagedGridNode;
 import appeng.api.networking.crafting.ICraftingProvider;
 import appeng.api.networking.security.IActionSource;
 import appeng.api.stacks.AEKey;
+import appeng.api.stacks.AEKeyType;
 import appeng.api.stacks.GenericStack;
 import appeng.api.stacks.KeyCounter;
 import appeng.api.storage.MEStorage;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 public class OverdriveMachineLogic<PATTERN extends IPatternDetails, PATTERN_CACHE>
@@ -55,7 +58,8 @@ public class OverdriveMachineLogic<PATTERN extends IPatternDetails, PATTERN_CACH
             IManagedGridNode mainNode,
             Class<PATTERN> patternClass,
             IntFunction<PATTERN[][]> pattern2DArrayConstructor,
-            IntFunction<PATTERN[]> patternArrayConstructor, IActionSource actionSource) {
+            IntFunction<PATTERN[]> patternArrayConstructor,
+            IActionSource actionSource) {
         this.host = host;
         this.mainNode = mainNode
                 .setFlags(GridFlags.REQUIRE_CHANNEL)
@@ -76,6 +80,18 @@ public class OverdriveMachineLogic<PATTERN extends IPatternDetails, PATTERN_CACH
         this.actionSource = actionSource;
     }
 
+    public OverdriveAEInv getPatternInv() {
+        return patternInv;
+    }
+
+    public boolean isOutputEmpty() {
+        return outputHolder.isEmpty();
+    }
+
+    public void setPatternInvCapacity(AEKeyType space, long capacity) {
+        patternInv.setCapacity(space, capacity);
+    }
+
     public void markPatternsDirty() {
         patternsDirty = true;
         if (lastDecodeTick != host.currentTick()) {
@@ -83,10 +99,10 @@ public class OverdriveMachineLogic<PATTERN extends IPatternDetails, PATTERN_CACH
         }
     }
 
-    public void markNeedUpdateAvailablePattern() {
+    public void markAvailablePatternsDirty() {
         needUpdateAvailablePatterns = true;
         if (lastUpdateTick != host.currentTick()) {
-            updateAvailablePatternsIfNeed();
+            updateAvailablePatterns();
         }
     }
 
@@ -99,20 +115,17 @@ public class OverdriveMachineLogic<PATTERN extends IPatternDetails, PATTERN_CACH
             needUpdateAvailablePatterns = true;
             lastDecodeTick = host.currentTick();
             ICraftingProvider.requestUpdate(this.mainNode);
-            updateAvailablePatternsIfNeed();
+            updateAvailablePatterns();
         }
     }
 
     protected void onPatternInvChange(int slotIndex, @Nullable GenericStack stack) {
         this.decodedPatterns[slotIndex] = host.decodePattern(stack);
-        markNeedUpdateAvailablePattern();
+        markAvailablePatternsDirty();
         host.saveChanges();
     }
 
-    /**
-     * {@link #getAvailablePatterns()}で呼んでいるので他のタイミングで呼ぶ必要は無い。
-     */
-    protected void updateAvailablePatternsIfNeed() {
+    protected void updateAvailablePatterns() {
         updatePatterns();
         if (needUpdateAvailablePatterns) {
             this.availablePatterns.clear();
@@ -128,7 +141,7 @@ public class OverdriveMachineLogic<PATTERN extends IPatternDetails, PATTERN_CACH
 
     @Override
     public List<IPatternDetails> getAvailablePatterns() {
-        updateAvailablePatternsIfNeed();
+        updateAvailablePatterns();
         return List.copyOf(availablePatterns);
     }
 
@@ -156,7 +169,7 @@ public class OverdriveMachineLogic<PATTERN extends IPatternDetails, PATTERN_CACH
     }
 
     protected final boolean hasPattern(IPatternDetails patternDetails) {
-        updateAvailablePatternsIfNeed();
+        updateAvailablePatterns();
         return availablePatterns.contains(patternDetails);
     }
 
@@ -209,12 +222,15 @@ public class OverdriveMachineLogic<PATTERN extends IPatternDetails, PATTERN_CACH
             PATTERN_CACHE cache = getCache(pattern, inputHolder);
             host.addOutputsToHolder(pattern, cache, budget, outputHolder);
             host.consumeInputs(pattern, cache, budget, inputHolder);
+            host.onProcessAdditional(pattern, cache, budget);
             return budget;
         } else {
-            host.addOutputsToHolder(pattern, getCache(pattern, inputHolder), times, outputHolder);
+            PATTERN_CACHE cache = getCache(pattern, inputHolder);
+            host.addOutputsToHolder(pattern, cache, times, outputHolder);
             for (KeyCounter counter : inputHolder) {
                 counter.clear();
             }
+            host.onProcessAdditional(pattern, cache, times);
             return times;
         }
     }
@@ -255,8 +271,18 @@ public class OverdriveMachineLogic<PATTERN extends IPatternDetails, PATTERN_CACH
     }
 
     @Override
-    public boolean compressTaskEnabled() {
-        return host.compressTaskEnebled();
+    public boolean coprocessorUsageReductionEnabled() {
+        return host.coprocessorUsageReductionEnabled();
+    }
+
+    public void addDrops(Level level, BlockPos pos, List<ItemStack> drops) {
+        patternInv.addDrops(drops, level, pos);
+        outputHolder.addDrops(drops, level, pos);
+    }
+
+    public void clearContent() {
+        patternInv.clear();
+        outputHolder.clear();
     }
 
 }

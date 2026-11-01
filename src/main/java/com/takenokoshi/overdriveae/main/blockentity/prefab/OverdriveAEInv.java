@@ -1,5 +1,6 @@
 package com.takenokoshi.overdriveae.main.blockentity.prefab;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 
@@ -9,6 +10,9 @@ import appeng.api.stacks.AEKey;
 import appeng.api.stacks.GenericStack;
 import appeng.api.storage.AEKeySlotFilter;
 import appeng.helpers.externalstorage.GenericStackInv;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 
 public class OverdriveAEInv extends GenericStackInv {
 
@@ -45,6 +49,12 @@ public class OverdriveAEInv extends GenericStackInv {
             this.stacks[slot] = stack;
             this.updateListener.onChange(slot, stack);
             this.onChange();
+        }
+    }
+
+    public void addDrops(List<ItemStack> drops, Level level, BlockPos pos){
+        for (int i = 0; i < stacks.length; i++) {
+            stacks[i].what().addDrops(stacks[i].amount(), drops, level, pos);
         }
     }
 

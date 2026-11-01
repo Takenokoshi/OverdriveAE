@@ -85,8 +85,8 @@ public class OverdriveAE$LargeCraftingExecuter {
                 if (craftingContainer == null) {
                     break;
                 }
-                boolean compressTaskEnabled = largeCraftingProvider.compressTaskEnabled();
-                long times = compressTaskEnabled
+                boolean coprocessorUsageReductionEnabled = largeCraftingProvider.coprocessorUsageReductionEnabled();
+                long times = coprocessorUsageReductionEnabled
                         ? largeCraftingProvider.budget(patternDetails)
                         : Math.min(largeCraftingProvider.budget(patternDetails), remainingOperations - usedOperations);
                 if (times <= 0L) {
@@ -115,7 +115,7 @@ public class OverdriveAE$LargeCraftingExecuter {
                 }
                 if (pushed > 0L) {
                     energyService.extractAEPower(patternPower * pushed, Actionable.MODULATE, PowerMultiplier.CONFIG);
-                    usedOperations += compressTaskEnabled ? 1 : (int) pushed;
+                    usedOperations += coprocessorUsageReductionEnabled ? 1 : (int) pushed;
                     multiplyCounter(expectedOutputs, pushed).forEach(
                             entry -> job.waitingFor.insert(entry.getKey(), entry.getLongValue(), Actionable.MODULATE));
                     multiplyCounter(expectedContainerItems, pushed).forEach(
