@@ -2,7 +2,7 @@ package com.takenokoshi.overdriveae.main.blockentity.machine;
 
 import com.takenokoshi.overdriveae.main.blockentity.prefab.OverdriveCookingOldBlockEntity;
 import com.takenokoshi.overdriveae.main.recipe.RecipeCacheHolder;
-import com.takenokoshi.overdriveae.main.recipe.cache.CookingRecipeCache;
+import com.takenokoshi.overdriveae.main.recipe.recipecache.CookingRecipeCache;
 import com.takenokoshi.overdriveae.main.registration.OverdriveAEDeferredMachine;
 
 import net.minecraft.core.BlockPos;

@@ -1,4 +1,4 @@
-package com.takenokoshi.overdriveae.main.recipe.cache;
+package com.takenokoshi.overdriveae.main.recipe.recipecache;
 
 import java.util.List;
 import com.takenokoshi.overdriveae.main.recipe.map.ItemCacheMap;

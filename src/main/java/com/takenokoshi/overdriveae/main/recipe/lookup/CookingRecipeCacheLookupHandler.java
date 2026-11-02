@@ -1,7 +1,7 @@
 package com.takenokoshi.overdriveae.main.recipe.lookup;
 
 import com.takenokoshi.overdriveae.main.recipe.RecipeCacheHolder;
-import com.takenokoshi.overdriveae.main.recipe.cache.CookingRecipeCache;
+import com.takenokoshi.overdriveae.main.recipe.recipecache.CookingRecipeCache;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.AbstractCookingRecipe;

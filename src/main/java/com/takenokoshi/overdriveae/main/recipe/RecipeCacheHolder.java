@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-import com.takenokoshi.overdriveae.main.recipe.cache.ChargerRecipeCache;
-import com.takenokoshi.overdriveae.main.recipe.cache.CookingRecipeCache;
-import com.takenokoshi.overdriveae.main.recipe.cache.IRecipeCache;
-import com.takenokoshi.overdriveae.main.recipe.cache.InscriberRecipeCache;
-import com.takenokoshi.overdriveae.main.recipe.cache.TransformRecipeCache;
+import com.takenokoshi.overdriveae.main.recipe.recipecache.ChargerRecipeCache;
+import com.takenokoshi.overdriveae.main.recipe.recipecache.CookingRecipeCache;
+import com.takenokoshi.overdriveae.main.recipe.recipecache.IRecipeCache;
+import com.takenokoshi.overdriveae.main.recipe.recipecache.InscriberRecipeCache;
+import com.takenokoshi.overdriveae.main.recipe.recipecache.TransformRecipeCache;
 
 import appeng.recipes.AERecipeTypes;
 import appeng.recipes.handlers.ChargerRecipe;
