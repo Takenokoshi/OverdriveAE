@@ -23,16 +23,16 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.AbstractCookingRecipe;
 import net.minecraft.world.level.block.state.BlockState;
 
-public abstract class OverdriveCookingBlockEntity<R extends AbstractCookingRecipe> extends
-        OverdriveMachineOldBlockEntity<SingleToSinglePattern.SingleToSingleAssembly, SingleToSinglePattern, OverdriveCookingBlockEntity<R>>
+public abstract class OverdriveCookingOldBlockEntity<R extends AbstractCookingRecipe> extends
+        OverdriveMachineOldBlockEntity<SingleToSinglePattern.SingleToSingleAssembly, SingleToSinglePattern, OverdriveCookingOldBlockEntity<R>>
         implements CookingRecipeCacheLookupHandler<R> {
 
-    public OverdriveCookingBlockEntity(OverdriveAEDeferredMachine<?, ?> deferredMachine, BlockPos pos, BlockState blockState) {
+    public OverdriveCookingOldBlockEntity(OverdriveAEDeferredMachine<?, ?> deferredMachine, BlockPos pos, BlockState blockState) {
         super(deferredMachine, pos, blockState);
     }
 
     @Override
-    protected OverdriveMachineOldLogic<SingleToSingleAssembly, SingleToSinglePattern, OverdriveCookingBlockEntity<R>> createLogic() {
+    protected OverdriveMachineOldLogic<SingleToSingleAssembly, SingleToSinglePattern, OverdriveCookingOldBlockEntity<R>> createLogic() {
         return new OverdriveMachineOldLogic<>(getMainNode(), this, SingleToSinglePattern[]::new,
                 SingleToSinglePattern.class);
     }
