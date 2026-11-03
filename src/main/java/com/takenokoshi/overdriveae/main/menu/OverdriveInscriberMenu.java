@@ -21,7 +21,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 
-public class OverdriveInscriberMenu extends OverdriveMachineMenu {
+public class OverdriveInscriberMenu extends OverdriveMachineOldMenu {
 
     public static final MenuType<OverdriveInscriberMenu> TYPE = IMenuTypeExtension
             .create(OverdriveInscriberMenu::fromNetwork);
@@ -37,7 +37,7 @@ public class OverdriveInscriberMenu extends OverdriveMachineMenu {
         this(TYPE, id, playerInventory, host);
     }
 
-    public OverdriveInscriberMenu(MenuType<? extends OverdriveMachineMenu> menuType, int id, Inventory playerInventory,
+    public OverdriveInscriberMenu(MenuType<? extends OverdriveMachineOldMenu> menuType, int id, Inventory playerInventory,
             OverdriveInscriberBlockEntity host) {
         super(menuType, id, playerInventory, host);
     }

@@ -2,8 +2,10 @@ package com.takenokoshi.overdriveae.main;
 
 import com.takenokoshi.overdriveae.main.menu.OverdriveInscriberMenu;
 import com.takenokoshi.overdriveae.main.menu.OverdriveMachineMenu;
+import com.takenokoshi.overdriveae.main.menu.OverdriveMachineOldMenu;
 import com.takenokoshi.overdriveae.main.menu.OverdriveTransformChamberMenu;
 import com.takenokoshi.overdriveae.main.screen.OverdriveInscriberScreen;
+import com.takenokoshi.overdriveae.main.screen.OverdriveMachineOldScreen;
 import com.takenokoshi.overdriveae.main.screen.OverdriveMachineScreen;
 import com.takenokoshi.overdriveae.main.screen.OverdriveTransformChamberScreen;
 
@@ -37,7 +39,9 @@ public class OverdriveAEClient extends OverdriveAE {
         InitScreens.register(event, OverdriveInscriberMenu.TYPE, OverdriveInscriberScreen::new,
                 "/screens/insaneae/quantum_cpu.json");
         /** そのままだと型推論がうまくいかないのでクラス指定しておく */
-        InitScreens.register(event, OverdriveMachineMenu.TYPE, OverdriveMachineScreen<OverdriveMachineMenu>::new ,
+        InitScreens.register(event, OverdriveMachineOldMenu.TYPE, OverdriveMachineOldScreen<OverdriveMachineOldMenu>::new ,
                 "/screens/insaneae/quantum_cpu.json");
+        InitScreens.register(event, OverdriveMachineMenu.TYPE, OverdriveMachineScreen<OverdriveMachineMenu>::new ,
+                "/screens/overdriveae/overdrive_machine.json");
     }
 }

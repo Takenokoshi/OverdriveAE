@@ -1,6 +1,5 @@
 package com.takenokoshi.overdriveae.main.mixin;
 
-import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -10,11 +9,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
+import com.takenokoshi.overdriveae.main.blockentity.logic.ExecutingCraftingJobBridge;
+import com.takenokoshi.overdriveae.main.blockentity.logic.OverdriveCraftingExecuter;
 
 import appeng.api.networking.energy.IEnergyService;
 import appeng.crafting.execution.CraftingCpuLogic;
 import appeng.crafting.execution.ExecutingCraftingJob;
-import appeng.crafting.execution.OverdriveAE$LargeCraftingExecuter;
 import appeng.crafting.inv.ListCraftingInventory;
 import appeng.me.cluster.implementations.CraftingCPUCluster;
 import appeng.me.service.CraftingService;
@@ -33,9 +33,6 @@ public abstract class CraftingCpuLogicMixin {
     @Final
     private ListCraftingInventory inventory;
 
-    @Shadow
-    public abstract boolean isJobSuspended();
-
     @Inject(
             /**
              * 対象メソッドがexecuteCraftingではなくtickCraftingLogicなのは、
@@ -46,7 +43,7 @@ public abstract class CraftingCpuLogicMixin {
             },
             // ローカル変数startedにremainingOperationsが保存された直後を狙って実行している
             at = {
-                    @At(value = "STORE", opcode = Opcodes.ISTORE, ordinal = 1, shift = At.Shift.AFTER)
+                    @At(value = "com.takenokoshi.overdriveae.main.mixin.injection.AfterStartedStore")
             })
     private void overdriveae$executeMachines(
             IEnergyService eg,
@@ -61,6 +58,6 @@ public abstract class CraftingCpuLogicMixin {
          */
         int v = remainingOperations.get();
         remainingOperations
-                .set(v - OverdriveAE$LargeCraftingExecuter.executeLargeCrafting(v, cluster, cc, eg, job, inventory));
+                .set(v - OverdriveCraftingExecuter.executeOverdriveCrafting(v, cluster, cc, eg, ExecutingCraftingJobBridge.getJob(job), inventory));
     }
 }

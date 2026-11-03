@@ -4,7 +4,7 @@ import appeng.api.crafting.IPatternDetails;
 import appeng.api.networking.crafting.ICraftingProvider;
 import appeng.api.stacks.KeyCounter;
 
-public interface ILargeCraftingProvider extends ICraftingProvider {
+public interface IOverdriveCraftingProvider extends ICraftingProvider {
     /**
      * このtickに実行可能な回数を取得する
      * 
@@ -23,7 +23,7 @@ public interface ILargeCraftingProvider extends ICraftingProvider {
      * @param times
      * @return 実際に処理できた回数
      */
-    long pushPatternLarge(IPatternDetails patternDetails, KeyCounter[] inputHolder, long times);
+    long pushPatternOverdrive(IPatternDetails patternDetails, KeyCounter[] inputHolder, long times);
 
     /**
      * 

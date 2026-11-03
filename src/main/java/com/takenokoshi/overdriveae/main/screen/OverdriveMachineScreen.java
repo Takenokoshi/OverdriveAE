@@ -1,243 +1,175 @@
-/*
- * Portions of this file are derived from InsaneAE.
- *
- * Original project:
- * https://github.com/taikun24/InsaneAE
- *
- * Original license: GNU General Public License v3.0
- *
- * Modified for OverdriveAE.
- * Copyright (c) 2026 Takenokoshi
- *
- * This file is distributed under the GNU GPL v3.0.
- */
 package com.takenokoshi.overdriveae.main.screen;
 
+import java.util.HashSet;
 import java.util.List;
-import java.util.function.Supplier;
 
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
 import com.takenokoshi.overdriveae.main.menu.OverdriveMachineMenu;
 
-import appeng.api.config.LockCraftingMode;
-import appeng.api.upgrades.IUpgradeableObject;
+import appeng.client.gui.AEBaseScreen;
 import appeng.client.gui.Icon;
-import appeng.client.gui.implementations.PatternProviderScreen;
 import appeng.client.gui.style.ScreenStyle;
-import appeng.client.gui.widgets.IconButton;
-import appeng.client.gui.widgets.UpgradesPanel;
 import appeng.menu.SlotSemantic;
 import appeng.menu.SlotSemantics;
 import appeng.menu.slot.AppEngSlot;
-import jp.main.taikun.insaneae.menu.QuantumCpuMenu;
-import jp.main.taikun.insaneae.mixin.SlotAccessor;
-import jp.main.taikun.insaneae.quantum.QuantumCpuBlockEntity;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 
-public class OverdriveMachineScreen<M extends OverdriveMachineMenu> extends PatternProviderScreen<M> {
+public class OverdriveMachineScreen<M extends OverdriveMachineMenu> extends AEBaseScreen<M> {
 
     protected static final Logger LOG = LogUtils.getLogger();
 
-    protected static final int COLUMNS = QuantumCpuBlockEntity.PATTERN_COLUMNS;
-    protected static final int PER_PAGE = QuantumCpuBlockEntity.PATTERN_SLOTS_PER_PAGE;
-    protected static final int PAGES = QuantumCpuBlockEntity.PATTERN_PAGES;
-
-    /** パターン枠の左上と間隔 (quantum_cpu.json の ENCODED_PATTERN と同じ値)。 */
-    protected static final int GRID_LEFT = 8;
-    protected static final int GRID_TOP = 22;
-    protected static final int SLOT_SIZE = 18;
-    protected final IconTextButton prevPage;
-    protected final IconTextButton nextPage;
-    protected int page;
-
-    public OverdriveMachineScreen(M menu, Inventory playerInventory, Component title,
-            ScreenStyle style) {
-        super(menu, playerInventory, title, style);
-        addUpgradesPanel(menu.host);
-        prevPage = new IconTextButton(() -> Icon.ARROW_LEFT,
-                Component.translatable("gui.insaneae.quantum_cpu.previous_page"), btn -> turnPage(-1));
-        nextPage = new IconTextButton(() -> Icon.ARROW_RIGHT,
-                Component.translatable("gui.insaneae.quantum_cpu.next_page"), btn -> turnPage(1));
-        widgets.add("prevPage", prevPage);
-        widgets.add("nextPage", nextPage);
-    }
+    protected final BasicIconButton backToPatternSlots, openUpgradeSlots, prevPage, nextPage;
 
     /**
-     * アップグレードカードのパネル。
-     *
-     * <p>
-     * <b>他 Mod が同じものを先に足していることがある。</b> 例えば ExtendedAE Plus は
-     * {@code PatternProviderScreen} のコンストラクタに Mixin で
-     * {@code widgets.add("upgrades", new UpgradesPanel(...))} を注入する。
-     * こちらは {@code super(...)} の後に同じ ID で足すので、
-     * {@code WidgetContainer} の重複チェック ({@code "%s already used for widget"}) に当たって
-     * {@code IllegalStateException} になり、<b>画面が開けなくなる</b>
-     * (相手は自分の追加だけ try/catch で守っているのでログにも出ない)。
-     * </p>
-     *
-     * <p>
-     * 中身はどちらも同じ {@code UPGRADE} スロットなので、既にあるなら相手のパネルに任せる。
-     * </p>
+     * このスクリーンで管理するSlotSemanticのデータ
+     * ここに追加していないSlotSemantic所属のSlotは影響を受けない
      */
-    private void addUpgradesPanel(IUpgradeableObject upgradeable) {
-        try {
-            widgets.add("upgrades", new UpgradesPanel(menu.getSlots(SlotSemantics.UPGRADE), upgradeable));
-        } catch (IllegalStateException alreadyAdded) {
-            LOG.debug("InsaneAE: upgrades パネルは他 Mod が追加済みなので任せる ({})",
-                    alreadyAdded.getMessage());
-        }
+    protected final HashSet<SlotSemanticPosData> semanticPosDatas;
+
+    /**
+     * 現在表示中のSlotSemantic
+     * {@link #layoutSlots()}で参照し、
+     * {@link #semanticPosDatas}に登録されたSlotSemantic全てに対して描画のon/offを切り替える
+     */
+    @NotNull
+    protected SlotSemantic visibleSemantic;
+
+    public OverdriveMachineScreen(M menu, Inventory playerInventory, Component title, ScreenStyle style) {
+        super(menu, playerInventory, title, style);
+        this.backToPatternSlots = new BasicIconButton(this::backToPatternSlots, () -> Icon.BACK)
+                .setText(Component.translatable("gui.overdriveae.element.back_to_pattern_slots"));
+        this.openUpgradeSlots = new BasicIconButton(this::openUpgradeSlots, () -> Icon.BACKGROUND_UPGRADE)
+                .setText(Component.translatable("gui.overdriveae.element.open_upgrade_slots"));
+        this.prevPage = new BasicIconButton(this::prevPage, () -> Icon.ARROW_LEFT)
+                .setText(Component.translatable("gui.overdriveae.element.prev_page"));
+        this.nextPage = new BasicIconButton(this::nextPage, () -> Icon.ARROW_RIGHT)
+                .setText(Component.translatable("gui.overdriveae.element.next_page"));
+        widgets.addOpenPriorityButton();
+        widgets.add("backToPatternSlots", backToPatternSlots);
+        widgets.add("openUpgradeSlots", openUpgradeSlots);
+        widgets.add("prevPage", prevPage);
+        widgets.add("nextPage", nextPage);
+        this.semanticPosDatas = new HashSet<>();
+        semanticPosDatas.add(new SlotSemanticPosData(SlotSemantics.ENCODED_PATTERN, 8, 22, 9));
+        semanticPosDatas.add(new SlotSemanticPosData(SlotSemantics.UPGRADE, 8, 34, 9));
+        this.visibleSemantic = SlotSemantics.ENCODED_PATTERN;
     }
 
     @Override
     protected void init() {
         super.init();
-        // super.init() がスタイルどおりに全スロットを並べてしまうので、ここで並べ直す。
         layoutSlots();
     }
 
-    // ------------------------------------------------------------------ ページ送り
-
-    protected void turnPage(int delta) {
-        setPage(page + delta);
+    protected void prevPage(Button btn) {
+        menu.prevPage();
+        layoutSlots();
     }
 
-    protected void setPage(int newPage) {
-        int clamped = Math.max(0, Math.min(pageCount() - 1, newPage));
-        if (clamped != page) {
-            page = clamped;
-            menu.setPage(page);
-            layoutSlots();
-        }
+    protected void nextPage(Button btn) {
+        menu.nextPage();
+        layoutSlots();
     }
 
-    protected int pageCount() {
-        return menu.isServerPaged() ? menu.getPageCount() : PAGES;
+    protected void backToPatternSlots(Button btn) {
+        setVisibleSemantic(SlotSemantics.ENCODED_PATTERN);
     }
 
-    /**
-     * 現在のページのパターン枠と、クラフトユニット枠を並べる。
-     *
-     * <p>
-     * パターン枠とユニット枠は<b>同じ場所を取り合う</b>ので、出しているのはどちらか一方だけ。
-     * </p>
-     *
-     * <p>
-     * サーバ側でページ分割されている場合 ({@link QuantumCpuMenu#isServerPaged()})、
-     * メニューには 1 ページぶんのスロットしか無いので素直に並べるだけ。
-     * サーバ側のページングを切っている場合は全枠 (1620) 並んでいるので、
-     * 表示するページぶんだけ位置を決めて残りは非表示にする<b>旧来のやり方</b>に落ちる。
-     * </p>
-     */
+    protected void openUpgradeSlots(Button btn) {
+        setVisibleSemantic(SlotSemantics.UPGRADE);
+    }
+
+    protected void setVisibleSemantic(SlotSemantic visibleSemantic) {
+        this.visibleSemantic = visibleSemantic;
+        layoutSlots();
+    }
+
     protected void layoutSlots() {
-        layoutPatternSlots(true);
-    }
-
-    protected void layoutPatternSlots(boolean patternSlotsvisible) {
-        List<Slot> slots = menu.getSlots(SlotSemantics.ENCODED_PATTERN);
-        int first = menu.isServerPaged() ? 0 : page * PER_PAGE;
-
-        for (int index = 0; index < slots.size(); index++) {
-            Slot slot = slots.get(index);
-            int inPage = index - first;
-            boolean visible = patternSlotsvisible && inPage >= 0 && inPage < PER_PAGE;
-
-            if (slot instanceof AppEngSlot appEngSlot) {
-                // setSlotEnabled ではなく setActive。
-                // 無効化すると mayPlace/mayPickup まで殺してしまい、Shift クリックが
-                // 表示中のページにしか入らなくなる。
-                appEngSlot.setActive(visible);
-            }
-            if (visible) {
-                // Slot#x/y は final なので Mixin のアクセサ経由で書く (AE2 は AT で外している)。
-                ((SlotAccessor) slot).insaneae$setX(GRID_LEFT + inPage % COLUMNS * SLOT_SIZE);
-                ((SlotAccessor) slot).insaneae$setY(GRID_TOP + inPage / COLUMNS * SLOT_SIZE);
+        for (SlotSemanticPosData posData : semanticPosDatas) {
+            if (posData.semantic().id().equals(visibleSemantic.id())) {
+                List<Slot> slots = menu.getSlots(visibleSemantic);
+                int leftPos = posData.leftPos(), topPos = posData.topPos(), columns = posData.columns();
+                for (int i = 0; i < slots.size(); i++) {
+                    Slot slot = slots.get(i);
+                    if (slot instanceof AppEngSlot appEngSlot) {
+                        appEngSlot.setActive(true);
+                    }
+                    // accesstransformerでfinal制限を外している
+                    slot.x = leftPos + 18 * (i % columns);
+                    slot.y = topPos + 18 * (i / columns);
+                }
+            } else {
+                for (Slot slot : menu.getSlots(posData.semantic())) {
+                    if (slot instanceof AppEngSlot appEngSlot) {
+                        appEngSlot.setActive(false);
+                    }
+                }
             }
         }
     }
 
     @Override
-    // 1.21 で横スクロール (scrollX) が引数に加わった。ページ送りは縦だけ見る。
-    public boolean mouseScrolled(double x, double y, double scrollX, double wheelDelta) {
-        if (super.mouseScrolled(x, y, scrollX, wheelDelta)) {
+    public boolean mouseScrolled(double x, double y, double deltaX, double deltaY) {
+        if (super.mouseScrolled(x, y, deltaX, deltaY)) {
             return true;
         }
-        if (wheelDelta != 0 && isOverPatternGrid(x, y)) {
-            turnPage(wheelDelta > 0 ? -1 : 1);
+        if (deltaY != 0 && isOverPatternGrid(x, y)) {
+            if (deltaY > 0) {
+                menu.nextPage();
+                layoutSlots();
+            } else {
+                menu.prevPage();
+                layoutSlots();
+            }
             return true;
         }
         return false;
     }
 
     protected boolean isOverPatternGrid(double x, double y) {
-        int left = leftPos + GRID_LEFT;
-        int top = topPos + GRID_TOP;
-        return x >= left && x < left + COLUMNS * SLOT_SIZE
-                && y >= top && y < top + PER_PAGE / COLUMNS * SLOT_SIZE;
+        int left = leftPos + 8;
+        int top = topPos + 22;
+        return x >= left && x < left + 162
+                && y >= top && y < top + 324;
     }
-
-    // -------------------------------------------------------------------- 描画
 
     @Override
     protected void updateBeforeRender() {
         super.updateBeforeRender();
 
         setTextContent("dialog_title", this.menu.host.getGuiTitle());
-        setTextContent("page", Component.literal((page + 1) + "/" + pageCount()));
-        prevPage.active = page > 0;
-        nextPage.active = page < pageCount() - 1;
-        // ロック表示 (lockReason) はタイトルと同じ行に出るので、出ている間はタイトルを引っ込める。
-        setTextHidden("dialog_title", menu.getLockCraftingMode() != LockCraftingMode.NONE);
-        setTextHidden("storageUnitsLabel", true);
-        setTextHidden("acceleratorUnitsLabel", true);
+        boolean pageVisible = visibleSemantic.id().equals(SlotSemantics.ENCODED_PATTERN.id());
+        setTextHidden("page", !pageVisible);
+        prevPage.active = pageVisible;
+        nextPage.active = pageVisible;
+        setTextContent("page", Component.literal((menu.getPage() + 1) + "/30"));
     }
 
-    /**
-     * 背景。{@code generatedBackground} は枠しか描かないので、スロットのくぼみは自分で敷く
-     * (専用の背景テクスチャを持たないぶん、ページ送りで枠数が変わっても崩れない)。
-     */
     @Override
-    public void drawBG(GuiGraphics guiGraphics, int offsetX, int offsetY, int mouseX, int mouseY,
-            float partialTicks) {
+    public void drawBG(GuiGraphics guiGraphics, int offsetX, int offsetY, int mouseX, int mouseY, float partialTicks) {
         super.drawBG(guiGraphics, offsetX, offsetY, mouseX, mouseY, partialTicks);
-
-        for (Slot slot : menu.slots) {
-            // アップグレードとツールボックスは専用パネルが自前の枠を描くので敷かない。
-            SlotSemantic semantic = menu.getSlotSemantic(slot);
-            if (slot.isActive() && semantic != SlotSemantics.UPGRADE && semantic != SlotSemantics.TOOLBOX) {
-                Icon.SLOT_BACKGROUND.getBlitter()
-                        .dest(offsetX + slot.x - 1, offsetY + slot.y - 1)
-                        .blit(guiGraphics);
-            }
+        for (Slot slot : menu.getSlots(visibleSemantic)) {
+            Icon.SLOT_BACKGROUND.getBlitter()
+                    .dest(offsetX + slot.x - 1, offsetY + slot.y - 1)
+                    .blit(guiGraphics);
+        }
+        for (Slot slot : menu.getSlots(SlotSemantics.PLAYER_HOTBAR)) {
+            Icon.SLOT_BACKGROUND.getBlitter()
+                    .dest(offsetX + slot.x - 1, offsetY + slot.y - 1)
+                    .blit(guiGraphics);
+        }
+        for (Slot slot : menu.getSlots(SlotSemantics.PLAYER_INVENTORY)) {
+            Icon.SLOT_BACKGROUND.getBlitter()
+                    .dest(offsetX + slot.x - 1, offsetY + slot.y - 1)
+                    .blit(guiGraphics);
         }
     }
 
-    /**
-     * アイコンだけのボタン。{@link IconButton} はアイコンを差し替えれば使える。
-     *
-     * <p>
-     * アイコンを供給側から取るのは、開閉ボタンが状態で見た目を変えるため
-     * ({@code getIcon} は毎フレーム呼ばれる)。
-     * </p>
-     */
-    protected static final class IconTextButton extends IconButton {
-
-        protected final Supplier<Icon> icon;
-
-        protected IconTextButton(Supplier<Icon> icon, Component message, Button.OnPress onPress) {
-            super(onPress);
-            this.icon = icon;
-            setMessage(message);
-        }
-
-        @Override
-        protected Icon getIcon() {
-            return icon.get();
-        }
-    }
 }

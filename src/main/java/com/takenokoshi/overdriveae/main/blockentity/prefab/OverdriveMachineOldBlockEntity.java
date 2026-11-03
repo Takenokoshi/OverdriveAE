@@ -56,7 +56,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
 import com.takenokoshi.overdriveae.main.blockentity.logic.OverdriveMachineOldLogic;
-import com.takenokoshi.overdriveae.main.menu.OverdriveMachineMenu;
+import com.takenokoshi.overdriveae.main.menu.OverdriveMachineOldMenu;
 import com.takenokoshi.overdriveae.main.registration.OverdriveAEDeferredMachine;
 
 import static jp.main.taikun.insaneae.quantum.QuantumCpuBlockEntity.BASE_CRAFTS_PER_TICK;
@@ -417,12 +417,12 @@ public abstract class OverdriveMachineOldBlockEntity<ASSEMBLY extends OverdriveM
 
     @Override
     public void openMenu(Player player, MenuHostLocator locator) {
-        MenuOpener.open(OverdriveMachineMenu.TYPE, player, locator);
+        MenuOpener.open(OverdriveMachineOldMenu.TYPE, player, locator);
     }
 
     @Override
     public void returnToMainMenu(Player player, ISubMenu subMenu) {
-        MenuOpener.returnTo(OverdriveMachineMenu.TYPE, player, subMenu.getLocator());
+        MenuOpener.returnTo(OverdriveMachineOldMenu.TYPE, player, subMenu.getLocator());
     }
 
     // ------------------------------------------------------------ アップグレード

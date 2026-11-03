@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.takenokoshi.overdriveae.main.blockentity.logic.OverdriveMachineOldLogic;
+import com.takenokoshi.overdriveae.main.recipe.pattern.SimpleInput;
 
 import appeng.api.crafting.IPatternDetails;
 import appeng.api.stacks.AEItemKey;

@@ -25,7 +25,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 
-public class OverdriveTransformChamberScreen extends OverdriveMachineScreen<OverdriveTransformChamberMenu> {
+public class OverdriveTransformChamberScreen extends OverdriveMachineOldScreen<OverdriveTransformChamberMenu> {
 
     /** クラフトユニット枠の 1 行の数。 */
     private static final int UNIT_COLUMNS = 9;

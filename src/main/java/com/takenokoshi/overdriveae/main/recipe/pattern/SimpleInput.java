@@ -1,4 +1,4 @@
-package com.takenokoshi.overdriveae.main.pattern;
+package com.takenokoshi.overdriveae.main.recipe.pattern;
 
 import org.jetbrains.annotations.Nullable;
 

@@ -9,9 +9,10 @@ import appeng.api.crafting.IPatternDetails;
 import appeng.api.stacks.AEKey;
 import appeng.api.stacks.GenericStack;
 import appeng.api.stacks.KeyCounter;
+import appeng.helpers.IPriorityHost;
 import net.minecraft.world.level.Level;
 
-public interface OverdriveMachineLogicHost<PATTERN extends IPatternDetails, PATTERN_CACHE> {
+public interface OverdriveMachineLogicHost<PATTERN extends IPatternDetails, PATTERN_CACHE> extends IPriorityHost {
 
     /**
      * GenericStackからパターンを読み取る

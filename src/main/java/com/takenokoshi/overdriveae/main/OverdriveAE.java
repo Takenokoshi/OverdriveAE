@@ -15,6 +15,7 @@ import appeng.api.upgrades.Upgrades;
 import jp.main.taikun.insaneae.InsaneAE;
 import jp.main.taikun.insaneae.quantum.QuantumCpuBlockEntity;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
@@ -23,6 +24,7 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+import net.neoforged.neoforge.registries.DeferredItem;
 
 import static jp.main.taikun.insaneae.registries.ModUpgrades.QUANTUM_ACCELERATION_CARD;
 import static jp.main.taikun.insaneae.registries.ModUpgrades.TASK_FUSION_CARD;
@@ -38,8 +40,8 @@ public class OverdriveAE {
         return ResourceLocation.fromNamespaceAndPath(MODID, path);
     }
 
-    public static ResourceLocation makeInsaneId(String path){
-        return  ResourceLocation.fromNamespaceAndPath(InsaneAE.MODID, path);
+    public static ResourceLocation makeInsaneId(String path) {
+        return ResourceLocation.fromNamespaceAndPath(InsaneAE.MODID, path);
     }
 
     public OverdriveAE(IEventBus modEventBus, ModContainer modContainer) {
@@ -68,11 +70,30 @@ public class OverdriveAE {
                 OverdriveAEMachines.OVERDRIVE_ENERGIZED_FURNACE,
                 OverdriveAEMachines.OVERDRIVE_ENERGIZED_SMOKER,
         }).forEach(this::addQuantumUpgrade);
+        List.of(new OverdriveAEDeferredMachine[] {
+                OverdriveAEMachines.OVERDRIVE_CHARGER,
+                OverdriveAEMachines.OVERDRIVE_INSCRIBER,
+                OverdriveAEMachines.OVERDRIVE_MATTER_CONDENSER,
+                OverdriveAEMachines.OVERDRIVE_TRANSFORM_CHAMBER,
+                OverdriveAEMachines.OVERDRIVE_ENERGIZED_BLAST_FURNACE,
+                OverdriveAEMachines.OVERDRIVE_ENERGIZED_FURNACE,
+                OverdriveAEMachines.OVERDRIVE_ENERGIZED_SMOKER,
+        }).forEach(this::addOverdriveUpgrade);
     }
 
     private void addQuantumUpgrade(OverdriveAEDeferredMachine<?, ?> machine) {
         Upgrades.add(QUANTUM_ACCELERATION_CARD.get(), machine, QuantumCpuBlockEntity.MAX_ACCELERATION_CARDS);
         Upgrades.add(TASK_FUSION_CARD.get(), machine, 1);
+    }
+
+    private void addOverdriveUpgrade(OverdriveAEDeferredMachine<?, ?> machine) {
+        for (DeferredItem<Item> card : OverdriveAEItems.OVERDRIVE_ENERGY_CARDS) {
+            Upgrades.add(card, machine, 1);
+        }
+        for (DeferredItem<Item> card : OverdriveAEItems.OVERDRIVE_SPEED_CARDS) {
+            Upgrades.add(card, machine, 1);
+        }
+        Upgrades.add(OverdriveAEItems.COPROCESSOR_USAGE_REDUCTION_CARD, machine, 1);
     }
 
     private void addCreative(BuildCreativeModeTabContentsEvent event) {

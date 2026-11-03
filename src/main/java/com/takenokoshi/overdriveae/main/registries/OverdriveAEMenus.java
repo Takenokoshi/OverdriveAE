@@ -3,6 +3,7 @@ package com.takenokoshi.overdriveae.main.registries;
 import com.takenokoshi.overdriveae.main.OverdriveAE;
 import com.takenokoshi.overdriveae.main.menu.OverdriveInscriberMenu;
 import com.takenokoshi.overdriveae.main.menu.OverdriveMachineMenu;
+import com.takenokoshi.overdriveae.main.menu.OverdriveMachineOldMenu;
 import com.takenokoshi.overdriveae.main.menu.OverdriveTransformChamberMenu;
 
 import net.minecraft.core.registries.Registries;
@@ -14,6 +15,8 @@ public class OverdriveAEMenus {
     public static final DeferredRegister<MenuType<?>> MENU_TYPES = DeferredRegister.create(Registries.MENU,
             OverdriveAE.MODID);
 
+    public static final DeferredHolder<MenuType<?>, MenuType<OverdriveMachineOldMenu>> OVERDRIVE_MACHINE_OLD = MENU_TYPES
+            .register("overdrive_machine_old", () -> OverdriveMachineOldMenu.TYPE);
     public static final DeferredHolder<MenuType<?>, MenuType<OverdriveMachineMenu>> OVERDRIVE_MACHINE = MENU_TYPES
             .register("overdrive_machine", () -> OverdriveMachineMenu.TYPE);
     public static final DeferredHolder<MenuType<?>, MenuType<OverdriveInscriberMenu>> OVERDRIVE_INSCRIBER = MENU_TYPES

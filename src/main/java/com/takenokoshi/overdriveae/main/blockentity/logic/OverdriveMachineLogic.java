@@ -31,11 +31,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 public class OverdriveMachineLogic<PATTERN extends IPatternDetails, PATTERN_CACHE>
-        implements ILargeCraftingProvider {
+        implements IOverdriveCraftingProvider {
 
     public static final int PATTERN_INV_SIZE = 1_620;
-    public static final String NBT_PATTERN_INV = "patternInv";
-    public static final String NBT_OUTPUT_HOLDER = "outputHolder";
+    public static final String NBT_PATTERN_INV = "patternInv", NBT_OUTPUT_HOLDER = "outputHolder";
 
     public final OverdriveMachineLogicHost<PATTERN, PATTERN_CACHE> host;
     public final IManagedGridNode mainNode;
@@ -48,11 +47,9 @@ public class OverdriveMachineLogic<PATTERN extends IPatternDetails, PATTERN_CACH
     protected final BigGenericHolder outputHolder;
     protected final IActionSource actionSource;
 
-    protected boolean patternsDirty;
-    protected boolean needUpdateAvailablePatterns;
+    protected boolean patternsDirty, availablePatternsDirty;
 
-    protected long lastDecodeTick;
-    protected long lastUpdateTick;
+    protected long lastDecodeTick, lastUpdateTick;
 
     public OverdriveMachineLogic(
             OverdriveMachineLogicHost<PATTERN, PATTERN_CACHE> host,
@@ -101,7 +98,7 @@ public class OverdriveMachineLogic<PATTERN extends IPatternDetails, PATTERN_CACH
     }
 
     public void markAvailablePatternsDirty() {
-        needUpdateAvailablePatterns = true;
+        availablePatternsDirty = true;
         if (lastUpdateTick != host.currentTick()) {
             updateAvailablePatterns();
         }
@@ -113,11 +110,8 @@ public class OverdriveMachineLogic<PATTERN extends IPatternDetails, PATTERN_CACH
                 decodedPatterns[i] = host.decodePattern(patternInv.getStack(i));
             }
             patternsDirty = false;
-            needUpdateAvailablePatterns = true;
+            availablePatternsDirty = true;
             lastDecodeTick = host.currentTick();
-            patternCacheMap.clear();
-            ICraftingProvider.requestUpdate(this.mainNode);
-            updateAvailablePatterns();
         }
     }
 
@@ -127,17 +121,19 @@ public class OverdriveMachineLogic<PATTERN extends IPatternDetails, PATTERN_CACH
         host.saveChanges();
     }
 
-    protected void updateAvailablePatterns() {
+    public void updateAvailablePatterns() {
         updatePatterns();
-        if (needUpdateAvailablePatterns) {
+        if (availablePatternsDirty) {
             this.availablePatterns.clear();
             for (PATTERN[] patterns : this.decodedPatterns) {
                 for (PATTERN pattern : patterns) {
                     availablePatterns.add(pattern);
                 }
             }
-            needUpdateAvailablePatterns = false;
+            availablePatternsDirty = false;
             lastUpdateTick = host.currentTick();
+            patternCacheMap.clear();
+            ICraftingProvider.requestUpdate(this.mainNode);
         }
     }
 
@@ -207,7 +203,7 @@ public class OverdriveMachineLogic<PATTERN extends IPatternDetails, PATTERN_CACH
     }
 
     @Override
-    public long pushPatternLarge(IPatternDetails patternDetails, KeyCounter[] inputHolder, long times) {
+    public long pushPatternOverdrive(IPatternDetails patternDetails, KeyCounter[] inputHolder, long times) {
         Level level = host.getLevel();
         if (level == null || level.isClientSide()) {
             return 0L;

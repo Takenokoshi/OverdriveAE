@@ -5,7 +5,6 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 import com.takenokoshi.overdriveae.main.blockentity.logic.OverdriveMachineLogic;
-import com.takenokoshi.overdriveae.main.blockentity.logic.OverdriveMachineLogicHost;
 import com.takenokoshi.overdriveae.main.registries.OverdriveAEItems;
 
 import appeng.api.crafting.IPatternDetails;
@@ -13,7 +12,7 @@ import appeng.api.inventories.ISegmentedInventory;
 import appeng.api.inventories.InternalInventory;
 import appeng.api.networking.IGridNodeListener.State;
 import appeng.api.upgrades.IUpgradeInventory;
-import appeng.api.upgrades.IUpgradeableObject;
+import appeng.api.upgrades.UpgradeInventories;
 import appeng.api.util.AECableType;
 import appeng.blockentity.ServerTickingBlockEntity;
 import appeng.blockentity.grid.AENetworkedBlockEntity;
@@ -23,16 +22,17 @@ import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 public abstract class OverdriveMachineBlockEntity<PATTERN extends IPatternDetails, PATTERN_CACHE>
         extends AENetworkedBlockEntity
-        implements OverdriveMachineLogicHost<PATTERN, PATTERN_CACHE>, ServerTickingBlockEntity, IUpgradeableObject,
+        implements ServerTickingBlockEntity,
         IOverdriveMachine<PATTERN, PATTERN_CACHE> {
 
-    public static final String NBT_LOGIC = "logic", NBT_UPGRADES = "upgrades";
+    public static final String NBT_LOGIC = "logic", NBT_UPGRADES = "upgrades", NBT_PRIORITY = "priority";
     protected static final int PENDING_SAVE_INTERVAL = 20;
 
     protected final OverdriveMachineLogic<PATTERN, PATTERN_CACHE> logic;
@@ -44,19 +44,29 @@ public abstract class OverdriveMachineBlockEntity<PATTERN extends IPatternDetail
     protected long budget, remainingBudgetThisTick;
     protected boolean coprocessorUsageReductionEnabled;
 
-    public OverdriveMachineBlockEntity(BlockEntityType<?> blockEntityType, BlockPos pos, BlockState blockState) {
+    protected int priority;
+
+    public OverdriveMachineBlockEntity(BlockEntityType<?> blockEntityType, BlockPos pos, BlockState blockState,
+            ItemLike upgradeHost) {
         super(blockEntityType, pos, blockState);
         this.logic = createLogic();
-        this.upgradeInventory = createUpgradeInv();
+        this.upgradeInventory = createUpgradeInv(upgradeHost);
     }
 
     protected abstract OverdriveMachineLogic<PATTERN, PATTERN_CACHE> createLogic();
 
-    protected abstract IUpgradeInventory createUpgradeInv();
+    protected IUpgradeInventory createUpgradeInv(ItemLike upgradeHost) {
+        return UpgradeInventories.forMachine(upgradeHost, 15, this::onUpgradeChanged);
+    };
 
     @Override
     public long budget(@NotNull PATTERN pattern) {
         return remainingBudgetThisTick;
+    }
+
+    @Override
+    public boolean isBusy() {
+        return remainingBudgetThisTick <= 0L;
     }
 
     @Override
@@ -133,7 +143,7 @@ public abstract class OverdriveMachineBlockEntity<PATTERN extends IPatternDetail
     @Override
     public void onReady() {
         super.onReady();
-        logic.updatePatterns();
+        logic.updateAvailablePatterns();
         onUpgradeChanged();
     }
 
@@ -147,6 +157,7 @@ public abstract class OverdriveMachineBlockEntity<PATTERN extends IPatternDetail
         super.saveAdditional(data, registries);
         logic.writeToNBT(data, NBT_LOGIC, registries);
         upgradeInventory.writeToNBT(data, NBT_UPGRADES, registries);
+        data.putInt(NBT_PRIORITY, priority);
     }
 
     @Override
@@ -154,6 +165,7 @@ public abstract class OverdriveMachineBlockEntity<PATTERN extends IPatternDetail
         super.loadTag(data, registries);
         logic.readFromTag(data, NBT_LOGIC, registries);
         upgradeInventory.readFromNBT(data, NBT_UPGRADES, registries);
+        priority = data.getInt(NBT_PRIORITY);
 
         pendingWasSaved = !logic.isOutputEmpty();
         ticksSincePendingSave = 0;
@@ -177,6 +189,17 @@ public abstract class OverdriveMachineBlockEntity<PATTERN extends IPatternDetail
 
     public OverdriveMachineLogic<PATTERN, PATTERN_CACHE> getLogic() {
         return logic;
+    }
+
+    @Override
+    public int getPriority() {
+        return priority;
+    }
+
+    @Override
+    public void setPriority(int priority) {
+        this.priority = priority;
+
     }
 
 }
