@@ -71,7 +71,7 @@ public abstract class OverdriveMachineBlockEntity<PATTERN extends IPatternDetail
 
     @Override
     public void serverTick() {
-        logic.updatePatterns();
+        logic.updateAvailablePatterns();
         if (logic.sendOutputs()) {
             saveOutputsIfNeeded();
         }
@@ -143,7 +143,7 @@ public abstract class OverdriveMachineBlockEntity<PATTERN extends IPatternDetail
     @Override
     public void onReady() {
         super.onReady();
-        logic.updateAvailablePatterns();
+        logic.markPatternsDirty();
         onUpgradeChanged();
     }
 

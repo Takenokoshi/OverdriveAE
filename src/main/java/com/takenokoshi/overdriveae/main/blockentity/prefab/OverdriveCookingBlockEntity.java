@@ -42,7 +42,8 @@ public abstract class OverdriveCookingBlockEntity<RECIPE extends AbstractCooking
     public OverdriveCookingBlockEntity(OverdriveAEDeferredMachine<?, ?> deferredMachine, BlockPos pos,
             BlockState blockState,
             DoubleSupplier baseEnergyCapacity) {
-        super(deferredMachine.getBlockEntityType(), pos, blockState, deferredMachine,baseEnergyCapacity, PowerMultiplier.ONE);
+        super(deferredMachine.getBlockEntityType(), pos, blockState, deferredMachine, baseEnergyCapacity,
+                PowerMultiplier.ONE);
         this.deferredMachine = deferredMachine;
     }
 

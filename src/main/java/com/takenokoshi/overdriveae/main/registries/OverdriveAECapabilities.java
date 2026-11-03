@@ -15,8 +15,10 @@ package com.takenokoshi.overdriveae.main.registries;
 
 import appeng.api.AECapabilities;
 import appeng.api.networking.IInWorldGridNodeHost;
+import appeng.blockentity.powersink.AEBasePoweredBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 
 public class OverdriveAECapabilities {
@@ -24,7 +26,11 @@ public class OverdriveAECapabilities {
         OverdriveAEMachines.MACHINES.getMachines().forEach(def -> {
             registerGridNodeHost(event, def.getBlockEntityType());
         });
-        
+
+        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK,
+                OverdriveAEMachines.OVERDRIVE_ENERGIZED_FURNACE.getBlockEntityType(),
+                AEBasePoweredBlockEntity::getEnergyStorage);
+
     }
 
     /**

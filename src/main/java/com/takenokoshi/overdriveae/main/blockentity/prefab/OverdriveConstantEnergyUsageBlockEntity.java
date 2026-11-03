@@ -10,15 +10,21 @@ import com.takenokoshi.overdriveae.main.registries.OverdriveAEItems;
 
 import appeng.api.config.Actionable;
 import appeng.api.config.PowerMultiplier;
+import appeng.api.config.PowerUnit;
 import appeng.api.crafting.IPatternDetails;
 import appeng.api.inventories.ISegmentedInventory;
 import appeng.api.inventories.InternalInventory;
+import appeng.api.networking.IGridNode;
 import appeng.api.networking.IGridNodeListener.State;
+import appeng.api.networking.ticking.IGridTickable;
+import appeng.api.networking.ticking.TickRateModulation;
+import appeng.api.networking.ticking.TickingRequest;
 import appeng.api.upgrades.IUpgradeInventory;
 import appeng.api.upgrades.UpgradeInventories;
 import appeng.api.util.AECableType;
 import appeng.blockentity.ServerTickingBlockEntity;
 import appeng.blockentity.grid.AENetworkedPoweredBlockEntity;
+import appeng.core.settings.TickRates;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup.Provider;
@@ -32,7 +38,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public abstract class OverdriveConstantEnergyUsageBlockEntity<PATTERN extends IPatternDetails, PATTERN_CACHE>
         extends AENetworkedPoweredBlockEntity
-        implements ServerTickingBlockEntity,
+        implements ServerTickingBlockEntity, IGridTickable,
         IOverdriveMachine<PATTERN, PATTERN_CACHE> {
 
     public static final String NBT_LOGIC = "logic", NBT_UPGRADES = "upgrades", NBT_PRIORITY = "priority";
@@ -61,6 +67,8 @@ public abstract class OverdriveConstantEnergyUsageBlockEntity<PATTERN extends IP
             DoubleSupplier baseEnergyCapacity,
             PowerMultiplier powerMultiplier) {
         super(blockEntityType, pos, blockState);
+        this.getMainNode()
+                .addService(IGridTickable.class, this);
         this.logic = createLogic();
         this.upgradeInventory = createUpgradeInv(upgradeHost);
         this.baseEnergyPerProcess = baseEnergyPerProcess;
@@ -184,7 +192,7 @@ public abstract class OverdriveConstantEnergyUsageBlockEntity<PATTERN extends IP
     @Override
     public void onReady() {
         super.onReady();
-        logic.updateAvailablePatterns();
+        logic.markPatternsDirty();
         onUpgradeChanged();
     }
 
@@ -224,6 +232,26 @@ public abstract class OverdriveConstantEnergyUsageBlockEntity<PATTERN extends IP
         super.clearContent();
         logic.clearContent();
         upgradeInventory.clear();
+    }
+
+    // ------------------------------------- MEからエネルギー吸う用
+
+    @Override
+    public TickingRequest getTickingRequest(IGridNode node) {
+        return new TickingRequest(TickRates.Interface, false);
+    }
+
+    @Override
+    public TickRateModulation tickingRequest(IGridNode node, int ticksSinceLastCall) {
+        if (getInternalCurrentPower() < getInternalMaxPower() * 0.99D) {
+            getMainNode().ifPresent(grid -> {
+                final double extracted = grid.getEnergyService().extractAEPower(
+                        getInternalMaxPower() - getInternalCurrentPower(), Actionable.MODULATE, PowerMultiplier.ONE);
+                this.injectExternalPower(PowerUnit.AE, extracted, Actionable.MODULATE);
+            });
+            this.markForUpdate();
+        }
+        return TickRateModulation.FASTER;
     }
 
     // ------------------------------------- Gui表示用
