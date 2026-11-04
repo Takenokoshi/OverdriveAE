@@ -24,12 +24,13 @@ public class OverdriveAEEnglishLangProvider extends LanguageProvider {
         OverdriveAEMachines.MACHINES.getMachines().forEach(this::addMachine);
         OverdriveAEItems.ITEMS.getEntries().forEach(this::addItem);
 
-        add("gui.overdriveae.overdrive_inscriber.catalyst_slots", "Slots for catalyst items.");
-        add("gui.overdriveae.overdrive_inscriber.catalyst_inv_label", "Catalyst items");
-        add("gui.overdriveae.overdrive_inscriber.show_catalysts", "Show catalyst item slots");
-        add("gui.overdriveae.overdrive_transform_chamber.catalyst_slots", "Tanks for catalyst fluids.");
-        add("gui.overdriveae.overdrive_transform_chamber.catalyst_inv_label", "Catalyst fluids");
-        add("gui.overdriveae.overdrive_transform_chamber.show_catalysts", "Show catalyst fluid tanks");
+        add("gui.overdriveae.element.upgrade_slots_label", "Upgrades");
+        add("gui.overdriveae.element.catalyst_slots_label", "Catalysts");
+        add("gui.overdriveae.element.back_to_pattern_slots", "Back to pattern inventory.");
+        add("gui.overdriveae.element.open_upgrade_slots", "Open upgrade inventory.");
+        add("gui.overdriveae.element.open_catalyst_slots", "Open catalyst inventory.");
+        add("gui.overdriveae.element.prev_page", "Go to the previous page.");
+        add("gui.overdriveae.element.next_page", "Go to the next page.");
     }
 
     private void addMachine(OverdriveAEDeferredMachine<?, ?> deferredMachine) {

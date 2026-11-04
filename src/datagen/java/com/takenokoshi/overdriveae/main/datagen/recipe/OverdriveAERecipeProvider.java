@@ -12,14 +12,13 @@ import appeng.recipes.handlers.InscriberProcessType;
 import appeng.recipes.handlers.InscriberRecipeBuilder;
 import appeng.recipes.transform.TransformCircumstance;
 import appeng.recipes.transform.TransformRecipeBuilder;
-import jp.main.taikun.insaneae.registries.ModItems;
 import net.minecraft.core.HolderLookup.Provider;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -46,7 +45,7 @@ public class OverdriveAERecipeProvider extends RecipeProvider {
                 .inscribe(OverdriveAEItems.OVERDRIVE_CRYSTAL, OverdriveAEItems.PRINTED_OVERDRIVE_PROCESSOR, 1)
                 .setMode(InscriberProcessType.INSCRIBE)
                 .setTop(Ingredient.of(new ItemLike[] {
-                        ModItems.INSANE_PROCESSOR_PRESS.get(),
+                        AEItems.LOGIC_PROCESSOR_PRESS.get(),
                 }))
                 .save(recipeOutput, OverdriveAE.makeId("printed_overdrive_processor"));
         InscriberRecipeBuilder
@@ -63,7 +62,7 @@ public class OverdriveAERecipeProvider extends RecipeProvider {
         ShapedRecipeBuilder
                 .shaped(RecipeCategory.REDSTONE, new ItemStack(OverdriveAEMachines.OVERDRIVE_CHARGER, 1))
                 .define('O', OverdriveAEItems.OVERDRIVE_PROCESSOR)
-                .define('C', BuiltInRegistries.ITEM.get(OverdriveAE.makeInsaneId("improved_charger")))
+                .define('C', AEBlocks.CHARGER)
                 .define('P', AEBlocks.PATTERN_PROVIDER)
                 .pattern("COC")
                 .pattern("OPO")
@@ -112,7 +111,8 @@ public class OverdriveAERecipeProvider extends RecipeProvider {
                 .unlockedBy("unlock", has(OverdriveAEItems.OVERDRIVE_PROCESSOR.asItem()))
                 .save(recipeOutput);
         ShapedRecipeBuilder
-                .shaped(RecipeCategory.REDSTONE, new ItemStack(OverdriveAEMachines.OVERDRIVE_ENERGIZED_BLAST_FURNACE, 1))
+                .shaped(RecipeCategory.REDSTONE,
+                        new ItemStack(OverdriveAEMachines.OVERDRIVE_ENERGIZED_BLAST_FURNACE, 1))
                 .define('O', OverdriveAEItems.OVERDRIVE_PROCESSOR)
                 .define('C', Items.BLAST_FURNACE)
                 .define('P', AEBlocks.PATTERN_PROVIDER)
@@ -131,6 +131,42 @@ public class OverdriveAERecipeProvider extends RecipeProvider {
                 .pattern("COC")
                 .unlockedBy("unlock", has(OverdriveAEItems.OVERDRIVE_PROCESSOR.asItem()))
                 .save(recipeOutput);
+
+        ShapelessRecipeBuilder
+                .shapeless(RecipeCategory.REDSTONE,
+                        new ItemStack(OverdriveAEItems.OVERDRIVE_ENERGY_CARDS.get(0).asItem(), 1))
+                .requires(AEItems.ENERGY_CARD, 4)
+                .requires(OverdriveAEItems.OVERDRIVE_PROCESSOR, 1)
+                .unlockedBy("unlock", has(OverdriveAEItems.OVERDRIVE_PROCESSOR.asItem()))
+                .save(recipeOutput);
+        ShapelessRecipeBuilder
+                .shapeless(RecipeCategory.REDSTONE,
+                        new ItemStack(OverdriveAEItems.OVERDRIVE_SPEED_CARDS.get(0).asItem(), 1))
+                .requires(AEItems.SPEED_CARD, 4)
+                .requires(OverdriveAEItems.OVERDRIVE_PROCESSOR, 1)
+                .unlockedBy("unlock", has(OverdriveAEItems.OVERDRIVE_PROCESSOR.asItem()))
+                .save(recipeOutput);
+        ShapelessRecipeBuilder
+                .shapeless(RecipeCategory.REDSTONE,
+                        new ItemStack(OverdriveAEItems.COPROCESSOR_USAGE_REDUCTION_CARD.asItem(), 1))
+                .requires(AEItems.ADVANCED_CARD, 1)
+                .requires(OverdriveAEItems.OVERDRIVE_PROCESSOR, 4)
+                .requires(AEItems.CELL_COMPONENT_256K, 4)
+                .unlockedBy("unlock", has(OverdriveAEItems.OVERDRIVE_PROCESSOR.asItem()))
+                .save(recipeOutput);
+
+        for (int i = 0; i < 6; i++) {
+            ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE,
+                    new ItemStack(OverdriveAEItems.OVERDRIVE_ENERGY_CARDS.get(i + 1).asItem(), 1))
+                    .requires(OverdriveAEItems.OVERDRIVE_ENERGY_CARDS.get(i), 2)
+                    .unlockedBy("unlock", has(OverdriveAEItems.OVERDRIVE_ENERGY_CARDS.get(i).asItem()))
+                    .save(recipeOutput);
+            ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE,
+                    new ItemStack(OverdriveAEItems.OVERDRIVE_SPEED_CARDS.get(i + 1).asItem(), 1))
+                    .requires(OverdriveAEItems.OVERDRIVE_SPEED_CARDS.get(i), 2)
+                    .unlockedBy("unlock", has(OverdriveAEItems.OVERDRIVE_SPEED_CARDS.get(i).asItem()))
+                    .save(recipeOutput);
+        }
     }
 
 }

@@ -27,11 +27,6 @@ public class ExecutingCraftingJobBridge {
             }
 
             @Override
-            public void removeTask(IPatternDetails patternDetails) {
-                jobMixin.overdriveae$getTasks().remove(patternDetails);
-            }
-
-            @Override
             public void setTaskProgress(IPatternDetails patternDetails, long newProgress) {
                 if (jobMixin.overdriveae$getTasks().get(patternDetails) instanceof TaskProgressMixin progressMixin) {
                     progressMixin.overdriveae$setValue(newProgress);

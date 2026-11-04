@@ -3,6 +3,9 @@ package com.takenokoshi.overdriveae.main.menu;
 import com.takenokoshi.overdriveae.main.blockentity.prefab.IOverdriveMachine;
 
 import appeng.api.stacks.AEItemKey;
+import appeng.api.stacks.AEKey;
+import appeng.helpers.InventoryAction;
+import appeng.helpers.externalstorage.GenericStackInv;
 import appeng.menu.AEBaseMenu;
 import appeng.menu.MenuOpener;
 import appeng.menu.SlotSemantic;
@@ -110,6 +113,32 @@ public class OverdriveMachineMenu extends AEBaseMenu {
     private boolean isPlayerInventorySlot(Slot slot) {
         SlotSemantic semantic = getSlotSemantic(slot);
         return semantic == SlotSemantics.PLAYER_INVENTORY || semantic == SlotSemantics.PLAYER_HOTBAR;
+    }
+
+    @Override
+    public void doAction(ServerPlayer player, InventoryAction action, int slot, long id) {
+        if (slot < 0 || slot >= this.slots.size()) {
+            return;
+        }
+        Slot s = this.getSlot(slot);
+        if (s instanceof AppEngSlot appEngSlot
+                && appEngSlot.getInventory() instanceof PagedMenuInv pagedMenuInv
+                && pagedMenuInv.getDelegate() instanceof ConfigMenuInventory configInv
+                && configInv.getDelegate().getMode() == GenericStackInv.Mode.STORAGE) {
+            GenericStackInv realInv = configInv.getDelegate();
+            int realInvSlot = appEngSlot.slot;
+
+            if (action == InventoryAction.FILL_ITEM || action == InventoryAction.FILL_ENTIRE_ITEM) {
+                AEKey what = realInv.getKey(realInvSlot);
+                handleFillingHeldItem(
+                        (amount, mode) -> realInv.extract(realInvSlot, what, amount, mode),
+                        what, action == InventoryAction.FILL_ENTIRE_ITEM);
+            } else if (action == InventoryAction.EMPTY_ITEM || action == InventoryAction.EMPTY_ENTIRE_ITEM) {
+                handleEmptyHeldItem((what, amount, mode) -> realInv.insert(realInvSlot, what, amount, mode),
+                        action == InventoryAction.EMPTY_ENTIRE_ITEM);
+            }
+        }
+        super.doAction(player, action, slot, id);
     }
 
     private static OverdriveMachineMenu fromNetwork(int containerId, Inventory playerInventory, FriendlyByteBuf buf) {

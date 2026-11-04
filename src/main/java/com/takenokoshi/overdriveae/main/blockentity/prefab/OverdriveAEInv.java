@@ -23,7 +23,7 @@ public class OverdriveAEInv extends GenericStackInv {
         this.updateListener = updateListener;
     }
 
-    public OverdriveAEInv(int size, OverdriveAEInvUpdateListener updateListener){
+    public OverdriveAEInv(int size, OverdriveAEInvUpdateListener updateListener) {
         this(null, size, updateListener);
     }
 
@@ -52,8 +52,11 @@ public class OverdriveAEInv extends GenericStackInv {
         }
     }
 
-    public void addDrops(List<ItemStack> drops, Level level, BlockPos pos){
+    public void addDrops(List<ItemStack> drops, Level level, BlockPos pos) {
         for (int i = 0; i < stacks.length; i++) {
+            if (stacks[i] == null) {
+                continue;
+            }
             stacks[i].what().addDrops(stacks[i].amount(), drops, level, pos);
         }
     }

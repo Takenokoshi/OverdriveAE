@@ -21,12 +21,6 @@ public interface IJob {
     long getTaskProgress(IPatternDetails patternDetails);
 
     /**
-     * タスクを削除する
-     * @param patternDetails
-     */
-    void removeTask(IPatternDetails patternDetails);
-
-    /**
      * タスク進捗を更新する
      * @param patternDetails
      * @param newProgress

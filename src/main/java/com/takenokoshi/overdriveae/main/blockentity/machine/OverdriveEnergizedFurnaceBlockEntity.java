@@ -5,7 +5,6 @@ import com.takenokoshi.overdriveae.main.recipe.RecipeCacheHolder;
 import com.takenokoshi.overdriveae.main.recipe.recipecache.CookingRecipeCache;
 import com.takenokoshi.overdriveae.main.registration.OverdriveAEDeferredMachine;
 
-import appeng.api.inventories.InternalInventory;
 import appeng.core.AEConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.crafting.SmeltingRecipe;
@@ -22,11 +21,6 @@ public class OverdriveEnergizedFurnaceBlockEntity extends OverdriveCookingBlockE
     @Override
     public RecipeCacheHolder<?, SmeltingRecipe, CookingRecipeCache<SmeltingRecipe>> getCacheHolder() {
         return RecipeCacheHolder.SMELTING;
-    }
-
-    @Override
-    public InternalInventory getInternalInventory() {
-        return InternalInventory.empty();
     }
 
 }

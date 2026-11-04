@@ -25,6 +25,16 @@
                 "top": 6
             }
         },
+        "upgradeSlotsLabel": {
+            "text": {
+                "translate": "gui.overdriveae.element.upgrade_slots_label"
+            },
+            "color": "DEFAULT_TEXT_COLOR",
+            "position": {
+                "left": 8,
+                "top": 24
+            }
+        },
         "page": {
             "text": {
                 "text": "1/30"

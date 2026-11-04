@@ -45,7 +45,6 @@ public class OverdriveCraftingExecuter {
                 break;
             }
             if (job.getTaskProgress(patternDetails) <= 0L) {
-                job.removeTask(patternDetails);
                 continue;
             }
             KeyCounter expectedOutputs = new KeyCounter();
@@ -106,12 +105,11 @@ public class OverdriveCraftingExecuter {
                             entry -> waitingFor.insert(entry.getKey(), entry.getLongValue(), Actionable.MODULATE));
                     cluster.markDirty();
                     job.setTaskProgress(patternDetails, job.getTaskProgress(patternDetails) - pushed);
-                    if (job.getTaskProgress(patternDetails) <= 0L) {
-                        job.removeTask(patternDetails);
-                        continue taskLoop;
-                    }
                     if (remainingOperations == usedOperations) {
                         break taskLoop;
+                    }
+                    if (job.getTaskProgress(patternDetails) <= 0L) {
+                        continue taskLoop;
                     }
                 }
                 expectedOutputs.reset();

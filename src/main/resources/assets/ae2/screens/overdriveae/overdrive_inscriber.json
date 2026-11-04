@@ -1,0 +1,86 @@
+{
+    "$schema": "../schema.json",
+    "includes": [
+        "../common/common.json",
+        "../common/player_inventory.json"
+    ],
+    "generatedBackground": {
+        "width": 176,
+        "height": 251
+    },
+    "slots": {
+        "ENCODED_PATTERN": {
+            "left": 8,
+            "top": 22,
+            "grid": "BREAK_AFTER_9COLS"
+        }
+    },
+    "text": {
+        "dialog_title": {
+            "text": {
+                "translate": "block.overdriveae.overdrive_inscriber"
+            },
+            "position": {
+                "left": 8,
+                "top": 6
+            }
+        },
+        "upgradeSlotsLabel": {
+            "text": {
+                "translate": "gui.overdriveae.element.upgrade_slots_label"
+            },
+            "color": "DEFAULT_TEXT_COLOR",
+            "position": {
+                "left": 8,
+                "top": 24
+            }
+        },
+        "catalystSlotsLabel": {
+            "text": {
+                "translate": "gui.overdriveae.element.catalyst_slots_label"
+            },
+            "color": "DEFAULT_TEXT_COLOR",
+            "position": {
+                "left": 8,
+                "top": 24
+            }
+        },
+        "page": {
+            "text": {
+                "text": "1/30"
+            },
+            "color": "MUTED_TEXT_COLOR",
+            "align": "CENTER",
+            "position": {
+                "left": 137,
+                "top": 143
+            }
+        }
+    },
+    "widgets": {
+        "openPriority": {
+            "left": 154,
+            "top": 2
+        },
+        "backToPatternSlots": {
+            "left": 8,
+            "top": 132
+        },
+        "openUpgradeSlots": {
+            "left": 28,
+            "top": 132
+        },
+        "openCatalystSlots": {
+            "left": 48,
+            "top": 132
+        },
+        "prevPage": {
+            "left": 104,
+            "top": 132
+        },
+        "nextPage": {
+            "left": 154,
+            "top": 132
+        }
+    }
+}

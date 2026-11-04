@@ -10,6 +10,7 @@ import com.takenokoshi.overdriveae.main.datagen.loot.OverdriveAEBlockLootProvide
 import com.takenokoshi.overdriveae.main.datagen.model.OverdriveAEBlockStateProvider;
 import com.takenokoshi.overdriveae.main.datagen.model.OverdriveAEItemModelProvider;
 import com.takenokoshi.overdriveae.main.datagen.recipe.OverdriveAERecipeProvider;
+import com.takenokoshi.overdriveae.main.datagen.tag.OverdriveAEBlockTagsProvider;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
@@ -40,6 +41,7 @@ public class OverdriveAEDatagen {
         generator.addProvider(event.includeServer(), new LootTableProvider(output, Set.of(), List.of(
                 new LootTableProvider.SubProviderEntry(OverdriveAEBlockLootProvider::new, LootContextParamSets.BLOCK)),
                 lookupProvider));
+        generator.addProvider(event.includeServer(), new OverdriveAEBlockTagsProvider(output, lookupProvider, existingFiles));
         generator.addProvider(event.includeServer(), new OverdriveAERecipeProvider(output, lookupProvider));
     }
 }

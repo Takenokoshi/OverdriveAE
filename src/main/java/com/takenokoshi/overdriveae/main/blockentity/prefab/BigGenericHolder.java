@@ -1,8 +1,10 @@
 package com.takenokoshi.overdriveae.main.blockentity.prefab;
 
 import java.math.BigInteger;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import appeng.api.stacks.AEKey;
 import appeng.api.stacks.GenericStack;
@@ -51,11 +53,7 @@ public class BigGenericHolder extends LinkedHashMap<AEKey, BigInteger> {
             }
             BigInteger drained = current.min(BigInteger.valueOf(maximum));
             BigInteger remaining = current.subtract(drained);
-            if (remaining.signum() == 0) {
-                remove(what);
-            } else {
-                put(what, remaining);
-            }
+            put(what, remaining);
             return drained.longValueExact();
         } else {
             return 0L;
@@ -113,5 +111,15 @@ public class BigGenericHolder extends LinkedHashMap<AEKey, BigInteger> {
         forEach((key, value) -> {
             key.addDrops(value.min(BigInteger.valueOf(Long.MAX_VALUE)).longValueExact(), drops, level, pos);
         });
+    }
+
+    public void clearZeros() {
+        Iterator<Map.Entry<AEKey, BigInteger>> iterator = entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<AEKey, BigInteger> entry = iterator.next();
+            if (entry.getValue().signum() == 0) {
+                iterator.remove();
+            }
+        }
     }
 }

@@ -15,6 +15,7 @@ import com.takenokoshi.overdriveae.main.util.AEKeyUtils;
 
 import appeng.api.config.PowerMultiplier;
 import appeng.api.ids.AEComponents;
+import appeng.api.inventories.InternalInventory;
 import appeng.api.networking.security.IActionSource;
 import appeng.api.stacks.AEItemKey;
 import appeng.api.stacks.AEKey;
@@ -139,6 +140,11 @@ public abstract class OverdriveCookingBlockEntity<RECIPE extends AbstractCooking
     @Override
     public Component getGuiTitle() {
         return hasCustomName() ? getCustomName() : deferredMachine.getBlock().getName();
+    }
+
+    @Override
+    public InternalInventory getInternalInventory() {
+        return InternalInventory.empty();
     }
 
 }

@@ -30,6 +30,14 @@ public class OverdriveAEItemModelProvider extends ItemModelProvider {
         basicItem(OverdriveAEItems.PRINTED_OVERDRIVE_PROCESSOR.get()).texture(LAYER0,
                 modLoc("item/printed_overdrive_processor"));
         basicItem(OverdriveAEItems.OVERDRIVE_PROCESSOR.get()).texture(LAYER0, modLoc("item/overdrive_processor"));
+        for (int i = 0; i < 7; i++) {
+            basicItem(OverdriveAEItems.OVERDRIVE_ENERGY_CARDS.get(i).get()).texture(LAYER0,
+                    modLoc("item/t" + i + "_overdrive_energy_card"));
+            basicItem(OverdriveAEItems.OVERDRIVE_SPEED_CARDS.get(i).get()).texture(LAYER0,
+                    modLoc("item/t" + i + "_overdrive_speed_card"));
+        }
+        basicItem(OverdriveAEItems.COPROCESSOR_USAGE_REDUCTION_CARD.get()).texture(LAYER0,
+                modLoc("item/coprocessor_usage_reduction_card"));
     }
 
 }

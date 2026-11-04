@@ -3,7 +3,7 @@
   "category": "redstone",
   "key": {
     "C": {
-      "item": "insaneae:improved_charger"
+      "item": "ae2:charger"
     },
     "O": {
       "item": "overdriveae:overdrive_processor"

@@ -12,8 +12,6 @@ import com.takenokoshi.overdriveae.main.registries.OverdriveAEMenus;
 import com.takenokoshi.overdriveae.main.registries.OverdriveAETabs;
 
 import appeng.api.upgrades.Upgrades;
-import jp.main.taikun.insaneae.InsaneAE;
-import jp.main.taikun.insaneae.quantum.QuantumCpuBlockEntity;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.neoforged.api.distmarker.Dist;
@@ -26,9 +24,6 @@ import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.registries.DeferredItem;
 
-import static jp.main.taikun.insaneae.registries.ModUpgrades.QUANTUM_ACCELERATION_CARD;
-import static jp.main.taikun.insaneae.registries.ModUpgrades.TASK_FUSION_CARD;
-
 import java.util.List;
 
 @Mod(value = OverdriveAE.MODID, dist = Dist.DEDICATED_SERVER)
@@ -38,10 +33,6 @@ public class OverdriveAE {
 
     public static ResourceLocation makeId(String path) {
         return ResourceLocation.fromNamespaceAndPath(MODID, path);
-    }
-
-    public static ResourceLocation makeInsaneId(String path) {
-        return ResourceLocation.fromNamespaceAndPath(InsaneAE.MODID, path);
     }
 
     public OverdriveAE(IEventBus modEventBus, ModContainer modContainer) {
@@ -60,16 +51,6 @@ public class OverdriveAE {
 
     private void commonSetup(FMLCommonSetupEvent event) {
         OverdriveAEMachines.MACHINES.bind();
-
-        List.of(new OverdriveAEDeferredMachine[] {
-                OverdriveAEMachines.OVERDRIVE_CHARGER,
-                OverdriveAEMachines.OVERDRIVE_INSCRIBER,
-                OverdriveAEMachines.OVERDRIVE_MATTER_CONDENSER,
-                OverdriveAEMachines.OVERDRIVE_TRANSFORM_CHAMBER,
-                OverdriveAEMachines.OVERDRIVE_ENERGIZED_BLAST_FURNACE,
-                OverdriveAEMachines.OVERDRIVE_ENERGIZED_FURNACE,
-                OverdriveAEMachines.OVERDRIVE_ENERGIZED_SMOKER,
-        }).forEach(this::addQuantumUpgrade);
         List.of(new OverdriveAEDeferredMachine[] {
                 OverdriveAEMachines.OVERDRIVE_CHARGER,
                 OverdriveAEMachines.OVERDRIVE_INSCRIBER,
@@ -79,11 +60,6 @@ public class OverdriveAE {
                 OverdriveAEMachines.OVERDRIVE_ENERGIZED_FURNACE,
                 OverdriveAEMachines.OVERDRIVE_ENERGIZED_SMOKER,
         }).forEach(this::addOverdriveUpgrade);
-    }
-
-    private void addQuantumUpgrade(OverdriveAEDeferredMachine<?, ?> machine) {
-        Upgrades.add(QUANTUM_ACCELERATION_CARD.get(), machine, QuantumCpuBlockEntity.MAX_ACCELERATION_CARDS);
-        Upgrades.add(TASK_FUSION_CARD.get(), machine, 1);
     }
 
     private void addOverdriveUpgrade(OverdriveAEDeferredMachine<?, ?> machine) {

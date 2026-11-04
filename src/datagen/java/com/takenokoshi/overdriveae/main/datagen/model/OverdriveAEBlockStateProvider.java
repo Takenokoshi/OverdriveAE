@@ -32,7 +32,7 @@ public class OverdriveAEBlockStateProvider extends BlockStateProvider {
                         .texture("particle", modLoc("block/overdrive_frame"))
                         .customLoader(CompositeModelAdvancedBuilder::begin)
                         .existingChild("base", modLoc("block/overdrive_base"))
-                        .modifiedExistingChildStart("charger", OverdriveAE.makeInsaneId("block/improved_charger"))
+                        .modifiedExistingChildStart("charger",  AppEng.makeId("block/charger"))
                         .rootTransforms().scale(0.5F).translation(-0.25F, -0.25F, -0.25F).backToModifiedChildBuilder()
                         .backToCompositeBuilder()
                         .itemRenderOrder("charger", "base")

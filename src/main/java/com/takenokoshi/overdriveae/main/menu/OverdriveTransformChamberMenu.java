@@ -1,7 +1,5 @@
 package com.takenokoshi.overdriveae.main.menu;
 
-import java.util.List;
-
 import com.takenokoshi.overdriveae.main.blockentity.machine.OverdriveTransformChamberBlockEntity;
 import appeng.menu.MenuOpener;
 import appeng.menu.SlotSemantic;
@@ -9,6 +7,7 @@ import appeng.menu.SlotSemantics;
 import appeng.menu.locator.MenuHostLocator;
 import appeng.menu.locator.MenuLocators;
 import appeng.menu.slot.AppEngSlot;
+import appeng.util.ConfigMenuInventory;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -20,7 +19,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 
-public class OverdriveTransformChamberMenu extends OverdriveMachineOldMenu {
+public class OverdriveTransformChamberMenu extends OverdriveMachineMenu {
 
     public static final MenuType<OverdriveTransformChamberMenu> TYPE = IMenuTypeExtension
             .create(OverdriveTransformChamberMenu::fromNetwork);
@@ -36,24 +35,13 @@ public class OverdriveTransformChamberMenu extends OverdriveMachineOldMenu {
         this(TYPE, id, playerInventory, host);
     }
 
-    public OverdriveTransformChamberMenu(MenuType<? extends OverdriveMachineOldMenu> menuType, int id,
+    public OverdriveTransformChamberMenu(MenuType<? extends OverdriveMachineMenu> menuType, int id,
             Inventory playerInventory,
             OverdriveTransformChamberBlockEntity host) {
         super(menuType, id, playerInventory, host);
-
-    }
-
-    @Override
-    protected void addAdditionalSlotsInConstructor() {
-        var catalystInv = ((OverdriveTransformChamberBlockEntity) host).getCatalystInv().createMenuWrapper();
-        List<Component> storageTooltip = List
-                .of(Component.translatable("gui.overdriveae.overdrive_transform_chamber.catalyst_slots"));
-        for (int i = 0; i < OverdriveTransformChamberBlockEntity.CATALYST_INV_SLOTS; i++) {
-            if (i < catalystInv.size()) {
-                AppEngSlot slot = new AppEngSlot(catalystInv, i);
-                slot.setEmptyTooltip(() -> storageTooltip);
-                this.addSlot(slot, CATALYST_INV);
-            }
+        ConfigMenuInventory catalystInv = host.getCatalystInv().createMenuWrapper();
+        for (int i = 0; i < catalystInv.size(); i++) {
+            addSlot(new AppEngSlot(catalystInv, i), CATALYST_INV);
         }
     }
 

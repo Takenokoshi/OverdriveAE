@@ -4,13 +4,10 @@
     "compatibilityLevel": "JAVA_21",
     "refmap": "overdriveae.refmap.json",
     "mixins": [
-        "InsanePatternProviderLogicMixin",
         "ExecutingCraftingJobMixin",
         "TaskProgressMixin",
         "CraftingCpuLogicMixin",
-        "StoredEnergyAmountMixin",
-        "AEBaseMenuMixin",
-        "AbstractContainerMenuMixin"
+        "StoredEnergyAmountMixin"
     ],
     "injectors": {
         "defaultRequire": 1

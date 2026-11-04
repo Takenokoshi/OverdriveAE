@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "ingredients": [
+    {
+      "item": "ae2:speed_card"
+    },
+    {
+      "item": "ae2:speed_card"
+    },
+    {
+      "item": "ae2:speed_card"
+    },
+    {
+      "item": "ae2:speed_card"
+    },
+    {
+      "item": "overdriveae:overdrive_processor"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "overdriveae:t0_overdrive_speed_card"
+  }
+}

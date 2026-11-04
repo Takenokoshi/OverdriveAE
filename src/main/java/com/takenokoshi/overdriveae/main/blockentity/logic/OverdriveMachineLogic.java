@@ -121,6 +121,9 @@ public class OverdriveMachineLogic<PATTERN extends IPatternDetails, PATTERN_CACH
         host.saveChanges();
     }
 
+    /**
+     * BlockEntity側等で毎tick呼んでる
+     */
     public void updateAvailablePatterns() {
         updatePatterns();
         if (availablePatternsDirty) {
@@ -252,6 +255,7 @@ public class OverdriveMachineLogic<PATTERN extends IPatternDetails, PATTERN_CACH
                 outputHolder.add(key, amount - inserted);
             }
         }
+        outputHolder.clearZeros();
         return true;
     }
 

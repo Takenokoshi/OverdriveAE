@@ -1,7 +1,5 @@
 package com.takenokoshi.overdriveae.main.menu;
 
-import java.util.List;
-
 import com.takenokoshi.overdriveae.main.blockentity.machine.OverdriveInscriberBlockEntity;
 
 import appeng.menu.MenuOpener;
@@ -10,6 +8,7 @@ import appeng.menu.SlotSemantics;
 import appeng.menu.locator.MenuHostLocator;
 import appeng.menu.locator.MenuLocators;
 import appeng.menu.slot.AppEngSlot;
+import appeng.util.inv.AppEngInternalInventory;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -21,7 +20,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 
-public class OverdriveInscriberMenu extends OverdriveMachineOldMenu {
+public class OverdriveInscriberMenu extends OverdriveMachineMenu {
 
     public static final MenuType<OverdriveInscriberMenu> TYPE = IMenuTypeExtension
             .create(OverdriveInscriberMenu::fromNetwork);
@@ -37,19 +36,13 @@ public class OverdriveInscriberMenu extends OverdriveMachineOldMenu {
         this(TYPE, id, playerInventory, host);
     }
 
-    public OverdriveInscriberMenu(MenuType<? extends OverdriveMachineOldMenu> menuType, int id, Inventory playerInventory,
+    public OverdriveInscriberMenu(MenuType<? extends OverdriveMachineMenu> menuType, int id, Inventory playerInventory,
             OverdriveInscriberBlockEntity host) {
         super(menuType, id, playerInventory, host);
-    }
 
-    @Override
-    protected void addAdditionalSlotsInConstructor() {
-        List<Component> storageTooltip = List
-                .of(Component.translatable("gui.overdriveae.overdrive_inscriber.catalyst_slots"));
-        for (int i = 0; i < OverdriveInscriberBlockEntity.CATALYST_INV_SLOTS; i++) {
-            AppEngSlot slot = new AppEngSlot(((OverdriveInscriberBlockEntity) host).getCatalystInv(), i);
-            slot.setEmptyTooltip(() -> storageTooltip);
-            addSlot(slot, CATALYST_INV);
+        AppEngInternalInventory catalystInv = host.getCatalystInv();
+        for (int i = 0; i < catalystInv.size(); i++) {
+            addSlot(new AppEngSlot(catalystInv, i), CATALYST_INV);
         }
     }
 

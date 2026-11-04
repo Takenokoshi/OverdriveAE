@@ -8,18 +8,25 @@ import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
 import com.takenokoshi.overdriveae.main.menu.OverdriveMachineMenu;
+import com.takenokoshi.overdriveae.main.menu.PagedMenuInv;
 
+import appeng.api.behaviors.ContainerItemStrategies;
+import appeng.api.behaviors.EmptyingAction;
+import appeng.api.stacks.GenericStack;
 import appeng.client.gui.AEBaseScreen;
 import appeng.client.gui.Icon;
 import appeng.client.gui.style.ScreenStyle;
+import appeng.helpers.externalstorage.GenericStackInv;
 import appeng.menu.SlotSemantic;
 import appeng.menu.SlotSemantics;
 import appeng.menu.slot.AppEngSlot;
+import appeng.util.ConfigMenuInventory;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 
 public class OverdriveMachineScreen<M extends OverdriveMachineMenu> extends AEBaseScreen<M> {
 
@@ -145,11 +152,20 @@ public class OverdriveMachineScreen<M extends OverdriveMachineMenu> extends AEBa
         super.updateBeforeRender();
 
         setTextContent("dialog_title", this.menu.host.getGuiTitle());
-        boolean pageVisible = visibleSemantic.id().equals(SlotSemantics.ENCODED_PATTERN.id());
-        setTextHidden("page", !pageVisible);
-        prevPage.active = pageVisible;
-        nextPage.active = pageVisible;
+        boolean patternSlotsVisible = visibleSemantic.id().equals(SlotSemantics.ENCODED_PATTERN.id());
+        setTextHidden("page", !patternSlotsVisible);
+        prevPage.active = patternSlotsVisible;
+        nextPage.active = patternSlotsVisible;
+        prevPage.visible = patternSlotsVisible;
+        nextPage.visible = patternSlotsVisible;
         setTextContent("page", Component.literal((menu.getPage() + 1) + "/30"));
+        backToPatternSlots.active = !patternSlotsVisible;
+        backToPatternSlots.visible = !patternSlotsVisible;
+
+        boolean upgradeSlotsVisible = visibleSemantic.id().equals(SlotSemantics.UPGRADE.id());
+        openUpgradeSlots.active = !upgradeSlotsVisible;
+        openUpgradeSlots.visible = !upgradeSlotsVisible;
+        setTextHidden("upgradeSlotsLabel", !upgradeSlotsVisible);
     }
 
     @Override
@@ -170,6 +186,25 @@ public class OverdriveMachineScreen<M extends OverdriveMachineMenu> extends AEBa
                     .dest(offsetX + slot.x - 1, offsetY + slot.y - 1)
                     .blit(guiGraphics);
         }
+    }
+
+    @Override
+    protected EmptyingAction getEmptyingAction(Slot slot, ItemStack carried) {
+        if (!(slot instanceof AppEngSlot appEngSlot) || carried.isEmpty()) {
+            return null;
+        }
+        if (appEngSlot.getInventory() instanceof PagedMenuInv pagedMenuInv
+                && pagedMenuInv.getDelegate() instanceof ConfigMenuInventory configInv
+                && configInv.getDelegate().getMode() == GenericStackInv.Mode.STORAGE) {
+            EmptyingAction emptyingAction = ContainerItemStrategies.getEmptyingAction(carried);
+            if (emptyingAction != null) {
+                var wrappedStack = GenericStack.wrapInItemStack(new GenericStack(emptyingAction.what(), 1));
+                if (pagedMenuInv.isItemValid(slot.slot, wrappedStack)) {
+                    return emptyingAction;
+                }
+            }
+        }
+        return super.getEmptyingAction(slot, carried);
     }
 
 }
