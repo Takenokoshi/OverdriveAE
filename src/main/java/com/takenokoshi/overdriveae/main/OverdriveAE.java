@@ -3,6 +3,9 @@ package com.takenokoshi.overdriveae.main;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
+import com.takenokoshi.overdriveae.advanced.AdvancedAEModule;
+import com.takenokoshi.overdriveae.extended.ExtendedAEModule;
+import com.takenokoshi.overdriveae.main.config.OverdriveAEConfig;
 import com.takenokoshi.overdriveae.main.recipe.RecipeCacheReloadLister;
 import com.takenokoshi.overdriveae.main.registration.OverdriveAEDeferredMachine;
 import com.takenokoshi.overdriveae.main.registries.OverdriveAECapabilities;
@@ -37,6 +40,8 @@ public class OverdriveAE {
 
     public OverdriveAE(IEventBus modEventBus, ModContainer modContainer) {
 
+        OverdriveAEConfig.register(modContainer);
+
         OverdriveAEMachines.MACHINES.register(modEventBus);
         OverdriveAEItems.ITEMS.register(modEventBus);
         OverdriveAETabs.TABS.register(modEventBus);
@@ -47,6 +52,13 @@ public class OverdriveAE {
         modEventBus.addListener(this::commonSetup);
 
         NeoForge.EVENT_BUS.addListener(this::registerReloadListeners);
+
+        if (OverdriveAEHook.shouldLoadAdvancedAEModule()) {
+            AdvancedAEModule.register(modEventBus);
+        }
+        if (OverdriveAEHook.shouldLoadExtendedAEModule()) {
+            ExtendedAEModule.register(modEventBus);
+        }
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {

@@ -95,6 +95,7 @@ public class OverdriveMachineLogic<PATTERN extends IPatternDetails, PATTERN_CACH
         if (lastDecodeTick != host.currentTick()) {
             updatePatterns();
         }
+        markAvailablePatternsDirty();
     }
 
     public void markAvailablePatternsDirty() {
@@ -116,8 +117,7 @@ public class OverdriveMachineLogic<PATTERN extends IPatternDetails, PATTERN_CACH
     }
 
     protected void onPatternInvChange(int slotIndex, @Nullable GenericStack stack) {
-        this.decodedPatterns[slotIndex] = host.decodePattern(stack);
-        markAvailablePatternsDirty();
+        markPatternsDirty();
         host.saveChanges();
     }
 
