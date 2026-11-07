@@ -47,8 +47,7 @@ public class OverdriveChargerBlockEntity extends
 
     @Override
     protected OverdriveMachineLogic<ChargerPattern, SingleToSingleCache> createLogic() {
-        return new OverdriveMachineLogic<>(this, getMainNode(), ChargerPattern.class, ChargerPattern[][]::new,
-                ChargerPattern[]::new, IActionSource.ofMachine(this));
+        return new OverdriveMachineLogic<>(this, getMainNode(), ChargerPattern.class, IActionSource.ofMachine(this));
     }
 
     @Override

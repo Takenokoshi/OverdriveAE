@@ -58,7 +58,7 @@ public class OverdriveInscriberBlockEntity
             BlockState blockState) {
         super(deferredMachine.getBlockEntityType(), pos, blockState, deferredMachine, () -> 10000.0D, () -> 2560000.0D,
                 PowerMultiplier.CONFIG);
-        this.catalystInv = new CatalystInv(this, this::isCatalystItem, logic::markPatternsDirty);
+        this.catalystInv = new CatalystInv(this, this::isCatalystItem, logic::markAvailablePatternsDirty);
     }
 
     public AppEngInternalInventory getCatalystInv() {
@@ -67,8 +67,7 @@ public class OverdriveInscriberBlockEntity
 
     @Override
     protected OverdriveMachineLogic<InscriberPattern, MultiToSingleCache> createLogic() {
-        return new OverdriveMachineLogic<>(this, getMainNode(), InscriberPattern.class, InscriberPattern[][]::new,
-                InscriberPattern[]::new, IActionSource.ofMachine(this));
+        return new OverdriveMachineLogic<>(this, getMainNode(), InscriberPattern.class, IActionSource.ofMachine(this));
     }
 
     /**

@@ -1,11 +1,8 @@
 package com.takenokoshi.overdriveae.main.blockentity.logic;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.function.IntFunction;
-
 import org.jetbrains.annotations.Nullable;
 
 import com.takenokoshi.overdriveae.main.blockentity.prefab.BigGenericHolder;
@@ -39,41 +36,32 @@ public class OverdriveMachineLogic<PATTERN extends IPatternDetails, PATTERN_CACH
     public final OverdriveMachineLogicHost<PATTERN, PATTERN_CACHE> host;
     public final IManagedGridNode mainNode;
     public final Class<PATTERN> patternClass;
-    protected final PATTERN[][] decodedPatterns;
-    protected final IntFunction<PATTERN[]> patternArrayConstructor;
     protected final Set<IPatternDetails> availablePatterns;
     protected final OverdriveAEInv patternInv;
     protected final LRUCacheMap<PATTERN, PATTERN_CACHE> patternCacheMap;
     protected final BigGenericHolder outputHolder;
     protected final IActionSource actionSource;
 
-    protected boolean patternsDirty, availablePatternsDirty;
+    protected boolean availablePatternsDirty;
 
-    protected long lastDecodeTick, lastUpdateTick;
+    protected long lastUpdateTick;
 
     public OverdriveMachineLogic(
             OverdriveMachineLogicHost<PATTERN, PATTERN_CACHE> host,
             IManagedGridNode mainNode,
             Class<PATTERN> patternClass,
-            IntFunction<PATTERN[][]> pattern2DArrayConstructor,
-            IntFunction<PATTERN[]> patternArrayConstructor,
             IActionSource actionSource) {
         this.host = host;
         this.mainNode = mainNode
                 .setFlags(GridFlags.REQUIRE_CHANNEL)
                 .addService(ICraftingProvider.class, this);
         this.patternClass = patternClass;
-        this.decodedPatterns = pattern2DArrayConstructor.apply(PATTERN_INV_SIZE);
-        this.patternArrayConstructor = patternArrayConstructor;
-        PATTERN[] emptyPatternArray = this.patternArrayConstructor.apply(0);
-        Arrays.fill(this.decodedPatterns, emptyPatternArray);
         this.availablePatterns = new HashSet<>();
         this.patternInv = new OverdriveAEInv(PATTERN_INV_SIZE, this::onPatternInvChange);
         this.patternInv.setFilter(this.host::isPatternAcceptable);
         this.patternCacheMap = new LRUCacheMap<>(16, 0.75f, true, 64);
         this.outputHolder = new BigGenericHolder();
 
-        this.lastDecodeTick = Long.MIN_VALUE;
         this.lastUpdateTick = Long.MIN_VALUE;
         this.actionSource = actionSource;
     }
@@ -90,14 +78,6 @@ public class OverdriveMachineLogic<PATTERN extends IPatternDetails, PATTERN_CACH
         patternInv.setCapacity(space, capacity);
     }
 
-    public void markPatternsDirty() {
-        patternsDirty = true;
-        if (lastDecodeTick != host.currentTick()) {
-            updatePatterns();
-        }
-        markAvailablePatternsDirty();
-    }
-
     public void markAvailablePatternsDirty() {
         availablePatternsDirty = true;
         if (lastUpdateTick != host.currentTick()) {
@@ -105,19 +85,8 @@ public class OverdriveMachineLogic<PATTERN extends IPatternDetails, PATTERN_CACH
         }
     }
 
-    public void updatePatterns() {
-        if (patternsDirty) {
-            for (int i = 0; i < PATTERN_INV_SIZE; i++) {
-                decodedPatterns[i] = host.decodePattern(patternInv.getStack(i));
-            }
-            patternsDirty = false;
-            availablePatternsDirty = true;
-            lastDecodeTick = host.currentTick();
-        }
-    }
-
     protected void onPatternInvChange(int slotIndex, @Nullable GenericStack stack) {
-        markPatternsDirty();
+        markAvailablePatternsDirty();
         host.saveChanges();
     }
 
@@ -125,11 +94,10 @@ public class OverdriveMachineLogic<PATTERN extends IPatternDetails, PATTERN_CACH
      * BlockEntity側等で毎tick呼んでる
      */
     public void updateAvailablePatterns() {
-        updatePatterns();
         if (availablePatternsDirty) {
             this.availablePatterns.clear();
-            for (PATTERN[] patterns : this.decodedPatterns) {
-                for (PATTERN pattern : patterns) {
+            for (int i = 0; i < PATTERN_INV_SIZE; i++) {
+                for (PATTERN pattern : host.decodePattern(patternInv.getStack(i))) {
                     availablePatterns.add(pattern);
                 }
             }

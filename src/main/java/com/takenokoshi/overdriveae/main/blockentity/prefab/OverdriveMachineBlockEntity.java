@@ -143,7 +143,7 @@ public abstract class OverdriveMachineBlockEntity<PATTERN extends IPatternDetail
     @Override
     public void onReady() {
         super.onReady();
-        logic.markPatternsDirty();
+        logic.markAvailablePatternsDirty();
         onUpgradeChanged();
     }
 

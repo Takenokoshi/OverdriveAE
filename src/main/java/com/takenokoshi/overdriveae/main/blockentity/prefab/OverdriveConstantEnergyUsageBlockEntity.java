@@ -192,7 +192,7 @@ public abstract class OverdriveConstantEnergyUsageBlockEntity<PATTERN extends IP
     @Override
     public void onReady() {
         super.onReady();
-        logic.markPatternsDirty();
+        logic.markAvailablePatternsDirty();
         onUpgradeChanged();
     }
 

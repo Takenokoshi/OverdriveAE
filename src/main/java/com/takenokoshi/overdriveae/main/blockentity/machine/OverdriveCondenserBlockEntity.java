@@ -40,8 +40,7 @@ public class OverdriveCondenserBlockEntity extends
 
     @Override
     protected OverdriveMachineLogic<CondenserPattern, CondenserPattern> createLogic() {
-        return new OverdriveMachineLogic<>(this, getMainNode(), CondenserPattern.class, CondenserPattern[][]::new,
-                CondenserPattern[]::new, IActionSource.ofMachine(this));
+        return new OverdriveMachineLogic<>(this, getMainNode(), CondenserPattern.class, IActionSource.ofMachine(this));
     }
 
     @Override

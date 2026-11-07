@@ -77,7 +77,7 @@ public class OverdriveTransformChamberBlockEntity extends
                 availableCatalysts.add(key.getFluid());
             }
         }
-        logic.markPatternsDirty();
+        logic.markAvailablePatternsDirty();
     }
 
     public GenericStackInv getCatalystInv() {
@@ -92,8 +92,7 @@ public class OverdriveTransformChamberBlockEntity extends
 
     @Override
     protected OverdriveMachineLogic<TransformPattern, MultiToSingleCache> createLogic() {
-        return new OverdriveMachineLogic<>(this, getMainNode(), TransformPattern.class, TransformPattern[][]::new,
-                TransformPattern[]::new, IActionSource.ofMachine(this));
+        return new OverdriveMachineLogic<>(this, getMainNode(), TransformPattern.class, IActionSource.ofMachine(this));
     }
 
     @Override

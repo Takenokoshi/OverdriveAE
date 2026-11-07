@@ -190,7 +190,7 @@ public abstract class OverdriveDynamicEnergyUsageBlockEntity<PATTERN extends IPa
     @Override
     public void onReady() {
         super.onReady();
-        logic.markPatternsDirty();
+        logic.markAvailablePatternsDirty();
         onUpgradeChanged();
     }
 

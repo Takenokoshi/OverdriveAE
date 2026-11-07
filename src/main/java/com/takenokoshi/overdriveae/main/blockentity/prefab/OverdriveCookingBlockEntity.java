@@ -50,8 +50,7 @@ public abstract class OverdriveCookingBlockEntity<RECIPE extends AbstractCooking
 
     @Override
     protected OverdriveMachineLogic<CookingPattern, SingleToSingleCache> createLogic() {
-        return new OverdriveMachineLogic<>(this, getMainNode(), CookingPattern.class, CookingPattern[][]::new,
-                CookingPattern[]::new, IActionSource.ofMachine(this));
+        return new OverdriveMachineLogic<>(this, getMainNode(), CookingPattern.class, IActionSource.ofMachine(this));
     }
 
     @Override
